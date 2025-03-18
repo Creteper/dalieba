@@ -121,3 +121,9 @@
     @apply bg-background text-foreground;
   }
 }
+
+.amap-marker-label {
+  background-color: var(--background) !important; /* 使用深色主题的 --card 颜色 */
+  border: var(--border) !important; /* 使用深色主题的 --border 颜色 */
+  color: var(--text) !important; /* 使用深色主题的 --foreground 颜色 */
+}

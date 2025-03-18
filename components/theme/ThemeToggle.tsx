@@ -3,7 +3,7 @@
 import * as React from "react"
 import { Moon, Sun, SunMoon } from "lucide-react"
 import { useTheme } from "next-themes"
-import { motion, AnimatePresence } from "framer-motion"
+import { motion, AnimatePresence } from "motion/react"
 
 import { Button } from "@/components/ui/button"
 import {
