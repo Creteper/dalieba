@@ -4,6 +4,7 @@ import * as React from "react"
 import { Moon, Sun, SunMoon } from "lucide-react"
 import { useTheme } from "next-themes"
 import { motion, AnimatePresence } from "motion/react"
+import { cn } from "@/lib/utils"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -13,7 +14,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-export function ModeToggle() {
+interface ModeToggleProps {
+  variant?: "default" | "outline" | "ghost" | "link"
+  className?: string
+}
+
+export function ModeToggle({ variant = "ghost", className }: ModeToggleProps) {
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = React.useState(false)
 
@@ -23,7 +29,7 @@ export function ModeToggle() {
 
   if (!mounted) {
     return (
-      <Button variant="ghost" size="icon" className="relative">
+      <Button variant={variant} size="icon" className={cn("relative", className)}>
         <Sun className="h-5 w-5" />
         <span className="sr-only">Toggle theme</span>
       </Button>
@@ -33,7 +39,7 @@ export function ModeToggle() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="relative">
+        <Button variant={variant} size="icon" className={cn("relative", className)}>
           <AnimatePresence mode="wait">
             {theme === "dark" ? (
               <motion.div
