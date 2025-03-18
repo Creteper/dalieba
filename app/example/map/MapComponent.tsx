@@ -33,14 +33,14 @@ export default function MapComponent() {
                 map.on('click', (e: any) => {
                     const lnglat = e.lnglat;
                     const position = [lnglat.getLng(), lnglat.getLat()];
-                    
+
                     // 创建新标记点
                     const newMarker = new AMap.Marker({
                         position: position,
                         title: `标记点 ${markersRef.current.length + 1}`,
                         animation: 'AMAP_ANIMATION_DROP'
                     });
-                    
+
                     // 添加标记点点击事件
                     newMarker.on('click', () => {
                         const markerIndex = markersRef.current.indexOf(newMarker) + 1;
@@ -82,4 +82,4 @@ export default function MapComponent() {
             </div>
         </div>
     );
-} 
+}
