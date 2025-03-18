@@ -2,6 +2,8 @@
 
 import { Button } from "@/components/ui/button";
 import { Home } from "lucide-react";
+import { ModeToggle } from "@/components/theme/ThemeToggle";
+
 export default function Main() {
 
   function alt () {
@@ -12,6 +14,8 @@ export default function Main() {
       <Button size="icon" onClick={alt}>
         <Home />
       </Button>
+      <ModeToggle />
+      
     </div>
   );
 }
