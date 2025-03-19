@@ -2,7 +2,7 @@
  * @Author: Creteper 7512254@qq.com
  * @Date: 2025-03-18 18:04:57
  * @LastEditors: Creteper 7512254@qq.com
- * @LastEditTime: 2025-03-18 18:52:22
+ * @LastEditTime: 2025-03-19 09:31:58
  * @FilePath: \dalieba\components\uiodropdawn-avatarrrrrrrrr.tsx
  * @Description: 用户下拉菜单   
  */
@@ -38,7 +38,7 @@ export default function DropdownAvatar({
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="mt-2 ml-2 space-y-2">
-        <DropdownMenuItem onClick={() => router.push("/user")}>
+        <DropdownMenuItem onClick={() => router.push("/personal")}>
           <User className="h-4 w-4" />
           个人中心
         </DropdownMenuItem>
