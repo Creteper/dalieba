@@ -2,7 +2,7 @@
  * @Author: Creteper 7512254@qq.com
  * @Date: 2025-03-18 16:06:37
  * @LastEditors: Creteper 7512254@qq.com
- * @LastEditTime: 2025-03-19 11:03:39
+ * @LastEditTime: 2025-03-19 11:12:45
  * @FilePath: \dalieba\app\home\page.tsx
  * @Description: 首页样式
  */
@@ -20,6 +20,7 @@ import { Input } from "@/components/ui/input"
 import MapPersonalCard from "@/components/ui/mapPersonalCard"
 import { useClientTheme } from "@/lib/client-theme"
 import { cn } from "@/lib/utils"
+import { Typewriter } from 'react-simple-typewriter'
 // 哈尔滨景点数据
 const ATTRACTIONS = [
   {
@@ -156,15 +157,7 @@ export default function HomePage() {
         layOutisPoints={false}
         positions={positions}
       />
-      {/* 遮罩层 */}
-      <div 
-        className={cn(
-          "fixed top-0 left-0 right-0 bottom-0 z-40 user-select-none pointer-events-none transition-colors duration-300",
-          {
-            "bg-background/50": theme === "dark"
-          }
-        )}
-      ></div>
+
       {/* 控制栏 */}
       <ControlBar />
       {/* 输入框 */}
@@ -172,11 +165,17 @@ export default function HomePage() {
         <div className="flex justify-between w-full">
           <Button className="bg-background/50 backdrop-blur-sm rounded-full p-2 px-4 flex items-center gap-2 text-foreground hover:bg-background/80">
             <Footprints className="w-4 h-4" />
-            { "哈尔滨有什么玩的" }
+            <Typewriter
+              words={["哈尔滨有什么玩的"]}
+              typeSpeed={100}
+            />
           </Button>
           <Button className="bg-background/50 backdrop-blur-sm rounded-full p-2 px-4 flex items-center gap-2 text-foreground hover:bg-background/80">
             <Footprints className="w-4 h-4" />
-            { "哈尔滨有什么玩的" }
+            <Typewriter
+              words={["哈尔滨有什么玩的"]}
+              typeSpeed={100}
+            />
           </Button>
         </div>
         <div className="relative w-full">
@@ -198,8 +197,18 @@ export default function HomePage() {
               key={currentAttraction.name}
             >
               <CardHeader>
-                <CardTitle>{currentAttraction.name}</CardTitle>
-                <CardDescription>{currentAttraction.description}</CardDescription>
+                <CardTitle>
+                  <Typewriter
+                    words={[currentAttraction.name]}
+                    typeSpeed={100}
+                  />
+                </CardTitle>
+                <CardDescription>
+                  <Typewriter
+                    words={[currentAttraction.description]}
+                    typeSpeed={100}
+                  />
+                </CardDescription>
               </CardHeader>
               <CardFooter className="pt-2 flex justify-between items-center gap-6">
                 <Button 
