@@ -23,120 +23,120 @@ import { cn } from "@/lib/utils"
 import { Typewriter } from 'react-simple-typewriter'
 // 哈尔滨景点数据
 const ATTRACTIONS = [
-  {
-    name: "哈尔滨极地公园",
-    position: [45.785251, 126.586479] as [number, number],
-    description: "中国规模最大的极地海洋动物主题公园"
-  },
-  {
-    name: "圣·索菲亚教堂",
-    position: [45.770125, 126.627215] as [number, number],
-    description: "哈尔滨市标志性建筑，拜占庭式的俄罗斯东正教教堂"
-  },
-  {
-    name: "东北虎林园",
-    position: [45.817483, 126.600650] as [number, number],
-    description: "世界上规模最大的东北虎人工繁育基地"
-  },
-  {
-    name: "哈尔滨音乐公园",
-    position: [45.749011, 126.548455] as [number, number],
-    description: "以音乐为主题的城市公园"
-  },
-  {
-    name: "哈尔滨市人民防洪胜利纪念塔",
-    position: [45.780654, 126.617203] as [number, number],
-    description: "纪念1957年抗洪胜利的标志性建筑"
-  },
-  {
-    name: "哈尔滨市兆麟公园",
-    position: [45.777327, 126.622915] as [number, number],
-    description: "哈尔滨历史悠久的城市公园"
-  },
-  {
-    name: "中华巴洛克风情街",
-    position: [45.781791, 126.640729] as [number, number],
-    description: "融合中西建筑风格的特色商业街"
-  }
+    {
+        name: "哈尔滨极地公园",
+        position: [45.785251, 126.586479] as [number, number],
+        description: "中国规模最大的极地海洋动物主题公园"
+    },
+    {
+        name: "圣·索菲亚教堂",
+        position: [45.770125, 126.627215] as [number, number],
+        description: "哈尔滨市标志性建筑，拜占庭式的俄罗斯东正教教堂"
+    },
+    {
+        name: "东北虎林园",
+        position: [45.817483, 126.600650] as [number, number],
+        description: "世界上规模最大的东北虎人工繁育基地"
+    },
+    {
+        name: "哈尔滨音乐公园",
+        position: [45.749011, 126.548455] as [number, number],
+        description: "以音乐为主题的城市公园"
+    },
+    {
+        name: "哈尔滨市人民防洪胜利纪念塔",
+        position: [45.780654, 126.617203] as [number, number],
+        description: "纪念1957年抗洪胜利的标志性建筑"
+    },
+    {
+        name: "哈尔滨市兆麟公园",
+        position: [45.777327, 126.622915] as [number, number],
+        description: "哈尔滨历史悠久的城市公园"
+    },
+    {
+        name: "中华巴洛克风情街",
+        position: [45.781791, 126.640729] as [number, number],
+        description: "融合中西建筑风格的特色商业街"
+    }
 ]
 
 const PATHS = [
-  [45.780304, 126.617201] as [number, number],
-  [45.780013, 126.617296] as [number, number],
-  [45.779449, 126.6175] as [number, number],
-  [45.778911, 126.617635] as [number, number],
-  [45.77875, 126.617678] as [number, number],
-  [45.778624, 126.617726] as [number, number],
-  [45.77862, 126.617726] as [number, number],
-  [45.778659, 126.617947] as [number, number],
-  [45.77872, 126.618394] as [number, number]
+    [45.780304, 126.617201] as [number, number],
+    [45.780013, 126.617296] as [number, number],
+    [45.779449, 126.6175] as [number, number],
+    [45.778911, 126.617635] as [number, number],
+    [45.77875, 126.617678] as [number, number],
+    [45.778624, 126.617726] as [number, number],
+    [45.77862, 126.617726] as [number, number],
+    [45.778659, 126.617947] as [number, number],
+    [45.77872, 126.618394] as [number, number]
 ]
 
 export default function HomePage() {
-  const [currentCenter, setCurrentCenter] = useState(ATTRACTIONS[0].position)
-  const [currentAttractionIndex, setCurrentAttractionIndex] = useState(0)
-  const [markers, setMarkers] = useState<Array<{position: [number, number], popup?: string}>>([])
-  const [isAutoPlaying, setIsAutoPlaying] = useState(true)
-  const resumeTimeout = React.useRef<NodeJS.Timeout | null>(null)
-  const [positions, setPositions] = useState<[number, number][]>([])
-  const theme = useClientTheme()
+    const [currentCenter, setCurrentCenter] = useState(ATTRACTIONS[0].position)
+    const [currentAttractionIndex, setCurrentAttractionIndex] = useState(0)
+    const [markers, setMarkers] = useState<Array<{ position: [number, number], popup?: string }>>([])
+    const [isAutoPlaying, setIsAutoPlaying] = useState(true)
+    const resumeTimeout = React.useRef<NodeJS.Timeout | null>(null)
+    const [positions, setPositions] = useState<[number, number][]>([])
+    const theme = useClientTheme()
 
-  // 创建所有景点的标记
-  useEffect(() => {
-    const allMarkers = ATTRACTIONS.map(attraction => ({
-      position: attraction.position,
-      popup: attraction.name,
-      description: attraction.description
-    }))
-    setMarkers(allMarkers)
-    // 创建路径
-    setPositions(PATHS)
-  }, [])
-  
-  // 自动轮播景点
-  useEffect(() => {
-    if (!isAutoPlaying) return
-    
-    const interval = setInterval(() => {
-      setCurrentAttractionIndex(prevIndex => {
-        const nextIndex = (prevIndex + 1) % ATTRACTIONS.length
-        setCurrentCenter(ATTRACTIONS[nextIndex].position)
-        return nextIndex
-      })
-    }, 8000)
-    
-    return () => clearInterval(interval)
-  }, [isAutoPlaying])
+    // 创建所有景点的标记
+    useEffect(() => {
+        const allMarkers = ATTRACTIONS.map(attraction => ({
+            position: attraction.position,
+            popup: attraction.name,
+            description: attraction.description
+        }))
+        setMarkers(allMarkers)
+        // 创建路径
+        setPositions(PATHS)
+    }, [])
 
-  const handleDragStart = () => {
-    setIsAutoPlaying(false)
-    if (resumeTimeout.current) {
-      clearTimeout(resumeTimeout.current)
-    }
-  }
+    // 自动轮播景点
+    useEffect(() => {
+        if (!isAutoPlaying) return
 
-  const handleDragEnd = () => {
-    if (resumeTimeout.current) {
-      clearTimeout(resumeTimeout.current)
+        const interval = setInterval(() => {
+            setCurrentAttractionIndex(prevIndex => {
+                const nextIndex = (prevIndex + 1) % ATTRACTIONS.length
+                setCurrentCenter(ATTRACTIONS[nextIndex].position)
+                return nextIndex
+            })
+        }, 8000)
+
+        return () => clearInterval(interval)
+    }, [isAutoPlaying])
+
+    const handleDragStart = () => {
+        setIsAutoPlaying(false)
+        if (resumeTimeout.current) {
+            clearTimeout(resumeTimeout.current)
+        }
     }
-    resumeTimeout.current = setTimeout(() => {
-      setIsAutoPlaying(true)
-    }, 1000)
-  }
-  
-  // 切换到特定景点
-  const goToAttraction = (index: number) => {
-    setCurrentAttractionIndex(index)
-    setCurrentCenter(ATTRACTIONS[index].position)
-    
-    // 可选：暂停自动轮播
-    if (isAutoPlaying && index !== (currentAttractionIndex + 1) % ATTRACTIONS.length) {
-      setIsAutoPlaying(false)
+
+    const handleDragEnd = () => {
+        if (resumeTimeout.current) {
+            clearTimeout(resumeTimeout.current)
+        }
+        resumeTimeout.current = setTimeout(() => {
+            setIsAutoPlaying(true)
+        }, 1000)
     }
-  }
-  
-  // 当前景点信息
-  const currentAttraction = ATTRACTIONS[currentAttractionIndex]
+
+    // 切换到特定景点
+    const goToAttraction = (index: number) => {
+        setCurrentAttractionIndex(index)
+        setCurrentCenter(ATTRACTIONS[index].position)
+
+        // 可选：暂停自动轮播
+        if (isAutoPlaying && index !== (currentAttractionIndex + 1) % ATTRACTIONS.length) {
+            setIsAutoPlaying(false)
+        }
+    }
+
+    // 当前景点信息
+    const currentAttraction = ATTRACTIONS[currentAttractionIndex]
 
   return (
     <motion.div
@@ -157,7 +157,15 @@ export default function HomePage() {
         layOutisPoints={false}
         positions={positions}
       />
-
+      {/* 遮罩层 */}
+      <div 
+        className={cn(
+          "fixed top-0 left-0 right-0 bottom-0 z-40 user-select-none pointer-events-none transition-colors duration-300",
+          {
+            "bg-background/50": theme === "dark"
+          }
+        )}
+      ></div>
       {/* 控制栏 */}
       <ControlBar />
       {/* 输入框 */}
@@ -165,17 +173,11 @@ export default function HomePage() {
         <div className="flex justify-between w-full">
           <Button className="bg-background/50 backdrop-blur-sm rounded-full p-2 px-4 flex items-center gap-2 text-foreground hover:bg-background/80">
             <Footprints className="w-4 h-4" />
-            <Typewriter
-              words={["哈尔滨有什么玩的"]}
-              typeSpeed={100}
-            />
+            { "哈尔滨有什么玩的" }
           </Button>
           <Button className="bg-background/50 backdrop-blur-sm rounded-full p-2 px-4 flex items-center gap-2 text-foreground hover:bg-background/80">
             <Footprints className="w-4 h-4" />
-            <Typewriter
-              words={["哈尔滨有什么玩的"]}
-              typeSpeed={100}
-            />
+            { "哈尔滨有什么玩的" }
           </Button>
         </div>
         <div className="relative w-full">
@@ -197,18 +199,8 @@ export default function HomePage() {
               key={currentAttraction.name}
             >
               <CardHeader>
-                <CardTitle>
-                  <Typewriter
-                    words={[currentAttraction.name]}
-                    typeSpeed={100}
-                  />
-                </CardTitle>
-                <CardDescription>
-                  <Typewriter
-                    words={[currentAttraction.description]}
-                    typeSpeed={100}
-                  />
-                </CardDescription>
+                <CardTitle>{currentAttraction.name}</CardTitle>
+                <CardDescription>{currentAttraction.description}</CardDescription>
               </CardHeader>
               <CardFooter className="pt-2 flex justify-between items-center gap-6">
                 <Button 
