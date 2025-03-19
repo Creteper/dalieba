@@ -1,3 +1,12 @@
+/*
+ * @Author: Creteper 7512254@qq.com
+ * @Date: 2025-03-18 18:04:57
+ * @LastEditors: Creteper 7512254@qq.com
+ * @LastEditTime: 2025-03-18 18:55:13
+ * @FilePath: \dalieba\components\theme\ThemeToggle.tsx
+ * @Description: 主题切换
+ */
+
 "use client"
 
 import * as React from "react"
@@ -29,7 +38,7 @@ export function ModeToggle({ variant = "ghost", className }: ModeToggleProps) {
 
   if (!mounted) {
     return (
-      <Button variant={variant} size="icon" className={cn("relative", className)}>
+      <Button variant={variant} size="icon" className={cn("relative", className, variant === 'default' ? 'bg-background' : '')}>
         <Sun className="h-5 w-5" />
         <span className="sr-only">Toggle theme</span>
       </Button>
@@ -48,7 +57,7 @@ export function ModeToggle({ variant = "ghost", className }: ModeToggleProps) {
                 animate={{ rotate: 0, scale: 1 }}
                 exit={{ rotate: -90, scale: 0 }}
                 transition={{ duration: 0.2 }}
-                className="absolute inset-0 flex items-center justify-center"
+                className="absolutqe inset-0 flex items-center justify-center"
               >
                 <Moon className="h-5 w-5" />
               </motion.div>
