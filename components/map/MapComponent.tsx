@@ -1,111 +1,254 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
-import dynamic from 'next/dynamic'
+import React, { useState } from 'react'
+import { MapContainer, TileLayer, useMap, Marker, Polyline } from 'react-leaflet'
+import { Icon, Marker as LeafletMarker } from 'leaflet'
+import 'leaflet/dist/leaflet.css'
 import { cn } from '@/lib/utils'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { X } from 'lucide-react'
 
-// 地图相关属性
-interface MapProps {
-  center?: [number, number]
-  zoom?: number
-  maxZoom?: number
-  minZoom?: number
-  markers?: Array<{
-    position: [number, number],
-    popup?: string,
-    description?: string
-  }>
-  showZoomLevel?: boolean
-  className?: string
-  onMapDragStart?: () => void
-  onMapDragEnd?: () => void
-  layOutisPoints?: boolean
-  positions?: [number, number][]
-}
+// ZoomDisplay组件定义
+function ZoomDisplay() {
+    const map = useMap();
+    const [currentZoom, setCurrentZoom] = React.useState(map.getZoom());
 
-// 整合DOM属性和地图属性
-interface MapComponentProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'className'>, MapProps {}
+    React.useEffect(() => {
+        const updateZoom = () => {
+            setCurrentZoom(map.getZoom());
+        };
 
-// 动态导入Leaflet相关组件，禁用SSR
-// 使用类型断言解决类型问题
-const ClientMapComponent = dynamic(
-  // @ts-ignore - 抑制模块未找到的错误
-  () => import('./MapImpl'), 
-  { 
-    ssr: false,
-    loading: () => (
-      <div className="flex items-center justify-center h-full">
-        <div className="animate-pulse text-muted-foreground">加载地图中...</div>
-      </div>
-    )
-  }
-) as React.ComponentType<MapProps>;
+        map.on('zoom', updateZoom);
 
-export function MapComponent({
-  className,
-  style,
-  center,
-  zoom,
-  maxZoom,
-  minZoom,
-  markers,
-  showZoomLevel,
-  onMapDragStart,
-  onMapDragEnd,
-  layOutisPoints,
-  positions,
-  ...otherProps
-}: MapComponentProps) {
-  const [isMounted, setIsMounted] = useState(false)
-  const [isVisible, setIsVisible] = useState(false)
+        return () => {
+            map.off('zoom', updateZoom);
+        };
+    }, [map]);
 
-  useEffect(() => {
-    setIsMounted(true)
-    // 添加短暂延迟以实现淡入效果
-    const timer = setTimeout(() => setIsVisible(true), 100)
-    return () => clearTimeout(timer)
-  }, [])
-
-  const containerClass = cn(
-    "fixed",
-    "top-0",
-    "left-0",
-    "right-0",
-    "bottom-0",
-    "z-40",
-    "user-select-none",
-    "pointer-events-none",
-    className
-  )
-
-  if (!isMounted) {
     return (
-      <div 
-        className={cn("h-96 bg-muted animate-pulse rounded-md overflow-hidden", className)} 
-        style={style}
-        {...otherProps} 
-      />
-    )
-  }
-
-  // 使用纯CSS过渡代替motion组件
-  return (
-    <div className={containerClass} style={style} {...otherProps}>
-      <ClientMapComponent
-        center={center}
-        zoom={zoom}
-        maxZoom={maxZoom}
-        minZoom={minZoom}
-        markers={markers}
-        showZoomLevel={showZoomLevel}
-        className={className}
-        onMapDragStart={onMapDragStart}
-        onMapDragEnd={onMapDragEnd}
-        layOutisPoints={layOutisPoints}
-        positions={positions}
-      />
-    </div>
-  )
+        <div className="leaflet-bottom leaflet-left bottom-0! left-0!">
+            <div className="rounded-sm bg-background/80 backdrop-blur-sm px-2 py-1 shadow-md rounded-l-none rounded-r-none rounded-tr-sm">
+                缩放级别: {parseInt(currentZoom.toString())}
+            </div>
+        </div>
+    );
 }
 
-export default MapComponent 
+// 创建ChangeView组件以监听和更新地图中心点
+function ChangeView({
+    center,
+    zoom,
+    onViewChange
+}: {
+    center: [number, number],
+    zoom: number,
+    onViewChange?: () => void
+}) {
+    const map = useMap();
+    const prevCenter = React.useRef(center);
+    const prevZoom = React.useRef(zoom);
+
+    React.useEffect(() => {
+        if (
+            prevCenter.current[0] !== center[0] ||
+            prevCenter.current[1] !== center[1] ||
+            prevZoom.current !== zoom
+        ) {
+            // 使用flyTo而不是setView以获得平滑的动画效果
+            map.flyTo(center, zoom, {
+                duration: 2, // 2秒的动画时间
+                easeLinearity: 0.5
+            });
+            // 触发视图改变回调
+            onViewChange?.();
+
+            // 更新前一次的值
+            prevCenter.current = center;
+            prevZoom.current = zoom;
+        }
+    }, [center, zoom, map, onViewChange]);
+
+    return null;
+}
+
+interface CustomPopupProps {
+    content: string
+    description: string
+    position: { x: number; y: number }
+    onClose: () => void
+}
+
+function CustomPopup({ content, description, position, onClose }: CustomPopupProps) {
+    const handleClick = (e: React.MouseEvent) => {
+        e.stopPropagation();
+    };
+
+    return (
+        <>
+            <div
+                className="fixed inset-0 z-[999]"
+                onClick={onClose}
+            />
+            <div
+                className="absolute z-[1000] transform -translate-x-1/2 -translate-y-full"
+                style={{
+                    left: position.x,
+                    top: position.y - 8,
+                }}
+                onClick={handleClick}
+            >
+                <div className="relative">
+                    <div className="bg-background/80 backdrop-blur-sm rounded-lg shadow-lg pt-2 px-4">
+                        <div className="flex flex-col gap-2">
+                            <div className="flex items-start justify-between">
+                                <span className="text-sm font-medium">{content}</span>
+                            </div>
+                            <p className="text-sm text-gray-500 pb-2">
+                                {description}
+                            </p>
+                        </div>
+                    </div>
+                    <div className="absolute left-1/2 -translate-x-1/2 border-8 border-transparent border-t-background/80 backdrop-blur-sm" style={{ bottom: '-16px' }} />
+                </div>
+            </div>
+        </>
+    )
+}
+
+// 自定义图标配置
+const customIcon = new Icon({
+    iconUrl: '/images/marker-icon.png',
+    iconRetinaUrl: '/images/marker-icon-2x.png',
+    shadowUrl: '/images/marker-shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41]
+})
+
+// 添加地图事件监听组件
+function MapEvents({ onDragStart, onDragEnd }: { onDragStart?: () => void, onDragEnd?: () => void }) {
+    const map = useMap();
+
+    React.useEffect(() => {
+        if (!map) return;
+
+        map.on('dragstart', () => {
+            onDragStart?.();
+        });
+
+        map.on('dragend', () => {
+            onDragEnd?.();
+        });
+
+        return () => {
+            map.off('dragstart');
+            map.off('dragend');
+        };
+    }, [map, onDragStart, onDragEnd]);
+
+    return null;
+}
+
+interface MapImplProps {
+    center?: [number, number]
+    zoom?: number
+    maxZoom?: number
+    minZoom?: number
+    markers?: Array<{
+        position: [number, number],
+        popup?: string,
+        description?: string
+    }>
+    showZoomLevel?: boolean
+    className?: string
+    onDragStart?: () => void
+    onDragEnd?: () => void
+    layOutisPoints?: boolean
+    positions?: [number, number][]
+}
+
+function MapImpl({
+    center = [45.75, 126.63],
+    zoom = 13,
+    maxZoom = 15,
+    minZoom = 10,
+    markers = [],
+    showZoomLevel = true,
+    className,
+    onDragStart,
+    onDragEnd,
+    layOutisPoints = true,
+    positions = []
+}: MapImplProps) {
+    const [selectedMarker, setSelectedMarker] = useState<{
+        content: string;
+        description: string;
+        position: { x: number; y: number };
+    } | null>(null);
+
+    const handleMarkerClick = (e: L.LeafletMouseEvent, content: string, description: string) => {
+        const { containerPoint } = e;
+        setSelectedMarker({
+            content,
+            description,
+            position: {
+                x: containerPoint.x,
+                y: containerPoint.y
+            }
+        });
+    };
+
+    const handleViewChange = () => {
+        setSelectedMarker(null);
+    };
+
+    return (
+        <div className={cn("h-full w-full relative", className)}>
+            <MapContainer
+                center={center}
+                zoom={zoom}
+                maxZoom={maxZoom}
+                minZoom={minZoom}
+                zoomControl={false}
+                style={{ height: '100%', width: '100%' }}
+            >
+                <ChangeView center={center} zoom={zoom} onViewChange={handleViewChange} />
+                <MapEvents onDragStart={onDragStart} onDragEnd={onDragEnd} />
+
+                <TileLayer
+                    attribution='&copy; 大列巴地图服务'
+                    url={layOutisPoints ? 'http://192.168.200.66:3000/tiles/{z}/{x}/{y}/x={x}&y={y}&z={z}.png' : 'http://192.168.200.66:3000/w_tiles/{z}/{x}/{y}/x={x}&y={y}&z={z}.png'}
+                />
+                <Polyline positions={positions}
+                    pathOptions={{
+                        weight: 6
+                    }}
+                />
+                {showZoomLevel && <ZoomDisplay />}
+
+                {markers.map((marker, idx) => (
+                    <Marker
+                        key={idx}
+                        position={marker.position}
+                        icon={customIcon}
+                        eventHandlers={{
+                            click: (e) => marker.popup && handleMarkerClick(e, marker.popup, marker.description || ''),
+                        }}
+                    />
+                ))}
+            </MapContainer>
+
+            {selectedMarker && (
+                <CustomPopup
+                    content={selectedMarker.content}
+                    description={selectedMarker.description}
+                    position={selectedMarker.position}
+                    onClose={() => setSelectedMarker(null)}
+                />
+            )}
+        </div>
+    )
+}
+
+export default MapImpl 
