@@ -2,7 +2,15 @@
  * @Author: Creteper 7512254@qq.com
  * @Date: 2025-03-18 16:06:37
  * @LastEditors: Creteper 7512254@qq.com
- * @LastEditTime: 2025-03-19 09:22:07
+ * @LastEditTime: 2025-03-19 09:42:54
+ * @FilePath: \dalieba\app\home\page.tsx
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
+/*
+ * @Author: Creteper 7512254@qq.com
+ * @Date: 2025-03-18 16:06:37
+ * @LastEditors: Creteper 7512254@qq.com
+ * @LastEditTime: 2025-03-19 09:40:18
  * @FilePath: \dalieba\app\home\page.tsx
  * @Description: 首页样式
  */
@@ -17,6 +25,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "@/components/ui/button"
 import React from "react"
 import { Input } from "@/components/ui/input"
+import MapPersonalCard from "@/components/ui/mapPersonalCard"
 // 哈尔滨景点数据
 const ATTRACTIONS = [
   {
@@ -171,46 +180,49 @@ export default function HomePage() {
           </Button>
         </div>
       </div>
-      {/* 景点信息展示 - 使用shadcn UI的Card组件 */}
-      <div className="fixed left-4 top-4 z-40 max-w-md">
-        <motion.div 
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          key={currentAttraction.name}
-        >
-          <Card className="backdrop-blur-sm bg-card/80 border border-border shadow-lg">
-            <CardHeader>
-              <CardTitle>{currentAttraction.name}</CardTitle>
-              <CardDescription>{currentAttraction.description}</CardDescription>
-            </CardHeader>
-            <CardFooter className="pt-2 flex justify-between items-center gap-6">
-              <Button 
-                size="sm"
-                variant={isAutoPlaying ? "default" : "outline"}
-                onClick={() => setIsAutoPlaying(!isAutoPlaying)}
-              >
-                {isAutoPlaying ? "暂停轮播" : "自动轮播"}
-              </Button>
-              
-              {/* 景点选择器 */}
-              <div className="flex items-center gap-1.5">
-                {ATTRACTIONS.map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => goToAttraction(index)}
-                    className={`w-2 h-2 rounded-full transition-all ${
-                      index === currentAttractionIndex 
-                        ? "bg-primary w-4" 
-                        : "bg-muted-foreground/50"
-                    }`}
-                    aria-label={`切换到${ATTRACTIONS[index].name}`}
-                  />
-                ))}
-              </div>
-            </CardFooter>
-          </Card>
-        </motion.div>
+      <div className="fixed top-4 left-4 flex flex-col gap-4">
+        <MapPersonalCard className=" backdrop-blur-sm bg-background/80" />
+        {/* 景点信息展示 - 使用shadcn UI的Card组件 */}
+        <div className="max-w-md">
+          <motion.div 
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            key={currentAttraction.name}
+          >
+            <Card className="backdrop-blur-sm bg-card/80 border border-border shadow-lg">
+              <CardHeader>
+                <CardTitle>{currentAttraction.name}</CardTitle>
+                <CardDescription>{currentAttraction.description}</CardDescription>
+              </CardHeader>
+              <CardFooter className="pt-2 flex justify-between items-center gap-6">
+                <Button 
+                  size="sm"
+                  variant={isAutoPlaying ? "default" : "outline"}
+                  onClick={() => setIsAutoPlaying(!isAutoPlaying)}
+                >
+                  {isAutoPlaying ? "暂停轮播" : "自动轮播"}
+                </Button>
+                
+                {/* 景点选择器 */}
+                <div className="flex items-center gap-1.5">
+                  {ATTRACTIONS.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => goToAttraction(index)}
+                      className={`w-2 h-2 rounded-full transition-all ${
+                        index === currentAttractionIndex 
+                          ? "bg-primary w-4" 
+                          : "bg-muted-foreground/50"
+                      }`}
+                      aria-label={`切换到${ATTRACTIONS[index].name}`}
+                    />
+                  ))}
+                </div>
+              </CardFooter>
+            </Card>
+          </motion.div>
+        </div>
       </div>
     </motion.div>
   )

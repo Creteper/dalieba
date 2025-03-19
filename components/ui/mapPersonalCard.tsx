@@ -1,12 +1,16 @@
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./card";
 import { Avatar, AvatarFallback, AvatarImage } from "./avatar";
-
+import { motion } from "motion/react";
 export default function MapPersonalCard({ className }: { className?: string }) {
     const [userName, setUserName] = useState("烙铁牛逼666")
 
     return (
-        <div>
+        <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+        >
             <Card className={"w-96 " + className}>
                 <CardHeader className="flex justify-between">
                     <div className="flex flex-col gap-3">
@@ -31,6 +35,6 @@ export default function MapPersonalCard({ className }: { className?: string }) {
                     </CardDescription>
                 </CardContent>
             </Card>
-        </div>
+        </motion.div>
     )
 }
