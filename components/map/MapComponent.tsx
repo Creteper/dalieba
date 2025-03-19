@@ -67,8 +67,14 @@ export function MapComponent({
   }, [])
 
   const containerClass = cn(
-    "h-96 rounded-md overflow-hidden transition-all duration-500 ease-out", 
-    isVisible ? "opacity-100 scale-100" : "opacity-0 scale-95",
+    "fixed",
+    "top-0",
+    "left-0",
+    "right-0",
+    "bottom-0",
+    "z-40",
+    "user-select-none",
+    "pointer-events-none",
     className
   )
 

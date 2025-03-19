@@ -1,7 +1,11 @@
+'use client'
+
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./card";
 import { Avatar, AvatarFallback, AvatarImage } from "./avatar";
 import { motion } from "motion/react";
+import { Typewriter } from 'react-simple-typewriter';
+
 export default function MapPersonalCard({ className }: { className?: string }) {
     const [userName, setUserName] = useState("烙铁牛逼666")
 
@@ -18,7 +22,11 @@ export default function MapPersonalCard({ className }: { className?: string }) {
                             @{userName}
                         </CardTitle>
                         <CardDescription>
-                            今日晴转多云，适宜出门走动，但风较大，请注意保暖
+                            <Typewriter 
+                                words={['今日晴转多云，适宜出门走动，但风较大，请注意保暖!']} 
+                                cursor={true}
+                                typeSpeed={100}
+                            />
                         </CardDescription>
                     </div>
                     <Avatar className="w-16 h-fit">

@@ -2,15 +2,7 @@
  * @Author: Creteper 7512254@qq.com
  * @Date: 2025-03-18 16:06:37
  * @LastEditors: Creteper 7512254@qq.com
- * @LastEditTime: 2025-03-19 09:48:28
- * @FilePath: \dalieba\app\home\page.tsx
- * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
- */
-/*
- * @Author: Creteper 7512254@qq.com
- * @Date: 2025-03-18 16:06:37
- * @LastEditors: Creteper 7512254@qq.com
- * @LastEditTime: 2025-03-19 09:40:18
+ * @LastEditTime: 2025-03-19 11:03:39
  * @FilePath: \dalieba\app\home\page.tsx
  * @Description: 首页样式
  */
@@ -26,6 +18,8 @@ import { Button } from "@/components/ui/button"
 import React from "react"
 import { Input } from "@/components/ui/input"
 import MapPersonalCard from "@/components/ui/mapPersonalCard"
+import { useClientTheme } from "@/lib/client-theme"
+import { cn } from "@/lib/utils"
 // 哈尔滨景点数据
 const ATTRACTIONS = [
   {
@@ -84,6 +78,8 @@ export default function HomePage() {
   const [isAutoPlaying, setIsAutoPlaying] = useState(true)
   const resumeTimeout = React.useRef<NodeJS.Timeout | null>(null)
   const [positions, setPositions] = useState<[number, number][]>([])
+  const theme = useClientTheme()
+
   // 创建所有景点的标记
   useEffect(() => {
     const allMarkers = ATTRACTIONS.map(attraction => ({
@@ -160,8 +156,18 @@ export default function HomePage() {
         layOutisPoints={false}
         positions={positions}
       />
-      
+      {/* 遮罩层 */}
+      <div 
+        className={cn(
+          "fixed top-0 left-0 right-0 bottom-0 z-40 user-select-none pointer-events-none transition-colors duration-300",
+          {
+            "bg-background/50": theme === "dark"
+          }
+        )}
+      ></div>
+      {/* 控制栏 */}
       <ControlBar />
+      {/* 输入框 */}
       <div className="fixed z-50 bottom-16 left-1/2 -translate-x-1/2 w-[calc(80%)] md:w-[30rem] h-32 flex items-center flex-col justify-center gap-4">
         <div className="flex justify-between w-full">
           <Button className="bg-background/50 backdrop-blur-sm rounded-full p-2 px-4 flex items-center gap-2 text-foreground hover:bg-background/80">
@@ -180,17 +186,17 @@ export default function HomePage() {
           </Button>
         </div>
       </div>
-      <div className="fixed top-4 left-4 flex flex-col gap-4">
+      <div className="fixed top-16 left-1/2 -translate-x-1/2 md:left-4 md:top-4 md:translate-x-0 flex flex-col gap-4 z-50">
         <MapPersonalCard className=" backdrop-blur-sm bg-background/80" />
         {/* 景点信息展示 - 使用shadcn UI的Card组件 */}
         <div className="max-w-md">
-          <motion.div 
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            key={currentAttraction.name}
-          >
-            <Card className="backdrop-blur-sm bg-card/80 border border-border shadow-lg">
+          <Card className="backdrop-blur-sm bg-card/80 border border-border shadow-lg">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.3 }}
+              key={currentAttraction.name}
+            >
               <CardHeader>
                 <CardTitle>{currentAttraction.name}</CardTitle>
                 <CardDescription>{currentAttraction.description}</CardDescription>
@@ -220,8 +226,8 @@ export default function HomePage() {
                   ))}
                 </div>
               </CardFooter>
-            </Card>
-          </motion.div>
+            </motion.div>
+          </Card>
         </div>
       </div>
     </motion.div>

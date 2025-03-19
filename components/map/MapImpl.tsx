@@ -26,8 +26,8 @@ function ZoomDisplay() {
   }, [map]);
   
   return (
-    <div className="leaflet-bottom leaflet-right">
-      <div className="leaflet-control leaflet-bar bg-background px-2 py-1 m-2 rounded shadow-md">
+    <div className="leaflet-bottom leaflet-left bottom-0! left-0!">
+      <div className="rounded-sm bg-background/80 backdrop-blur-sm px-2 py-1 shadow-md rounded-l-none rounded-r-none rounded-tr-sm">
         缩放级别: {parseInt(currentZoom.toString())}
       </div>
     </div>
