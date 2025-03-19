@@ -2,7 +2,7 @@
  * @Author: Creteper 7512254@qq.com
  * @Date: 2025-03-18 16:06:37
  * @LastEditors: Creteper 7512254@qq.com
- * @LastEditTime: 2025-03-19 11:12:45
+ * @LastEditTime: 2025-03-19 13:20:52
  * @FilePath: \dalieba\app\home\page.tsx
  * @Description: 首页样式
  */
@@ -60,17 +60,17 @@ const ATTRACTIONS = [
     }
 ]
 
-const PATHS = [
-    [45.780304, 126.617201] as [number, number],
-    [45.780013, 126.617296] as [number, number],
-    [45.779449, 126.6175] as [number, number],
-    [45.778911, 126.617635] as [number, number],
-    [45.77875, 126.617678] as [number, number],
-    [45.778624, 126.617726] as [number, number],
-    [45.77862, 126.617726] as [number, number],
-    [45.778659, 126.617947] as [number, number],
-    [45.77872, 126.618394] as [number, number]
-]
+// const PATHS = [
+//     [45.780304, 126.617201] as [number, number],
+//     [45.780013, 126.617296] as [number, number],
+//     [45.779449, 126.6175] as [number, number],
+//     [45.778911, 126.617635] as [number, number],
+//     [45.77875, 126.617678] as [number, number],
+//     [45.778624, 126.617726] as [number, number],
+//     [45.77862, 126.617726] as [number, number],
+//     [45.778659, 126.617947] as [number, number],
+//     [45.77872, 126.618394] as [number, number]
+// ]
 
 export default function HomePage() {
     const [currentCenter, setCurrentCenter] = useState(ATTRACTIONS[0].position)
@@ -89,8 +89,8 @@ export default function HomePage() {
             description: attraction.description
         }))
         setMarkers(allMarkers)
-        // 创建路径
-        setPositions(PATHS)
+        // // 创建路径
+        // setPositions(PATHS)
     }, [])
 
     // 自动轮播景点
@@ -152,8 +152,8 @@ export default function HomePage() {
         minZoom={13}
         markers={markers}
         className="w-full h-full fixed top-0 left-0 right-0 bottom-0"
-        onMapDragStart={handleDragStart}
-        onMapDragEnd={handleDragEnd}
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
         layOutisPoints={false}
         positions={positions}
       />
