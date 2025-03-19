@@ -18,6 +18,7 @@ import { useState } from "react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Drawer, DrawerTrigger, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription, DrawerFooter, DrawerClose } from "@/components/ui/drawer"
 
 export default function PersonalPage() {
 
@@ -25,12 +26,14 @@ export default function PersonalPage() {
     const [userEmail, setUserEmail] = useState("lijianlin050416@gmail.com")
     const [isLocal, setIsLocal] = useState(false)
 
+    var historyPadding = ""
+
     return (
         <div className="w-screen h-screen flex">
-            <Button onClick={() => {
+            {/* <Button onClick={() => {
                 setIsLocal(!isLocal)
-            }} />
-            <div className="mx-auto h-screen w-1/3 py-20 flex flex-col gap-5">
+            }} /> */}
+            <div className="mx-auto h-screen w-9/12 sm:w-8/12 md:w-7/12 lg:w-5/12 xl:w-1/3 py-20 flex flex-col gap-5">
                 <p className="text-3xl font-bold">个人中心</p>
                 <div className="flex gap-5 items-center">
                     <Avatar className="w-24 h-fit">
@@ -71,12 +74,6 @@ export default function PersonalPage() {
                 </div>
                 <Card className="mt-5">
                     <CardContent>
-                        {/* {itemContents.map((item, index) => (
-                            <CardItem key={index} className="py-5 justify-between" hasBottom={true}>
-                                <p>{item.content}</p>
-                                <Button variant="outline" className="">{item.buttonContent}</Button>
-                            </CardItem>
-                        ))} */}
                         {isLocal ?
                             <div>
                                 <CardItem className="pb-5" hasBottom={true}>
@@ -92,7 +89,11 @@ export default function PersonalPage() {
                             <p>查看收藏路线</p>
                             <Button variant="outline" className="">查看收藏</Button>
                         </CardItem>
-                        <CardItem className="py-5 justify-between" hasBottom={true}>
+                        {(() => {
+                            historyPadding = isLocal ? "pt-5" : "py-5";
+                            return null;
+                        })()}
+                        <CardItem className={"justify-between " + historyPadding}>
                             <p>管理历史回答记录</p>
                             <Popover>
                                 <PopoverTrigger asChild>
@@ -105,11 +106,35 @@ export default function PersonalPage() {
                                     <Button variant="destructive">确认</Button>
                                 </PopoverContent>
                             </Popover>
-
                         </CardItem>
-                        {isLocal ? null : <CardItem className="pt-5 justify-between">
-                            <p>当前登录账号：{userEmail}</p>
-                            <Button variant="destructive" className="">退出登录</Button>
+                        {isLocal ? null : <CardItem hasTop={true} className="pt-5 justify-between">
+                            <div>
+                                <p>当前登录账号：</p>
+                                <p className="">{userEmail}</p>
+                            </div>
+                            <Drawer>
+                                <DrawerTrigger asChild>
+                                    <Button variant="destructive">退出登录</Button>
+                                </DrawerTrigger>
+                                <DrawerContent>
+                                    <div className="flex flex-col  w-9/12 sm:w-8/12 md:w-7/12 lg:w-5/12 xl:w-1/3 mx-auto">
+                                        <DrawerHeader>
+                                            <DrawerTitle>确认退出登录吗？</DrawerTitle>
+                                            <DrawerDescription>
+                                                退出登录后，您的历史路线问答与您收藏的路线将不能够在多端同步，只能在本地查看。
+                                                请确认您是否要退出登录
+                                            </DrawerDescription>
+                                        </DrawerHeader>
+                                        <DrawerFooter className="flex flex-col">
+                                            <Button>确认</Button>
+                                            <DrawerClose asChild className="w-full">
+                                                <Button variant="outline" className="w-full">Cancel</Button>
+                                            </DrawerClose>
+                                        </DrawerFooter>
+                                    </div>
+                                </DrawerContent>
+                            </Drawer>
+
                         </CardItem>}
                     </CardContent>
                 </Card>
