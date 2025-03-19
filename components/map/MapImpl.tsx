@@ -1,12 +1,10 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { MapContainer, TileLayer, useMap, Marker, Polyline } from 'react-leaflet'
 import { Icon, Marker as LeafletMarker } from 'leaflet'
 import 'leaflet/dist/leaflet.css'
-import { cn } from '@/lib/utils'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { X } from 'lucide-react'
+import { cn } from '@/lib/utils'  
 
 // ZoomDisplay组件定义
 function ZoomDisplay() {
@@ -117,13 +115,10 @@ function CustomPopup({ content, description, position, onClose }: CustomPopupPro
 
 // 自定义图标配置
 const customIcon = new Icon({
-    iconUrl: '/images/marker-icon.png',
-    iconRetinaUrl: '/images/marker-icon-2x.png',
-    shadowUrl: '/images/marker-shadow.png',
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    shadowSize: [41, 41]
+    iconUrl: '/images/location.svg',
+    iconSize: [32, 32],
+    iconAnchor: [16, 32],
+    popupAnchor: [0, -32],
 })
 
 // 添加地图事件监听组件
@@ -166,6 +161,8 @@ interface MapImplProps {
     onDragEnd?: () => void
     layOutisPoints?: boolean
     positions?: [number, number][]
+    selectedMarker?: number | null
+    onMarkerClose?: () => void
 }
 
 function MapImpl({
@@ -179,17 +176,20 @@ function MapImpl({
     onDragStart,
     onDragEnd,
     layOutisPoints = true,
-    positions = []
+    positions = [],
+    selectedMarker = null,
+    onMarkerClose
 }: MapImplProps) {
-    const [selectedMarker, setSelectedMarker] = useState<{
+    const [selectedMarkerInfo, setSelectedMarkerInfo] = useState<{
         content: string;
         description: string;
         position: { x: number; y: number };
     } | null>(null);
 
+    // 处理标记点击
     const handleMarkerClick = (e: L.LeafletMouseEvent, content: string, description: string) => {
         const { containerPoint } = e;
-        setSelectedMarker({
+        setSelectedMarkerInfo({
             content,
             description,
             position: {
@@ -199,9 +199,32 @@ function MapImpl({
         });
     };
 
+    // 处理视图改变
     const handleViewChange = () => {
-        setSelectedMarker(null);
+        setSelectedMarkerInfo(null);
+        onMarkerClose?.();
     };
+
+    // 自动显示选中的标记
+    useEffect(() => {
+        if (selectedMarker !== null && markers[selectedMarker]) {
+            const marker = markers[selectedMarker];
+            const map = document.querySelector('.leaflet-container');
+            if (map) {
+                const rect = map.getBoundingClientRect();
+                setSelectedMarkerInfo({
+                    content: marker.popup || '',
+                    description: marker.description || '',
+                    position: {
+                        x: rect.width / 2,
+                        y: rect.height / 2
+                    }
+                });
+            }
+        } else {
+            setSelectedMarkerInfo(null);
+        }
+    }, [selectedMarker, markers]);
 
     return (
         <div className={cn("h-full w-full relative", className)}>
@@ -239,12 +262,15 @@ function MapImpl({
                 ))}
             </MapContainer>
 
-            {selectedMarker && (
+            {selectedMarkerInfo && (
                 <CustomPopup
-                    content={selectedMarker.content}
-                    description={selectedMarker.description}
-                    position={selectedMarker.position}
-                    onClose={() => setSelectedMarker(null)}
+                    content={selectedMarkerInfo.content}
+                    description={selectedMarkerInfo.description}
+                    position={selectedMarkerInfo.position}
+                    onClose={() => {
+                        setSelectedMarkerInfo(null);
+                        onMarkerClose?.();
+                    }}
                 />
             )}
         </div>

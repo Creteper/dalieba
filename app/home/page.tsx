@@ -2,7 +2,7 @@
  * @Author: Creteper 7512254@qq.com
  * @Date: 2025-03-18 16:06:37
  * @LastEditors: Creteper 7512254@qq.com
- * @LastEditTime: 2025-03-19 13:20:52
+ * @LastEditTime: 2025-03-19 15:23:03
  * @FilePath: \dalieba\app\home\page.tsx
  * @Description: 首页样式
  */
@@ -12,7 +12,7 @@ import { motion } from "motion/react"
 import ControlBar from "@/components/ui/control-bar"
 import MapComponent from "@/components/map/MapComponent"
 import { useEffect, useState } from "react"
-import { Footprints, Mic } from "lucide-react"
+import { Footprints, Mic, UtensilsCrossed } from "lucide-react"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import React from "react"
@@ -80,6 +80,7 @@ export default function HomePage() {
     const resumeTimeout = React.useRef<NodeJS.Timeout | null>(null)
     const [positions, setPositions] = useState<[number, number][]>([])
     const theme = useClientTheme()
+    const [selectedMarker, setSelectedMarker] = useState<number | null>(null)
 
     // 创建所有景点的标记
     useEffect(() => {
@@ -101,6 +102,7 @@ export default function HomePage() {
             setCurrentAttractionIndex(prevIndex => {
                 const nextIndex = (prevIndex + 1) % ATTRACTIONS.length
                 setCurrentCenter(ATTRACTIONS[nextIndex].position)
+                setSelectedMarker(nextIndex)
                 return nextIndex
             })
         }, 8000)
@@ -128,6 +130,7 @@ export default function HomePage() {
     const goToAttraction = (index: number) => {
         setCurrentAttractionIndex(index)
         setCurrentCenter(ATTRACTIONS[index].position)
+        setSelectedMarker(index)
 
         // 可选：暂停自动轮播
         if (isAutoPlaying && index !== (currentAttractionIndex + 1) % ATTRACTIONS.length) {
@@ -154,8 +157,10 @@ export default function HomePage() {
         className="w-full h-full fixed top-0 left-0 right-0 bottom-0"
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
-        layOutisPoints={false}
+        layOutisPoints={true}
         positions={positions}
+        selectedMarker={selectedMarker}
+        onMarkerClose={() => setSelectedMarker(null)}
       />
       {/* 遮罩层 */}
       <div 
@@ -166,29 +171,54 @@ export default function HomePage() {
           }
         )}
       ></div>
+
       {/* 控制栏 */}
       <ControlBar />
       {/* 输入框 */}
       <div className="fixed z-50 bottom-16 left-1/2 -translate-x-1/2 w-[calc(80%)] md:w-[30rem] h-32 flex items-center flex-col justify-center gap-4">
-        <div className="flex justify-between w-full">
+        <div className="flex justify-start gap-4 w-full">
           <Button className="bg-background/50 backdrop-blur-sm rounded-full p-2 px-4 flex items-center gap-2 text-foreground hover:bg-background/80">
             <Footprints className="w-4 h-4" />
             { "哈尔滨有什么玩的" }
           </Button>
           <Button className="bg-background/50 backdrop-blur-sm rounded-full p-2 px-4 flex items-center gap-2 text-foreground hover:bg-background/80">
-            <Footprints className="w-4 h-4" />
-            { "哈尔滨有什么玩的" }
+            <UtensilsCrossed className="w-4 h-4" />
+            { "哈尔滨美食推荐" }
           </Button>
         </div>
         <div className="relative w-full">
-          <Input className="bg-background/80! backdrop-blur-sm border border-border h-16 rounded-full pl-8 text-lg! " placeholder="Hi" />
+          <Input className="bg-background/80! backdrop-blur-sm border border-border h-16 rounded-full pl-8 text-lg! " placeholder="Hi，我想去..." />
           <Button variant="ghost" size="icon" className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full">
             <Mic className="w-4 h-4" />
           </Button>
         </div>
       </div>
       <div className="fixed top-16 left-1/2 -translate-x-1/2 md:left-4 md:top-4 md:translate-x-0 flex flex-col gap-4 z-50">
-        <MapPersonalCard className=" backdrop-blur-sm bg-background/80" />
+        {/* LOGO */}
+        <Card className="backdrop-blur-sm bg-background/70 border border-border shadow-lg overflow-hidden">
+          <CardHeader className="relative">
+            <div className="absolute inset-0" />
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="relative"
+            >
+              <CardTitle className="flex items-center gap-2">
+                <span className="text-3xl font-black bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+                  GO!
+                </span>
+                <span className="text-2xl font-light tracking-wider text-foreground/80">
+                  TOGETHER
+                </span>
+              </CardTitle>
+              <CardDescription className="tracking-wider">
+                规划行程， 结伴而行
+              </CardDescription>
+            </motion.div>
+          </CardHeader>
+        </Card>
+        <MapPersonalCard className="backdrop-blur-sm bg-background/70" />
         {/* 景点信息展示 - 使用shadcn UI的Card组件 */}
         <div className="max-w-md">
           <Card className="backdrop-blur-sm bg-card/80 border border-border shadow-lg">
@@ -202,7 +232,7 @@ export default function HomePage() {
                 <CardTitle>{currentAttraction.name}</CardTitle>
                 <CardDescription>{currentAttraction.description}</CardDescription>
               </CardHeader>
-              <CardFooter className="pt-2 flex justify-between items-center gap-6">
+              <CardFooter className="pt-4 mt-4 flex justify-between items-center gap-6">
                 <Button 
                   size="sm"
                   variant={isAutoPlaying ? "default" : "outline"}
