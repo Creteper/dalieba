@@ -9,7 +9,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { ChevronDown, ChevronRight } from "lucide-react"
 import { motion } from "motion/react"
 import { useEffect, useRef, useState } from "react"
-
+import ControlBar from "@/components/ui/control-bar"
 export default function History() {
     const [currentCenter, setCurrentCenter] = useState([45.780654, 126.617203] as [number, number])
     const resumeTimeout = useRef<NodeJS.Timeout | null>(null)
@@ -61,6 +61,7 @@ export default function History() {
             transition={{ duration: 1 }}
             className="flex h-screen w-full flex-col-reverse lg:flex-row user-select-none"
         >
+
             <ScrollArea
                 style={{ height: `${Math.min(historyHeight, windowHeight)}px` }}
                 className="xl:w-2/5 lg:w-3/5 w-full lg:h-full relative shadow-lg bg-muted "
@@ -211,13 +212,14 @@ export default function History() {
             </ScrollArea>
 
             <div className="w-full h-full">
+                <ControlBar className="z-999" />
                 <MapComponent
                     showZoomLevel={true}
                     center={currentCenter}
                     zoom={14}
                     maxZoom={16}
                     minZoom={13}
-                    className="w-full h-full"
+                    className="w-full h-full z-50"
                     onDragStart={handleDragStart}
                     onDragEnd={handleDragEnd}
                     layOutisPoints={true}

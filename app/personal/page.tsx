@@ -33,7 +33,7 @@ export default function PersonalPage() {
     var historyPadding = ""
 
     return (
-        <div className="w-screen h-screen flex overflow-hidden">
+        <div className="w-screen h-screen flex">
             <motion.div className="mx-auto h-screen w-9/12 sm:w-8/12 md:w-7/12 lg:w-5/12 xl:w-1/3 py-20 flex flex-col gap-5"
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}

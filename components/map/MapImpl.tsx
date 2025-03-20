@@ -345,7 +345,7 @@ function MapImpl({
     };
 
     return (
-        <div className={cn("h-full w-full relative", className)}>
+        <div className={cn("h-full w-full relative z-40", className)}>
             <MapContainer
                 center={center}
                 zoom={zoom}
