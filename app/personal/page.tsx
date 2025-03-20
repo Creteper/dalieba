@@ -34,9 +34,6 @@ export default function PersonalPage() {
 
     return (
         <div className="w-screen h-screen flex overflow-hidden">
-            {/* <Button onClick={() => {
-                setIsLocal(!isLocal)
-            }} /> */}
             <motion.div className="mx-auto h-screen w-9/12 sm:w-8/12 md:w-7/12 lg:w-5/12 xl:w-1/3 py-20 flex flex-col gap-5"
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -46,12 +43,12 @@ export default function PersonalPage() {
                     <p className="text-3xl font-bold">个人中心</p>
                     <Button variant="ghost" size="sm" onClick={() => router.push("/")}>返回主页</Button>
                 </div>
-                <div className="flex gap-5 items-center">
+                <div className="flex flex-col md:flex-row gap-5 items-center">
                     <Avatar className="w-24 h-fit">
                         <AvatarImage src="/img.jpg" />
                         <AvatarFallback>CN</AvatarFallback>
                     </Avatar>
-                    <div className="flex flex-col gap-1">
+                    <div className="flex flex-col gap-1 items-center md:items-start">
                         <p className="text-2xl font-bold">{isLocal ? "未登录" : userName}</p>
                         <p className="text-muted-foreground">{userEmail}</p>
                     </div>
@@ -112,20 +109,20 @@ export default function PersonalPage() {
                                         清空记录
                                     </Button>
                                 </PopoverTrigger>
-                                <PopoverContent className="flex items-center justify-between">
+                                <PopoverContent className="w-fit flex items-center gap-5">
                                     <p>确认清空记录？</p>
                                     <Button variant="destructive">确认</Button>
                                 </PopoverContent>
                             </Popover>
                         </CardItem>
-                        {isLocal ? null : <CardItem hasTop={true} className="pt-5 justify-between">
+                        {isLocal ? null : <CardItem hasTop={true} className="pt-5 flex flex-col md:flex-row md:items-center md:justify-between items-start gap-5">
                             <div>
                                 <p>当前登录账号：</p>
-                                <p className="">{userEmail}</p>
+                                <p>{userEmail}</p>
                             </div>
                             <Drawer>
                                 <DrawerTrigger asChild>
-                                    <Button variant="destructive">退出登录</Button>
+                                    <Button variant="destructive" className="w-full md:w-fit">退出登录</Button>
                                 </DrawerTrigger>
                                 <DrawerContent>
                                     <div className="flex flex-col  w-9/12 sm:w-8/12 md:w-7/12 lg:w-5/12 xl:w-1/3 mx-auto">
@@ -150,7 +147,7 @@ export default function PersonalPage() {
                     </CardContent>
                 </Card>
             </motion.div>
-        </div >
+        </div>
     )
 }
 
