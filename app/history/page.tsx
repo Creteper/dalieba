@@ -6,7 +6,7 @@ import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/comp
 import DragBar from "@/components/ui/dragBar"
 import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { ChevronDown, ChevronRight } from "lucide-react"
+import { ChevronDown, ChevronRight, PanelLeft } from "lucide-react"
 import { motion } from "motion/react"
 import { useEffect, useRef, useState } from "react"
 import ControlBar from "@/components/ui/control-bar"
@@ -19,6 +19,8 @@ export default function History() {
     const [showToday, setShowToday] = useState(true)
     const [showYesterday, setShowYesterday] = useState(true)
     const [showAgo, setShowAgo] = useState(true)
+
+    const [showHistory, setShowHistory] = useState(true)
 
     const handleDragStart = () => {
         if (resumeTimeout.current) {
@@ -61,11 +63,31 @@ export default function History() {
             transition={{ duration: 1 }}
             className="flex h-screen w-full flex-col-reverse lg:flex-row user-select-none"
         >
-
+            {!showHistory ? (
+                <Button
+                    onClick={() => setShowHistory(!showHistory)}
+                    variant="secondary"
+                    className="fixed top-5 left-5 z-50 bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg" // 修改这行
+                >
+                    <PanelLeft />
+                </Button>
+            ) : null}
             <ScrollArea
-                style={{ height: `${Math.min(historyHeight, windowHeight)}px` }}
+                style={{
+                    height: `${Math.min(historyHeight, windowHeight)}px`,
+                    ...(showHistory ? {} : { display: "none" }),
+                }}
                 className="xl:w-2/5 lg:w-3/5 w-full lg:h-full relative shadow-lg bg-muted "
             >
+                {!showDrag && (
+                    <Button
+                        onClick={() => setShowHistory(!showHistory)}
+                        variant="ghost"
+                        className="mt-5 flex ml-auto mr-5"
+                    >
+                        <PanelLeft onClick={() => setShowHistory(!showHistory)} className="" />
+                    </Button>
+                )}
                 {showDrag && <DragBar data={historyHeight} setData={setHistoryHeight} />}
                 <div className={`px-10 flex gap-5 items-center ${!showDrag ? "pt-10" : "pb-10"}`}>
                     <Input id="search" className="shadow-xl" placeholder="搜索历史记录" />
@@ -212,14 +234,13 @@ export default function History() {
             </ScrollArea>
 
             <div className="w-full h-full">
-                <ControlBar className="z-999" />
                 <MapComponent
                     showZoomLevel={true}
                     center={currentCenter}
                     zoom={14}
                     maxZoom={16}
                     minZoom={13}
-                    className="w-full h-full z-50"
+                    className="w-full h-full"
                     onDragStart={handleDragStart}
                     onDragEnd={handleDragEnd}
                     layOutisPoints={true}
