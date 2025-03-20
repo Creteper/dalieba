@@ -2,7 +2,7 @@
  * @Author: Creteper 7512254@qq.com
  * @Date: 2025-03-18 16:06:37
  * @LastEditors: Creteper 7512254@qq.com
- * @LastEditTime: 2025-03-20 09:05:44
+ * @LastEditTime: 2025-03-20 09:13:45
  * @FilePath: \dalieba\app\home\page.tsx
  * @Description: 首页样式
  */
@@ -21,6 +21,7 @@ import MapPersonalCard from "@/components/ui/mapPersonalCard"
 import { useClientTheme } from "@/lib/client-theme"
 import { cn } from "@/lib/utils"
 import { Typewriter } from 'react-simple-typewriter'
+import { useRouter } from "next/navigation"
 // 哈尔滨景点数据
 const ATTRACTIONS = [
     {
@@ -83,6 +84,7 @@ export default function HomePage() {
     const [selectedMarker, setSelectedMarker] = useState<number | null>(null)
     const [isCollapsed, setIsCollapsed] = useState(false)
     const [isFocus, setIsFocus] = useState(false)
+    const router = useRouter()
 
     // 创建所有景点的标记
     useEffect(() => {
@@ -150,6 +152,15 @@ export default function HomePage() {
         setIsCollapsed(false)
     }
 
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter') {
+          const inputValue = e.currentTarget.value
+          if (inputValue.trim() === '') {
+            return
+          }
+          router.push(`/newplan/djks32Dsa1s4rfcS5r`)
+        }
+    }
     // 当前景点信息
     const currentAttraction = ATTRACTIONS[currentAttractionIndex]
 
@@ -308,6 +319,7 @@ export default function HomePage() {
           <Input
             onFocus={() => handleFocus()}
             onBlur={() => handleBlur()}
+            onKeyDown={(e) => handleKeyDown(e)}
             className="h-11 pl-6 pr-12 text-sm rounded-full" 
             placeholder="Hi，我想去..." 
           />

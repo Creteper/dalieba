@@ -113,13 +113,20 @@ function CustomPopup({ content, description, position, onClose }: CustomPopupPro
     )
 }
 
-// 自定义图标配置
-const customIcon = new Icon({
-    iconUrl: '/images/location.svg',
-    iconSize: [32, 32],
-    iconAnchor: [16, 32],
-    popupAnchor: [0, -32],
-})
+// 添加图标创建工具函数
+export function createIcon(options: {
+    url: string,
+    size?: [number, number],
+    anchor?: [number, number],
+    popupAnchor?: [number, number]
+}) {
+    return new Icon({
+        iconUrl: options.url,
+        iconSize: options.size || [32, 32],
+        iconAnchor: options.anchor || [16, 32],
+        popupAnchor: options.popupAnchor || [0, -32],
+    })
+}
 
 // 添加地图事件监听组件
 function MapEvents({ onDragStart, onDragEnd }: { onDragStart?: () => void, onDragEnd?: () => void }) {
@@ -145,15 +152,110 @@ function MapEvents({ onDragStart, onDragEnd }: { onDragStart?: () => void, onDra
     return null;
 }
 
+// 添加地图点击事件处理组件
+function MapClickHandler({ onClick }: { onClick?: (e: L.LeafletMouseEvent) => void }) {
+    const map = useMap();
+
+    React.useEffect(() => {
+        if (!map || !onClick) return;
+
+        map.on('click', onClick);
+
+        return () => {
+            map.off('click', onClick);
+        };
+    }, [map, onClick]);
+
+    return null;
+}
+
+// 添加标题组件
+function MarkerTitle({ 
+    position, 
+    title, 
+    maxZoom = 18,
+    minZoom = 15 
+}: { 
+    position: [number, number], 
+    title: string,
+    maxZoom?: number,
+    minZoom?: number
+}) {
+    const map = useMap();
+    const [pixelPosition, setPixelPosition] = useState<L.Point | null>(null);
+    const [currentZoom, setCurrentZoom] = useState(map.getZoom());
+
+    useEffect(() => {
+        const updatePosition = () => {
+            try {
+                const point = map.latLngToContainerPoint(position);
+                setPixelPosition(point);
+            } catch (error) {
+                setPixelPosition(null);
+            }
+        };
+
+        const updateZoom = () => {
+            setCurrentZoom(map.getZoom());
+        };
+
+        // 初始化时更新一次
+        updatePosition();
+        updateZoom();
+
+        map.on('zoom', () => {
+            updatePosition();
+            updateZoom();
+        });
+        map.on('move', updatePosition);
+        // 添加 load 事件监听
+        map.on('load', () => {
+            updatePosition();
+            updateZoom();
+        });
+
+        return () => {
+            map.off('zoom');
+            map.off('move', updatePosition);
+            map.off('load');
+        };
+    }, [map, position]);
+
+    if (currentZoom > maxZoom || currentZoom < minZoom || !pixelPosition) return null;
+
+    return (
+        <div 
+            className="absolute z-[999] transform -translate-x-1/2 text-center pointer-events-none whitespace-nowrap"
+            style={{
+                left: `${pixelPosition.x}px`,
+                top: `${pixelPosition.y + 20}px`,
+            }}
+        >
+            <span className="px-2 py-1 text-xs bg-background/60 backdrop-blur-sm rounded-full text-foreground">
+                {title}
+            </span>
+        </div>
+    );
+}
+
 interface MapImplProps {
     center?: [number, number]
     zoom?: number
     maxZoom?: number
     minZoom?: number
+    titleMaxZoom?: number      // 标题最大显示缩放级别
+    titleMinZoom?: number      // 添加标题最小显示缩放级别
     markers?: Array<{
         position: [number, number],
         popup?: string,
-        description?: string
+        description?: string,
+        title?: string,
+        icon?: {
+            url: string,
+            size?: [number, number],
+            anchor?: [number, number],
+            popupAnchor?: [number, number]
+        } | Icon
     }>
     showZoomLevel?: boolean
     className?: string
@@ -163,13 +265,21 @@ interface MapImplProps {
     positions?: [number, number][]
     selectedMarker?: number | null
     onMarkerClose?: () => void
+    onMapClick?: (e: L.LeafletMouseEvent) => void
 }
+
+// 默认图标配置
+const defaultIcon = createIcon({
+    url: '/images/location.svg'
+})
 
 function MapImpl({
     center = [45.75, 126.63],
     zoom = 13,
     maxZoom = 15,
     minZoom = 10,
+    titleMaxZoom = 15,    // 标题最大显示缩放级别
+    titleMinZoom = 12,    // 添加标题最小显示缩放级别
     markers = [],
     showZoomLevel = true,
     className,
@@ -178,7 +288,8 @@ function MapImpl({
     layOutisPoints = true,
     positions = [],
     selectedMarker = null,
-    onMarkerClose
+    onMarkerClose,
+    onMapClick
 }: MapImplProps) {
     const [selectedMarkerInfo, setSelectedMarkerInfo] = useState<{
         content: string;
@@ -226,6 +337,13 @@ function MapImpl({
         }
     }, [selectedMarker, markers]);
 
+    // 处理图标配置
+    const getMarkerIcon = (markerIcon?: NonNullable<MapImplProps['markers']>[number]['icon']) => {
+        if (!markerIcon) return defaultIcon;
+        if (markerIcon instanceof Icon) return markerIcon;
+        return createIcon(markerIcon);
+    };
+
     return (
         <div className={cn("h-full w-full relative", className)}>
             <MapContainer
@@ -238,6 +356,7 @@ function MapImpl({
             >
                 <ChangeView center={center} zoom={zoom} onViewChange={handleViewChange} />
                 <MapEvents onDragStart={onDragStart} onDragEnd={onDragEnd} />
+                <MapClickHandler onClick={onMapClick} />
 
                 <TileLayer
                     attribution='&copy; 大列巴地图服务'
@@ -251,14 +370,23 @@ function MapImpl({
                 {showZoomLevel && <ZoomDisplay />}
 
                 {markers.map((marker, idx) => (
-                    <Marker
-                        key={idx}
-                        position={marker.position}
-                        icon={customIcon}
-                        eventHandlers={{
-                            click: (e) => marker.popup && handleMarkerClick(e, marker.popup, marker.description || ''),
-                        }}
-                    />
+                    <div key={idx} className="relative">
+                        <Marker
+                            position={marker.position}
+                            icon={getMarkerIcon(marker.icon)}
+                            eventHandlers={{
+                                click: (e) => marker.popup && handleMarkerClick(e, marker.popup, marker.description || ''),
+                            }}
+                        />
+                        {marker.title && (
+                            <MarkerTitle 
+                                position={marker.position}
+                                title={marker.title}
+                                maxZoom={titleMaxZoom}
+                                minZoom={titleMinZoom}
+                            />
+                        )}
+                    </div>
                 ))}
             </MapContainer>
 
