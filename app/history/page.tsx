@@ -58,7 +58,7 @@ export default function History() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1 }}
-            className="flex h-screen w-full flex-col-reverse lg:flex-row"
+            className="flex h-screen w-full flex-col-reverse lg:flex-row user-select-none"
         >
             <ScrollArea
                 style={{ height: `${Math.min(historyHeight, windowHeight)}px` }}

@@ -2,7 +2,7 @@
  * @Author: Creteper 7512254@qq.com
  * @Date: 2025-03-19 13:59:54
  * @LastEditors: Creteper 7512254@qq.com
- * @LastEditTime: 2025-03-19 15:07:50
+ * @LastEditTime: 2025-03-19 16:00:05
  * @FilePath: \dalieba\app\login\page.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -17,10 +17,11 @@ import { useState, useEffect } from "react"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
 import { useTheme } from "next-themes"
+import { useRouter } from "next/navigation"
 
 export default function Login() {
   const { setTheme } = useTheme()
-
+  const router = useRouter()
   useEffect(() => {
     setTheme('dark')
   }, [setTheme])
@@ -223,7 +224,7 @@ export default function Login() {
           </div>
 
           <div className="flex justify-center flex-col gap-2">
-            <Button variant="link" className="text-muted-foreground">
+            <Button variant="link" className="text-muted-foreground" onClick={() => router.push('/register')}>
               没有账号？注册
             </Button>
             <Button variant="link" className="text-muted-foreground">

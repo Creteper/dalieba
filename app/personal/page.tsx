@@ -20,6 +20,7 @@ import { Label } from "@/components/ui/label"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Drawer, DrawerTrigger, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription, DrawerFooter, DrawerClose } from "@/components/ui/drawer"
 import { useRouter } from "next/navigation"
+import { motion } from "motion/react"
 
 export default function PersonalPage() {
 
@@ -32,11 +33,15 @@ export default function PersonalPage() {
     var historyPadding = ""
 
     return (
-        <div className="w-screen h-screen flex">
+        <div className="w-screen h-screen flex overflow-hidden">
             {/* <Button onClick={() => {
                 setIsLocal(!isLocal)
             }} /> */}
-            <div className="mx-auto h-screen w-9/12 sm:w-8/12 md:w-7/12 lg:w-5/12 xl:w-1/3 py-20 flex flex-col gap-5">
+            <motion.div className="mx-auto h-screen w-9/12 sm:w-8/12 md:w-7/12 lg:w-5/12 xl:w-1/3 py-20 flex flex-col gap-5"
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+            >
                 <div className="flex justify-between items-center">
                     <p className="text-3xl font-bold">个人中心</p>
                     <Button variant="ghost" size="sm" onClick={() => router.push("/")}>返回主页</Button>
@@ -144,7 +149,7 @@ export default function PersonalPage() {
                         </CardItem>}
                     </CardContent>
                 </Card>
-            </div>
+            </motion.div>
         </div >
     )
 }
