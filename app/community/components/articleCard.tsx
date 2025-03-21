@@ -34,9 +34,8 @@ export default function ArticleCard({
         <>
             {
                 isMobile ? (
-                    <Card className="w-full rounded-none border-0 border-b">
+                    <Card className="shadow-none w-full rounded-none border-0 border-b">
                         <CardContent className="max-h-72 flex flex-col justify-between">
-
                             <CardTitle className="flex gap-2 items-center">
                                 <Avatar className="w-10 h-fit">
                                     <AvatarImage src={userAvatar} />
@@ -44,13 +43,12 @@ export default function ArticleCard({
                                 </Avatar >
                                 <div className="flex flex-col items-start gap-1">
                                     <div className="flex gap-3 items-center">
-                                        <p className="font-bold">{articleTitle}</p>
+                                        <p className="font-bold line-clamp-2">{articleTitle}</p>
                                         <Badge>{articleClasses}</Badge>
                                     </div>
                                     <p className="text-muted-foreground text-sm">@{userName}</p>
                                 </div>
                             </CardTitle >
-
                             <div className="w-full h-5/12">
                                 <img
                                     src={articleImg}
@@ -58,13 +56,11 @@ export default function ArticleCard({
                                     className="h-full w-full object-cover rounded-md"
                                 />
                             </div>
-
-                            <div className="text-md text-justify indent-4 max-w-full overflow-hidden line-clamp-2">
+                            <div className="text-md indent-4 max-w-full overflow-hidden line-clamp-2">
                                 {articleDescription}
                             </div>
-
                             <div className="text-sm text-muted-foreground flex justify-end gap-5">
-                                <div className="flex gap-1 items-center">
+                                <div className="flex mr-auto gap-1 items-center">
                                     <Eye />
                                     {viewCounts}
                                 </div>
@@ -81,12 +77,10 @@ export default function ArticleCard({
                                     {shareCounts}
                                 </div>
                             </div>
-
-
                         </CardContent >
                     </Card>
                 ) : (
-                    <Card className="w-full rounded-none border-0 border-b" >
+                    <Card className="shadow-none w-full rounded-none border-0 border-b" >
                         <CardContent className="flex gap-10">
                             <div className="flex flex-col w-full justify-between">
                                 <CardTitle className="flex gap-2 items-center">
@@ -96,31 +90,31 @@ export default function ArticleCard({
                                     </Avatar >
                                     <div className="flex flex-col items-start gap-1">
                                         <div className="flex gap-3 items-center">
-                                            <p className="font-bold">{articleTitle}</p>
+                                            <p className="font-bold line-clamp-2">{articleTitle}</p>
                                             <Badge>{articleClasses}</Badge>
                                         </div>
                                         <p className="text-muted-foreground text-sm">@{userName}</p>
                                     </div>
                                 </CardTitle >
 
-                                <div className="text-md text-justify indent-4 max-w-full overflow-hidden line-clamp-2">
+                                <div className="text-md indent-4 max-w-full overflow-hidden line-clamp-2">
                                     {articleDescription}
                                 </div>
 
-                                <div className="text-sm text-muted-foreground flex justify-between">
-                                    <div className="flex gap-3 items-center">
+                                <div className="text-sm text-muted-foreground flex gap-5">
+                                    <div className="flex mr-auto gap-1 items-center">
                                         <Eye />
                                         {viewCounts}
                                     </div>
-                                    <div className="flex gap-3 items-center">
+                                    <div className="flex gap-1 items-center">
                                         <Heart />
                                         {likeCounts}
                                     </div>
-                                    <div className="flex gap-3 items-center">
+                                    <div className="flex gap-1 items-center">
                                         <Star />
                                         {collectCounts}
                                     </div>
-                                    <div className="flex gap-3 items-center">
+                                    <div className="flex gap-1 items-center">
                                         <Share />
                                         {shareCounts}
                                     </div>
