@@ -2,7 +2,7 @@
  * @Author: Creteper 7512254@qq.com
  * @Date: 2025-03-19 13:59:54
  * @LastEditors: Creteper 7512254@qq.com
- * @LastEditTime: 2025-03-21 17:25:53
+ * @LastEditTime: 2025-03-21 17:44:07
  * @FilePath: \dalieba\app\login\page.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -19,19 +19,22 @@ import Link from "next/link"
 import { useTheme } from "next-themes"
 import { useRouter } from "next/navigation"
 import UserClient from "@/lib/use-client"
+import { toast } from "sonner"
+
 export default function Login() {
   const { setTheme } = useTheme()
   const router = useRouter()
   const userClient = new UserClient()
-  
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   useEffect(() => {
     setTheme('dark')
 
     const checkToken = async () => {
       const isValid = await userClient.verifyToken();
-      if (!isValid) {
+      if (isValid) {
         // 如果token无效，可以选择重定向或其他操作
-        console.log('Token无效');
+        router.push("/home")
       }
     };
 
@@ -80,15 +83,19 @@ export default function Login() {
         ...prev,
         phone: validatePhone(value)
       }))
+      setUsername(value)
     } else {
       setErrors(prev => ({
         ...prev,
         password: validatePassword(value)
       }))
+      setPassword(value)
     }
+
+    console.log(username,password)
   }
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     // 提交时验证
     const phoneError = validatePhone(formData.phone)
     const passwordError = validatePassword(formData.password)
@@ -100,7 +107,16 @@ export default function Login() {
 
     if (!phoneError && !passwordError) {
       // TODO: 处理登录逻辑
-      console.log('表单验证通过', formData)
+      try {
+        const response = await userClient.Login(formData.phone, formData.password);
+        if(response.status === 200) {
+          toast.success("登录成功") 
+          console.log(response.data)
+        }
+      } catch (error: any) {
+        toast.error(error.response.data.error)
+      }
+      
     }
   }
 

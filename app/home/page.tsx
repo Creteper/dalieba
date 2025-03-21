@@ -2,7 +2,7 @@
  * @Author: Creteper 7512254@qq.com
  * @Date: 2025-03-18 16:06:37
  * @LastEditors: Creteper 7512254@qq.com
- * @LastEditTime: 2025-03-21 17:09:47
+ * @LastEditTime: 2025-03-21 17:35:30
  * @FilePath: \dalieba\app\home\page.tsx
  * @Description: 首页样式
  */
@@ -75,7 +75,7 @@ export default function HomePage() {
     const router = useRouter()
     const userClient = new UserClient();
     // 创建所有景点的标记
-    useEffect(() => {
+    useEffect( () => {
         const allMarkers = ATTRACTIONS.map(attraction => ({
             position: attraction.position,
             popup: attraction.name,
@@ -84,9 +84,17 @@ export default function HomePage() {
         setMarkers(allMarkers)
         // // 创建路径
         // setPositions(PATHS)
-        // userClient.getToken() ? '' : router.push("/login")
+        userClient.getToken() ? '' : router.push("/login")
 
-        userClient.verifyToken()
+        const checkToken = async () => {
+          const isValid = await userClient.verifyToken();
+          if (!isValid) {
+            // 如果token无效，可以选择重定向或其他操作
+            router.push("/login")
+          }
+        };
+    
+        checkToken();
         
     }, [])
 

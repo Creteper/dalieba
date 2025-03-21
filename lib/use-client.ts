@@ -38,4 +38,13 @@ export default class UserClient {
       return false;
     }
   }
+
+  async Login(username: string, password: string) {
+    this.httpUser.setAuthToken("");
+    const response = await this.httpUser.post("/login", {
+      account: username,
+      password: password,
+  });
+  return response;
+  }
 }
