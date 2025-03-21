@@ -2,7 +2,7 @@
  * @Author: Creteper 7512254@qq.com
  * @Date: 2025-03-18 18:04:57
  * @LastEditors: Creteper 7512254@qq.com
- * @LastEditTime: 2025-03-19 16:12:59
+ * @LastEditTime: 2025-03-21 11:13:07
  * @FilePath: \dalieba\components\uiodropdawn-avatarrrrrrrrr.tsx
  * @Description: 用户下拉菜单   
  */
@@ -35,7 +35,7 @@ export default function DropdownAvatar({
     return (
         <>
             {isMobile ? (
-                <Avatar onClick={() => router.push("personal")} className={cn(className, "hover:scale-105 transition-all select-none")}>
+                <Avatar onClick={() => router.push("/personal")} className={cn(className, "hover:scale-105 transition-all select-none")}>
                     <AvatarImage src="https://github.com/shadcn.png" />
                     <AvatarFallback>CN</AvatarFallback>
                 </Avatar>

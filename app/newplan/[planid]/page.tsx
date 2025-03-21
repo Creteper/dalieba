@@ -2,7 +2,7 @@
  * @Author: Creteper 7512254@qq.com
  * @Date: 2025-03-19 21:08:57
  * @LastEditors: Creteper 7512254@qq.com
- * @LastEditTime: 2025-03-21 09:04:46
+ * @LastEditTime: 2025-03-21 11:09:39
  * @FilePath: \dalieba\app\newplan\[planid]\page.tsx
  * @Description: new plan page
  */
@@ -34,6 +34,16 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer"
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 
 export default function NewPlanPage(
   {
@@ -48,7 +58,20 @@ export default function NewPlanPage(
     const [isOpen, setIsOpen] = useState(false);
     const [DayPlanItem, setDayPlanItem] = useState<SpotCardProps['DayPlan']>([]);
     const [activeTimelineItem, setActiveTimelineItem] = useState<string | number | undefined>(undefined);
-    const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+    const [isDrawerOpen, setIsDrawerOpen] = useState(true);
+    const [markers, setMarkers] = useState<Array<{
+      position: [number, number];
+      title: string;
+      popup: string;
+      description: string;
+      icon: {
+        url: string;
+        size: [number, number];
+      };
+    }>>([]);
+    const [mapCenter, setMapCenter] = useState<[number, number]>([45.74331, 126.63108]);
+    const [isSetTitleDrawerOpen, setIsSetTitleDrawerOpen] = useState(false);
+    const [title, setTitle] = useState('旅游攻略 - 哈尔滨');
 
     const timelineItems: TimeLineItem[] = [
       {
@@ -60,11 +83,16 @@ export default function NewPlanPage(
             title: '哈尔滨工业大学',
             description: '参观校园主要景点',
             date: '9:00 - 11:00',
-            thumbnail: '/images/hit.jpg',
+            street: '哈尔滨市南岗区西大直街92号',
+            thumbnail: '/img.jpg',
+            position: {
+              latitude: 45.74331,
+              longitude: 126.63108
+            },
             transport: {
               type: '打车',
-              duration: '20',
-              cost: '30'
+              duration: '20分钟',
+              cost: '¥30'
             }
           },
           {
@@ -72,11 +100,16 @@ export default function NewPlanPage(
             title: '中央大街',
             description: '漫步百年商业街',
             date: '11:30 - 13:30',
-            thumbnail: '/images/central-street.jpg',
+            street: '哈尔滨市道里区中央大街',
+            thumbnail: '/img.jpg',
+            position: {
+              latitude: 45.77501,
+              longitude: 126.63227
+            },
             transport: {
               type: '步行',
-              duration: '15',
-              cost: '0'
+              duration: '15分钟',
+              cost: '¥0'
             }
           }
         ]
@@ -90,11 +123,16 @@ export default function NewPlanPage(
             title: '索菲亚教堂',
             description: '欣赏拜占庭建筑',
             date: '14:00 - 15:30',
-            thumbnail: '/images/sophia-church.jpg',
+            street: '哈尔滨市道里区透笼街88号',
+            thumbnail: '/img.jpg',
+            position: {
+              latitude: 45.77068,
+              longitude: 126.63244
+            },
             transport: {
               type: '地铁',
-              duration: '25',
-              cost: '4'
+              duration: '25分钟',
+              cost: '¥4'
             }
           },
           {
@@ -102,7 +140,12 @@ export default function NewPlanPage(
             title: '防洪纪念塔',
             description: '城市地标建筑',
             date: '16:00 - 17:30',
-            thumbnail: '/images/flood-tower.jpg'
+            street: '哈尔滨市道里区中央大街',
+            thumbnail: '/img.jpg',
+            position: {
+              latitude: 45.78116, 
+              longitude: 126.63202
+            }
           }
         ]
       }
@@ -128,8 +171,54 @@ export default function NewPlanPage(
     };
 
     useEffect(() => {
-      setDayPlanItem([testItem]); // 设置景点描述
+      // 设置景点描述
+      setDayPlanItem([testItem]);
+      
+      // 处理所有标记点
+      const newMarkers: Array<{
+        position: [number, number];
+        title: string;
+        popup: string;
+        description: string;
+        icon: {
+          url: string;
+          size: [number, number];
+        };
+      }> = [];
+      
+      // 图标配置
+      const defaultIcon = {
+        url: '/images/location.svg',
+        size: [32, 32] as [number, number],
+      };
+      
+      // 处理所有天数的所有景点
+      timelineItems.forEach(day => {
+        day.spots.forEach(spot => {
+          newMarkers.push({
+            position: [spot.position.latitude, spot.position.longitude] as [number, number],
+            title: spot.title,
+            popup: spot.title,
+            description: spot.description,
+            icon: defaultIcon,
+          });
+        });
+      });
+      
+      // 更新标记点
+      setMarkers(newMarkers);
+      
+      // 如果有标记点，以第一个为中心
+      if (newMarkers.length > 0) {
+        setMapCenter(newMarkers[0].position);
+      }
     }, []);
+
+    // 处理点击时间线项目
+    const handleTimelineItemClick = (spot: TimeLineItem['spots'][0], position: { latitude: number, longitude: number }) => {
+      setActiveTimelineItem(spot.id);
+      setMapCenter([position.latitude, position.longitude]);
+    };
 
     const markdown = `
 # 哈尔滨工业大学
@@ -150,23 +239,11 @@ export default function NewPlanPage(
 > 这里是中国最早的理工科大学之一，拥有悠久的历史和深厚的文化底蕴。
     `
 
-    const markers = [
-      {
-        position: [45.74331, 126.63108] as [number, number],
-        title: '哈尔滨工业大学',
-        popup: '哈尔滨工业大学',
-        description: '哈尔滨工业大学123',
-        icon: {
-          url: '/images/location.svg',
-          size: [32, 32] as [number, number],
-        },
-      }
-    ]
     return (
         <div className="flex flex-col w-full h-screen overflow-hidden">
             <MapComponent 
               className='w-full h-full' 
-              center={[45.74331, 126.63108]}
+              center={mapCenter}
               layOutisPoints={false}
               showZoomLevel={false}
               maxZoom={16}
@@ -177,10 +254,12 @@ export default function NewPlanPage(
               titleMinZoom={14}
               markers={markers}
             />
-            <ControlBar />
-
+            <ControlBar className='z-999' />
+            <div className='fixed top-4 left-4 z-999 text-2xl font-bold'>
+              GO! TOGETHER
+            </div>
             <motion.div 
-              className='mb-4 fixed top-4 left-4 bottom-4 w-[400px] z-999 rounded-lg flex flex-col gap-4'
+              className='mb-4 fixed top-15 left-4 right-4 md:w-[400px]  z-50 rounded-lg flex flex-col gap-45'
               initial={{ opacity: 0, x: -100 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -100 }}
@@ -195,14 +274,14 @@ export default function NewPlanPage(
                   setIsOpen(!isOpen);
                 }}
               >
-                <summary className='cursor-pointer bg-background/70 backdrop-blur-sm rounded-lg list-none group-open:rounded-b-none overflow-y-auto'>
+                <summary className='cursor-pointer bg-background/70 backdrop-blur-sm rounded-lg list-none group-open:rounded-b-none'>
                     <div className='px-4 py-3 rounded-lg transition-colors bg-background/40 group-open:rounded-b-none group-open:border-b-border group-open:border-b-1'>
                       <div className='flex items-center justify-between'>
                         <div className='space-y-1'>
-                          <p className='font-medium'>AI 全部回复</p>
-                          <p className='text-sm text-gray-500'>title</p>
+                          <p className='font-medium truncate'>AI 全部回复</p>
+                          <p className='text-sm text-gray-500 truncate'>title</p>
                         </div>
-                        <div className='text-primary transform transition-transform duration-300 group-open:-rotate-180'>
+                        <div className='text-primary transform transition-transform duration-300 group-open:-rotate-180 flex-shrink-0 ml-2'>
                           <ChevronDown />
                         </div>
                       </div>
@@ -221,7 +300,7 @@ export default function NewPlanPage(
                       }}
                       className={cn("overflow-hidden bg-background/70 backdrop-blur-sm rounded-lg group-open:rounded-t-none")}
                     >
-                      <div className='px-4 pb-4 pt-2 bg-background/40 rounded-b-lg h-[400px] overflow-y-auto'>
+                      <div className='px-4 pb-4 pt-2 bg-background/40 rounded-b-lg md:h-[400px] h-[300px] overflow-y-auto'>
                         <motion.div
                           className='pt-3'
                           initial={{ y: -10, opacity: 0 }}
@@ -256,16 +335,28 @@ export default function NewPlanPage(
                   <DrawerTitle>旅游攻略 - 哈尔滨</DrawerTitle>
                   <DrawerDescription>关于哈尔滨的旅游攻略</DrawerDescription>
                 </DrawerHeader>
-                <div className='px-6'>
+                {/* 手机端 */}
+                <div className='block md:hidden px-6 overflow-auto pb-4' style={{ scrollbarWidth: 'thin' }}>
+                  {isDrawerOpen && (
+                    <TimeLine 
+                      items={timelineItems}
+                      direction="vertical"
+                      activeId={activeTimelineItem}
+                      onItemClick={handleTimelineItemClick}
+                      className="w-full pb-8"
+                    />
+                  )}
+                </div>
+                
+                {/* 电脑端 */}
+                <div className='hidden md:block px-6 overflow-x-auto overflow-y-hidden pb-4' style={{ scrollbarWidth: 'thin' }}>
                   {isDrawerOpen && (
                     <TimeLine 
                       items={timelineItems}
                       direction="horizontal"
                       activeId={activeTimelineItem}
-                      onItemClick={(item) => {
-                        setActiveTimelineItem(item.id);
-                      }}
-                      className="w-full"
+                      onItemClick={handleTimelineItemClick}
+                      className="w-full min-w-fit"
                     />
                   )}
                 </div>
@@ -273,6 +364,22 @@ export default function NewPlanPage(
                 </DrawerFooter>
               </DrawerContent>
             </Drawer>
+            <Dialog open={isSetTitleDrawerOpen} onOpenChange={setIsSetTitleDrawerOpen}>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>修改标题</DialogTitle>
+                </DialogHeader>
+                <DialogDescription>
+                  <Input type="text" placeholder="请输入攻略标题" value={title} onChange={(e) => setTitle(e.target.value)} />
+                </DialogDescription>
+                <DialogFooter>
+                  <Button onClick={() => {
+                    setIsSetTitleDrawerOpen(false)
+                    setIsDrawerOpen(true)
+                  }}>确定</Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
         </div>
     )
 }
