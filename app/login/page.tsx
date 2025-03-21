@@ -2,7 +2,7 @@
  * @Author: Creteper 7512254@qq.com
  * @Date: 2025-03-19 13:59:54
  * @LastEditors: Creteper 7512254@qq.com
- * @LastEditTime: 2025-03-21 15:59:07
+ * @LastEditTime: 2025-03-21 17:25:53
  * @FilePath: \dalieba\app\login\page.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -18,12 +18,24 @@ import { cn } from "@/lib/utils"
 import Link from "next/link"
 import { useTheme } from "next-themes"
 import { useRouter } from "next/navigation"
-
+import UserClient from "@/lib/use-client"
 export default function Login() {
   const { setTheme } = useTheme()
   const router = useRouter()
+  const userClient = new UserClient()
+  
   useEffect(() => {
     setTheme('dark')
+
+    const checkToken = async () => {
+      const isValid = await userClient.verifyToken();
+      if (!isValid) {
+        // 如果token无效，可以选择重定向或其他操作
+        console.log('Token无效');
+      }
+    };
+
+    checkToken();
   }, [setTheme])
 
   const [formData, setFormData] = useState({

@@ -256,7 +256,7 @@ export default function History() {
                 <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    transition={{ duration: 1 }}
+                    transition={{ duration: 0.3 }}
                     className="flex h-screen w-full user-select-none"
                 >
                     <ControlBar title="历史记录" className="z-999" />
@@ -276,7 +276,7 @@ export default function History() {
                         style={{
                             ...(showHistory ? {} : { display: "none" }),
                         }}
-                        className="2xl:w-4/12 xl:w-5/12 lg:w-7/12 md:w-11/12 h-full relative shadow-lg bg-muted "
+                        className="2xl:w-4/12 xl:w-5/12 lg:w-7/12 md:w-11/12 h-full shadow-lg bg-muted "
                     >
                         <div className="sticky top-0 z-50 bg-muted">
                             <div className="flex justify-between items-center justify-items-center px-5 py-3">

@@ -2,7 +2,7 @@
  * @Author: Creteper 7512254@qq.com
  * @Date: 2025-03-19 21:08:57
  * @LastEditors: Creteper 7512254@qq.com
- * @LastEditTime: 2025-03-21 15:32:44
+ * @LastEditTime: 2025-03-21 16:09:58
  * @FilePath: \dalieba\app\newplan\[planid]\page.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -427,7 +427,7 @@ export default function NewPlanPage(
               ]}
             />
             <ControlBar className='z-999' />
-            <div className='fixed top-4 left-4 z-999 text-2xl font-bold flex gap-4 items-center'>
+            <div className='fixed top-4 left-4 z-999 text-2xl font-bold text-black flex gap-4 items-center'>
               <img src="/images/logo.svg" alt="GO TOGETHER!" className="w-8 h-8" />
               GO! TOGETHER
             </div>

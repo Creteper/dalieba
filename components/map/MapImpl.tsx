@@ -403,7 +403,7 @@ function MapImpl({
                             position={marker.position}
                             icon={getMarkerIcon(marker.icon)}
                             eventHandlers={{
-                                click: (e) => marker.popup && handleMarkerClick(e, marker.popup, marker.description || ''),
+                                click: (e: any) => marker.popup && handleMarkerClick(e, marker.popup, marker.description || ''),
                             }}
                         />
                         {marker.title && (

@@ -2,7 +2,7 @@
  * @Author: Creteper 7512254@qq.com
  * @Date: 2025-03-18 16:06:37
  * @LastEditors: Creteper 7512254@qq.com
- * @LastEditTime: 2025-03-21 15:51:11
+ * @LastEditTime: 2025-03-21 17:09:47
  * @FilePath: \dalieba\app\home\page.tsx
  * @Description: 首页样式
  */
@@ -20,8 +20,8 @@ import { Input } from "@/components/ui/input"
 import MapPersonalCard from "@/components/ui/mapPersonalCard"
 import { useClientTheme } from "@/lib/client-theme"
 import { cn } from "@/lib/utils"
-import { Typewriter } from 'react-simple-typewriter'
 import { useRouter } from "next/navigation"
+import UserClient from '@/lib/use-client'
 // 哈尔滨景点数据
 const ATTRACTIONS = [
     {
@@ -61,18 +61,6 @@ const ATTRACTIONS = [
     }
 ]
 
-// const PATHS = [
-//     [45.780304, 126.617201] as [number, number],
-//     [45.780013, 126.617296] as [number, number],
-//     [45.779449, 126.6175] as [number, number],
-//     [45.778911, 126.617635] as [number, number],
-//     [45.77875, 126.617678] as [number, number],
-//     [45.778624, 126.617726] as [number, number],
-//     [45.77862, 126.617726] as [number, number],
-//     [45.778659, 126.617947] as [number, number],
-//     [45.77872, 126.618394] as [number, number]
-// ]
-
 export default function HomePage() {
     const [currentCenter, setCurrentCenter] = useState(ATTRACTIONS[0].position)
     const [currentAttractionIndex, setCurrentAttractionIndex] = useState(0)
@@ -85,7 +73,7 @@ export default function HomePage() {
     const [isCollapsed, setIsCollapsed] = useState(false)
     const [isFocus, setIsFocus] = useState(false)
     const router = useRouter()
-
+    const userClient = new UserClient();
     // 创建所有景点的标记
     useEffect(() => {
         const allMarkers = ATTRACTIONS.map(attraction => ({
@@ -96,6 +84,10 @@ export default function HomePage() {
         setMarkers(allMarkers)
         // // 创建路径
         // setPositions(PATHS)
+        // userClient.getToken() ? '' : router.push("/login")
+
+        userClient.verifyToken()
+        
     }, [])
 
     // 自动轮播景点
