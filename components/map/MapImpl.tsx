@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react'
 import { MapContainer, TileLayer, useMap, Marker, Polyline } from 'react-leaflet'
 import { Icon, Marker as LeafletMarker } from 'leaflet'
 import 'leaflet/dist/leaflet.css'
-import { cn } from '@/lib/utils'  
+import { cn } from '@/lib/utils'
 
 // ZoomDisplay组件定义
 function ZoomDisplay() {
@@ -170,13 +170,13 @@ function MapClickHandler({ onClick }: { onClick?: (e: L.LeafletMouseEvent) => vo
 }
 
 // 添加标题组件
-function MarkerTitle({ 
-    position, 
-    title, 
+function MarkerTitle({
+    position,
+    title,
     maxZoom = 18,
-    minZoom = 15 
-}: { 
-    position: [number, number], 
+    minZoom = 15
+}: {
+    position: [number, number],
     title: string,
     maxZoom?: number,
     minZoom?: number
@@ -224,7 +224,7 @@ function MarkerTitle({
     if (currentZoom > maxZoom || currentZoom < minZoom || !pixelPosition) return null;
 
     return (
-        <div 
+        <div
             className="absolute z-[999] transform -translate-x-1/2 text-center pointer-events-none whitespace-nowrap"
             style={{
                 left: `${pixelPosition.x}px`,
@@ -379,7 +379,7 @@ function MapImpl({
                             }}
                         />
                         {marker.title && (
-                            <MarkerTitle 
+                            <MarkerTitle
                                 position={marker.position}
                                 title={marker.title}
                                 maxZoom={titleMaxZoom}
