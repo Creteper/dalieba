@@ -263,6 +263,13 @@ interface MapImplProps {
     onDragEnd?: () => void
     layOutisPoints?: boolean
     positions?: [number, number][]
+    routes?: Array<{
+        positions: [number, number][],
+        color?: string,
+        weight?: number,
+        opacity?: number,
+        dashArray?: string
+    }>
     selectedMarker?: number | null
     onMarkerClose?: () => void
     onMapClick?: (e: L.LeafletMouseEvent) => void
@@ -287,6 +294,7 @@ function MapImpl({
     onDragEnd,
     layOutisPoints = true,
     positions = [],
+    routes = [],
     selectedMarker = null,
     onMarkerClose,
     onMapClick
@@ -362,11 +370,31 @@ function MapImpl({
                     attribution='&copy; 大列巴地图服务'
                     url={layOutisPoints ? 'http://192.168.200.66:3000/tiles/{z}/{x}/{y}/x={x}&y={y}&z={z}.png' : 'http://192.168.200.66:3000/w_tiles/{z}/{x}/{y}/x={x}&y={y}&z={z}.png'}
                 />
-                <Polyline positions={positions}
-                    pathOptions={{
-                        weight: 6
-                    }}
-                />
+                
+                {/* 渲染单条路线(向后兼容) */}
+                {positions.length > 0 && (
+                    <Polyline positions={positions}
+                        pathOptions={{
+                            weight: 6,
+                            color: '#3B82F6'
+                        }}
+                    />
+                )}
+
+                {/* 渲染多条路线 */}
+                {routes.map((route, index) => (
+                    <Polyline 
+                        key={index}
+                        positions={route.positions}
+                        pathOptions={{
+                            color: route.color || '#3B82F6',
+                            weight: route.weight || 6,
+                            opacity: route.opacity || 1,
+                            dashArray: route.dashArray
+                        }}
+                    />
+                ))}
+
                 {showZoomLevel && <ZoomDisplay />}
 
                 {markers.map((marker, idx) => (

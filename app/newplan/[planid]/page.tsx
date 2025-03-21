@@ -2,7 +2,15 @@
  * @Author: Creteper 7512254@qq.com
  * @Date: 2025-03-19 21:08:57
  * @LastEditors: Creteper 7512254@qq.com
- * @LastEditTime: 2025-03-21 11:09:39
+ * @LastEditTime: 2025-03-21 15:32:44
+ * @FilePath: \dalieba\app\newplan\[planid]\page.tsx
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
+/*
+ * @Author: Creteper 7512254@qq.com
+ * @Date: 2025-03-19 21:08:57
+ * @LastEditors: Creteper 7512254@qq.com
+ * @LastEditTime: 2025-03-21 13:48:40
  * @FilePath: \dalieba\app\newplan\[planid]\page.tsx
  * @Description: new plan page
  */
@@ -24,6 +32,7 @@ import { Input } from '@/components/ui/input'
 import ControlBar from '@/components/ui/control-bar'
 import TimeLine, { TimeLineItem } from '@/components/plan/time-line'
 import { cn } from '@/lib/utils'
+import { splitPos, extractPolylines, mergePolylines, processRouteToCoordinates } from '@/lib/pos-split'
 import {
   Drawer,
   DrawerClose,
@@ -44,7 +53,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-
+import { devData } from '@/lib/dev-data'
 export default function NewPlanPage(
   {
     params
@@ -72,7 +81,17 @@ export default function NewPlanPage(
     const [mapCenter, setMapCenter] = useState<[number, number]>([45.74331, 126.63108]);
     const [isSetTitleDrawerOpen, setIsSetTitleDrawerOpen] = useState(false);
     const [title, setTitle] = useState('旅游攻略 - 哈尔滨');
-
+    const [positions, setPositions] = useState<Array<{
+      latitude: number;
+      longitude: number;
+    }>>([]);
+    const [routes, setRoutes] = useState<Array<{
+      positions: [number, number][],
+      color?: string,
+      weight?: number,
+      opacity?: number,
+      dashArray?: string
+    }>>([]);
     const timelineItems: TimeLineItem[] = [
       {
         id: '1',
@@ -80,14 +99,14 @@ export default function NewPlanPage(
         spots: [
           {
             id: '1',
-            title: '哈尔滨工业大学',
-            description: '参观校园主要景点',
+            title: '圣·索菲亚教堂',
+            description: '参观教堂',
             date: '9:00 - 11:00',
-            street: '哈尔滨市南岗区西大直街92号',
-            thumbnail: '/img.jpg',
+            street: '黑龙江省哈尔滨市道里区透笼街88号圣·索菲亚教堂',
+            thumbnail: '/images/djt.jpeg',
             position: {
-              latitude: 45.74331,
-              longitude: 126.63108
+              latitude: 45.770125,
+              longitude: 126.627215
             },
             transport: {
               type: '打车',
@@ -100,16 +119,67 @@ export default function NewPlanPage(
             title: '中央大街',
             description: '漫步百年商业街',
             date: '11:30 - 13:30',
-            street: '哈尔滨市道里区中央大街',
-            thumbnail: '/img.jpg',
+            street: '黑龙江省哈尔滨市道里区中央大街1号哈尔滨中央大街',
+            thumbnail: '/images/zydj.jpg',
             position: {
-              latitude: 45.77501,
-              longitude: 126.63227
+              latitude: 45.774835,
+              longitude: 126.617682
+            },
+            transport: {
+              type: '地铁',
+              duration: '15分钟',
+              cost: '¥4'
+            }
+          },
+          {
+            id: '3',
+            title: '维也纳国际酒店',
+            description: '入住酒店',
+            date: '13:30 - 15:00',
+            street: '北兴街55号悦城H15栋8-15层',
+            thumbnail: '/images/jd.jpg',
+            position: {
+              latitude: 45.706189,
+              longitude: 126.590348
             },
             transport: {
               type: '步行',
               duration: '15分钟',
               cost: '¥0'
+            }
+          },
+          {
+            id: '4',
+            title: '哈尔滨松花江公路大桥',
+            description: '欣赏松花江美景',
+            date: '14:00 - 15:30',
+            street: '黑龙江省哈尔滨市松北区松北区哈尔滨松花江公路大桥',
+            thumbnail: '/images/dq.png',
+            position: {
+              latitude: 45.766351,
+              longitude: 126.586364
+            },
+            transport: {
+              type: '打车',
+              duration: '10分钟',
+              cost: '¥10'
+            }
+          },
+          {
+            id: '5',
+            title: '哈尔滨太阳岛',
+            description: '参观太阳岛',
+            date: '9:00 - 11:00',
+            street: '黑龙江省哈尔滨市松北区雪乡街与冰峰路交叉口南260米太阳岛绿色运动公园',
+            thumbnail: '/images/sd.png',
+            position: {
+              latitude: 45.772135, 
+              longitude: 126.571046
+            },
+            transport: {
+              type: '打车',
+              duration: '10分钟',
+              cost: '¥10'
             }
           }
         ]
@@ -119,60 +189,68 @@ export default function NewPlanPage(
         day: 2,
         spots: [
           {
-            id: '3',
-            title: '索菲亚教堂',
-            description: '欣赏拜占庭建筑',
-            date: '14:00 - 15:30',
-            street: '哈尔滨市道里区透笼街88号',
-            thumbnail: '/img.jpg',
-            position: {
-              latitude: 45.77068,
-              longitude: 126.63244
-            },
-            transport: {
-              type: '地铁',
-              duration: '25分钟',
-              cost: '¥4'
-            }
-          },
-          {
-            id: '4',
-            title: '防洪纪念塔',
-            description: '城市地标建筑',
+            id: '6',
+            title: '澜亭水汇',
+            description: '尝试东北洗浴',
             date: '16:00 - 17:30',
-            street: '哈尔滨市道里区中央大街',
-            thumbnail: '/img.jpg',
+            street: '黑龙江省哈尔滨市道里区澜亭水汇',
+            thumbnail: '/images/sh.png',
             position: {
               latitude: 45.78116, 
               longitude: 126.63202
             }
+          },
+          {
+            id: '7',
+            title: '老厨家(中央大街店)',
+            description: '品尝地道东北菜',
+            date: '11:30 - 13:30',
+            street: '黑龙江省哈尔滨市道里区中央大街1号哈尔滨中央大街',
+            thumbnail: '/images/lcj.png',
+            position: {
+              latitude: 45.775947,
+              longitude: 126.619297
+            },
+            transport: {
+              type: '打车',
+              duration: '10分钟',
+              cost: '¥10'
+            }
+          },
+          {
+            id: '8',
+            title: '中华巴洛克风情街',
+            description: '参观中华巴洛克风情街',
+            date: '14:00 - 15:30',
+            street: '黑龙江省哈尔滨市道里区中华巴洛克风情街',
+            thumbnail: '/images/zj.png',
+            position: {
+              latitude: 45.781791,
+              longitude: 126.640729
+            },
+            transport: {
+              type: '打车',
+              duration: '10分钟',
+              cost: '¥10'
+            }
+          },
+          {
+            id: '9',
+            title: '哈尔滨西站',
+            description: '乘坐火车离开哈尔滨',
+            date: '15:30 - 17:00',
+            street: '哈尔滨市南岗区哈尔滨大街501号',
+            thumbnail: '/images/hx.png',
+            position: {
+              latitude: 45.707626,
+              longitude: 126.575964
+            }
           }
+          
         ]
       }
     ];
-    const testItem = {
-      spotDescription: [ // 景点描述
-        {
-          name: '哈尔滨工业大学', // 景点名称
-          street: '哈尔滨工业大学123', // 景点地址
-          description: '哈尔滨工业大学123', // 景点描述
-          image: 'https://img-blog.csdnimg.cn/7ab12a17f5e0433fba325d665a4c0827.png', // 景点图片
-          openTime: '哈尔滨工业大学123', // 景点开放时间
-          closeTime: '哈尔滨工业大学123', // 景点关闭时间
-          toNextSpotDescription: [
-            {
-              goType: '公交', // 交通工具
-              time: '1小时', // 所需时间
-              price: '10元' // 费用
-            }
-          ]
-        }
-      ]
-    };
-
     useEffect(() => {
-      // 设置景点描述
-      setDayPlanItem([testItem]);
       
       // 处理所有标记点
       const newMarkers: Array<{
@@ -191,6 +269,11 @@ export default function NewPlanPage(
         url: '/images/location.svg',
         size: [32, 32] as [number, number],
       };
+
+      const dayTwoIcon = {
+        url: '/images/black_marker.svg',
+        size: [32, 32] as [number, number],
+      };
       
       // 处理所有天数的所有景点
       timelineItems.forEach(day => {
@@ -200,7 +283,7 @@ export default function NewPlanPage(
             title: spot.title,
             popup: spot.title,
             description: spot.description,
-            icon: defaultIcon,
+            icon: day.day === 1 ? defaultIcon : dayTwoIcon,
           });
         });
       });
@@ -212,6 +295,59 @@ export default function NewPlanPage(
       if (newMarkers.length > 0) {
         setMapCenter(newMarkers[0].position);
       }
+
+      const _Pos = splitPos(devData.polyline);
+      setPositions(_Pos);
+
+      const _polyline = extractPolylines(devData.secoundLine);
+      const _mergePolyline = mergePolylines(_polyline);
+      const _mergePos = splitPos(_mergePolyline);
+      setPositions(_Pos.concat(_mergePos));
+
+      const _polyline2 = extractPolylines(devData.thirdLine);
+      const _mergePolyline2 = mergePolylines(_polyline2);
+
+      const _routes = processRouteToCoordinates(devData.thirdLine);
+      const __routes = processRouteToCoordinates(devData.fourLine)
+      const ___routes = processRouteToCoordinates(devData.fiveLine);
+      const ____routes = processRouteToCoordinates(devData.sixLine);
+      const _____routes = processRouteToCoordinates(devData.sevenLine);
+
+      setRoutes([
+        {
+          positions: _routes,
+          color: '#3B82F6',
+          weight: 6,
+          opacity: 1,
+          dashArray: '10, 10'
+        },{
+          positions: __routes,
+          color: '#3B82F6',
+          weight: 6,
+          opacity: 1,
+          dashArray: '10, 10'
+        },{
+          positions: ___routes,
+          color: '#000000',
+          weight: 6,
+          opacity: 0.67,
+          dashArray: '10, 10'
+        },{
+          positions: ____routes,
+          color: '#000000',
+          weight: 6,
+          opacity: 0.67,
+          dashArray: '10, 10'
+        },{
+          positions: _____routes,
+          color: '#000000',
+          weight: 6,
+          opacity: 0.67,
+          dashArray: '10, 10'
+        }
+      ]);
+
+
     }, []);
 
     // 处理点击时间线项目
@@ -221,41 +357,78 @@ export default function NewPlanPage(
     };
 
     const markdown = `
-# 哈尔滨工业大学
+# 哈尔滨两天一晚旅游计划
 
-哈尔滨工业大学（Harbin Institute of Technology）是中国著名的理工科大学，位于黑龙江省哈尔滨市。
+哈尔滨是中国东北地区的重要城市，以其独特的冰雪文化和美丽的自然风光而闻名。以下是哈尔滨两天一晚的旅游计划：
 
-## 基本信息
-- 创建时间：1920年
-- 地址：哈尔滨市南岗区西大直街92号
-- 类型：理工类综合性大学
+## 第一天
+
+### 上午
+
+    1. 圣·索菲亚教堂
+    2. 中央大街
+    3. 维也纳国际酒店
+
+### 下午
+
+    1. 哈尔滨松花江公路大桥
+    2. 澜亭水汇
+
+## 第二天
+
+### 上午
+
+    1. 哈尔滨太阳岛
+    2. 老厨家(中央大街店)
+
+### 下午
+
+    1. 中华巴洛克风情街
+    2. 哈尔滨西站
 
 ## 特色景点
-1. 主楼
-2. 图书馆
-3. 校史馆
-4. 主广场
+1. 圣·索菲亚教堂
+2. 中央大街
+3. 哈尔滨松花江公路大桥
+4. 澜亭水汇
+5. 哈尔滨冰雪大世界
+6. 哈尔滨太阳岛
+7. 中华巴洛克风情街
+8. 老厨家(中央大街店)
 
 > 这里是中国最早的理工科大学之一，拥有悠久的历史和深厚的文化底蕴。
     `
+
+
 
     return (
         <div className="flex flex-col w-full h-screen overflow-hidden">
             <MapComponent 
               className='w-full h-full' 
               center={mapCenter}
-              layOutisPoints={false}
+              layOutisPoints={true}
               showZoomLevel={false}
-              maxZoom={16}
-              minZoom={13}
+              maxZoom={19}
+              minZoom={0}
               selectedMarker={selectedMarker}
               onMarkerClose={() => setSelectedMarker(null)}
               titleMaxZoom={17}
               titleMinZoom={14}
               markers={markers}
+              routes={[
+                {
+                  positions: positions.map(pos => [pos.latitude, pos.longitude] as [number, number]),
+                  color: '#3B82F6',
+                  weight: 6,
+                  opacity: 1,
+                  dashArray: '10, 10'
+                },
+                ...routes
+              ]}
             />
             <ControlBar className='z-999' />
-            <div className='fixed top-4 left-4 z-999 text-2xl font-bold'>
+            <div className='fixed top-4 left-4 z-999 text-2xl font-bold flex gap-4 items-center'>
+              <img src="/images/logo.svg" alt="GO TOGETHER!" className="w-8 h-8" />
               GO! TOGETHER
             </div>
             <motion.div 
@@ -279,7 +452,7 @@ export default function NewPlanPage(
                       <div className='flex items-center justify-between'>
                         <div className='space-y-1'>
                           <p className='font-medium truncate'>AI 全部回复</p>
-                          <p className='text-sm text-gray-500 truncate'>title</p>
+                          <p className='text-sm text-gray-500 truncate'>{ title }</p>
                         </div>
                         <div className='text-primary transform transition-transform duration-300 group-open:-rotate-180 flex-shrink-0 ml-2'>
                           <ChevronDown />
@@ -332,7 +505,13 @@ export default function NewPlanPage(
               </DrawerTrigger>
               <DrawerContent className='z-999 h-[400px] bg-background/90 backdrop-blur-sm'>
                 <DrawerHeader>
-                  <DrawerTitle>旅游攻略 - 哈尔滨</DrawerTitle>
+                  <DrawerTitle 
+                    className='flex items-center gap-2'
+                    onClick={() => {
+                      setIsSetTitleDrawerOpen(true)
+                      setIsDrawerOpen(false)
+                    }}
+                  >{ title} <Pencil className='w-4 h-4 inline-block' /></DrawerTitle>
                   <DrawerDescription>关于哈尔滨的旅游攻略</DrawerDescription>
                 </DrawerHeader>
                 {/* 手机端 */}

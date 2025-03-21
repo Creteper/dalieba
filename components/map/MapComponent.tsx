@@ -54,6 +54,13 @@ interface MapProps {
   onDragEnd?: () => void
   layOutisPoints?: boolean
   positions?: [number, number][]
+  routes?: Array<{
+    positions: [number, number][]
+    color?: string
+    weight?: number
+    opacity?: number
+    dashArray?: string
+  }>
   className?: string
   selectedMarker?: number | null
   onMarkerClose?: () => void

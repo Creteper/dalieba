@@ -195,6 +195,9 @@ export default function Register() {
       >
         {/* Logo */}
         <div className="text-center">
+          <div className="w-full flex items-center justify-center mb-2">
+            <img src="/images/logo.svg" alt="GO TOGETHER!" className="w-8 h-8" />
+          </div>
           <h1 className="text-4xl font-bold">
             Go! Together
           </h1>

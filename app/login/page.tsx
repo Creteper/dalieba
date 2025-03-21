@@ -2,7 +2,7 @@
  * @Author: Creteper 7512254@qq.com
  * @Date: 2025-03-19 13:59:54
  * @LastEditors: Creteper 7512254@qq.com
- * @LastEditTime: 2025-03-19 16:00:05
+ * @LastEditTime: 2025-03-21 15:59:07
  * @FilePath: \dalieba\app\login\page.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -168,6 +168,9 @@ export default function Login() {
       >
         {/* Logo */}
         <div className="text-center">
+          <div className="w-full flex items-center justify-center mb-2">
+            <img src="/images/logo.svg" alt="GO TOGETHER!" className="w-8 h-8" />
+          </div>
           <h1 className="text-4xl font-bold">
             Go! Together
           </h1>
