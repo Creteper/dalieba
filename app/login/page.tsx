@@ -2,7 +2,7 @@
  * @Author: Creteper 7512254@qq.com
  * @Date: 2025-03-19 13:59:54
  * @LastEditors: Creteper 7512254@qq.com
- * @LastEditTime: 2025-03-21 17:44:07
+ * @LastEditTime: 2025-03-21 17:49:47
  * @FilePath: \dalieba\app\login\page.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -92,7 +92,6 @@ export default function Login() {
       setPassword(value)
     }
 
-    console.log(username,password)
   }
 
   const handleSubmit = async () => {
@@ -213,7 +212,7 @@ export default function Login() {
               <Input 
                 value={formData.phone}
                 onChange={(e) => handleInputChange('phone', e.target.value)}
-                placeholder="手机号" 
+                placeholder="用户名" 
                 className={cn("h-12 pl-10", errors.phone && "border-destructive text-destructive")}
               />
             </div>
