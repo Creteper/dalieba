@@ -52,7 +52,7 @@ export default function DropdownAvatar({
                             <User className="h-4 w-4" />
                             个人中心
                         </DropdownMenuItem>
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => router.push("/community")}>
                             <Sprout className="h-4 w-4" />
                             Together Go! (社区)
                         </DropdownMenuItem>
