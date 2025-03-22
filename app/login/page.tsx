@@ -53,7 +53,7 @@ export default function Login() {
 
     const validateUserName = (username: string) => {
         if (!username) {
-            return '请输入手机号'
+            return '请输入账号'
         }
         return ''
     }
