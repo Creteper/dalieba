@@ -16,7 +16,9 @@ export default function ArticleCard({
     viewCounts,
     likeCounts,
     collectCounts,
-    shareCounts
+    shareCounts,
+    isLiked,
+    isStarred
 }: {
     userName: string
     userAvatar: string
@@ -28,13 +30,15 @@ export default function ArticleCard({
     likeCounts: string
     collectCounts: string
     shareCounts: string
+    isLiked?: boolean
+    isStarred?: boolean
 }) {
     const isMobile = useIsMobile()
     return (
         <>
             {
                 isMobile ? (
-                    <Card className="shadow-none w-full rounded-none border-0 border-b">
+                    <Card className="shadow-none w-full rounded-none border-0 border-b bg-background">
                         <CardContent className="max-h-72 flex flex-col justify-between">
                             <CardTitle className="flex gap-2 items-center">
                                 <Avatar className="w-10 h-fit">
@@ -43,7 +47,7 @@ export default function ArticleCard({
                                 </Avatar >
                                 <div className="flex flex-col items-start gap-1">
                                     <div className="flex gap-3 items-center">
-                                        <p className="font-bold line-clamp-2">{articleTitle}</p>
+                                        <p className="font-bold line-clamp-1">{articleTitle}</p>
                                         <Badge>{articleClasses}</Badge>
                                     </div>
                                     <p className="text-muted-foreground text-sm">@{userName}</p>
@@ -56,31 +60,31 @@ export default function ArticleCard({
                                     className="h-full w-full object-cover rounded-md"
                                 />
                             </div>
-                            <div className="text-md indent-4 max-w-full overflow-hidden line-clamp-2">
+                            <div className="text-sm sm:text-md indent-4 max-w-full overflow-hidden line-clamp-2">
                                 {articleDescription}
                             </div>
-                            <div className="text-sm text-muted-foreground flex justify-end gap-5">
+                            <div className="text-xs sm:text-sm text-muted-foreground flex justify-end gap-2 sm:gap-5">
                                 <div className="flex mr-auto gap-1 items-center">
-                                    <Eye />
+                                    <Eye size={14} />
                                     {viewCounts}
                                 </div>
                                 <div className="flex gap-1 items-center">
-                                    <Heart />
+                                    <Heart size={14} />
                                     {likeCounts}
                                 </div>
                                 <div className="flex gap-1 items-center">
-                                    <Star />
+                                    <Star size={14} />
                                     {collectCounts}
                                 </div>
                                 <div className="flex gap-1 items-center">
-                                    <Share />
+                                    <Share size={14} />
                                     {shareCounts}
                                 </div>
                             </div>
                         </CardContent >
                     </Card>
                 ) : (
-                    <Card className="shadow-none w-full rounded-none border-0 border-b" >
+                    <Card className="shadow-none w-full rounded-none border-0 border-b bg-background" >
                         <CardContent className="flex gap-10">
                             <div className="flex flex-col w-full justify-between">
                                 <CardTitle className="flex gap-2 items-center">
@@ -103,19 +107,25 @@ export default function ArticleCard({
 
                                 <div className="text-sm text-muted-foreground flex gap-5">
                                     <div className="flex mr-auto gap-1 items-center">
-                                        <Eye />
+                                        <Eye size={16} />
                                         {viewCounts}
                                     </div>
                                     <div className="flex gap-1 items-center">
-                                        <Heart />
+                                        {isLiked ?
+                                            <Heart size={16} fill="var(--color-rose)" strokeWidth={0} />
+                                            :
+                                            <Heart size={16} />}
                                         {likeCounts}
                                     </div>
                                     <div className="flex gap-1 items-center">
-                                        <Star />
+                                        {isStarred ?
+                                            <Star size={16} fill="var(--color-amber)" strokeWidth={0} />
+                                            :
+                                            <Star size={16} />}
                                         {collectCounts}
                                     </div>
                                     <div className="flex gap-1 items-center">
-                                        <Share />
+                                        <Share size={16} />
                                         {shareCounts}
                                     </div>
                                 </div>
