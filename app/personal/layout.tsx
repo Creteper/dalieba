@@ -64,7 +64,7 @@ function SelectionButton({ selection, url }: { selection: string, url: string })
     return (
         <Button
             variant="link"
-            className={`text-md shadow-none ${isActive ? "text-foreground" : "text-muted-foreground"}`}
+            className={`text-md shadow-none ${isActive ? "text-foreground font-extrabold" : "text-muted-foreground font-extralight"}`}
             onClick={() => onClick(url)}
         >
             {selection}
