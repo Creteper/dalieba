@@ -5,6 +5,7 @@ import { MapContainer, TileLayer, useMap, Marker, Polyline } from 'react-leaflet
 import { Icon, Marker as LeafletMarker } from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import { cn } from '@/lib/utils'
+import { ServerConfig } from '@/lib/site'
 
 // ZoomDisplay组件定义
 function ZoomDisplay() {
@@ -368,7 +369,7 @@ function MapImpl({
 
                 <TileLayer
                     attribution='&copy; 大列巴地图服务'
-                    url={layOutisPoints ? 'http://192.168.110.22:3001/tiles/{z}/{x}/{y}/x={x}&y={y}&z={z}.png' : 'http://192.168.110.22:3001/w_tiles/{z}/{x}/{y}/x={x}&y={y}&z={z}.png'}
+                    url={layOutisPoints ? ServerConfig.mapApiUrl + 'tiles/{z}/{x}/{y}/x={x}&y={y}&z={z}.png' : ServerConfig.mapApiUrl + 'w_tiles/{z}/{x}/{y}/x={x}&y={y}&z={z}.png'}
                 />
                 
                 {/* 渲染单条路线(向后兼容) */}
