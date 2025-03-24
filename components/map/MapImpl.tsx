@@ -371,7 +371,7 @@ function MapImpl({
                     attribution='&copy; 大列巴地图服务'
                     url={layOutisPoints ? ServerConfig.mapApiUrl + 'tiles/{z}/{x}/{y}/x={x}&y={y}&z={z}.png' : ServerConfig.mapApiUrl + 'w_tiles/{z}/{x}/{y}/x={x}&y={y}&z={z}.png'}
                 />
-                
+
                 {/* 渲染单条路线(向后兼容) */}
                 {positions.length > 0 && (
                     <Polyline positions={positions}
@@ -384,7 +384,7 @@ function MapImpl({
 
                 {/* 渲染多条路线 */}
                 {routes.map((route, index) => (
-                    <Polyline 
+                    <Polyline
                         key={index}
                         positions={route.positions}
                         pathOptions={{

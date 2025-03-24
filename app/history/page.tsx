@@ -21,6 +21,7 @@ export default function History() {
     const [showToday, setShowToday] = useState(true)
     const [showYesterday, setShowYesterday] = useState(true)
     const [showAgo, setShowAgo] = useState(true)
+    const [mapRefresh, setMapRefresh] = useState(0)
 
     const [showHistory, setShowHistory] = useState(true)
 
@@ -61,6 +62,11 @@ export default function History() {
     }, [])
 
     const isMobile = useIsMobile()
+
+    const handleChangeHistory = () => {
+        setShowHistory(!showHistory)
+        setMapRefresh((prev) => prev + 1) // 更新状态以触发重新渲染
+    }
 
     return (
         <>
@@ -241,6 +247,7 @@ export default function History() {
                     </AlwaysDrawerContent >
 
                     <MapComponent
+                        key={mapRefresh}
                         showZoomLevel={true}
                         center={currentCenter}
                         zoom={14}
@@ -264,7 +271,7 @@ export default function History() {
                     <div>
                         {!showHistory ? (
                             <Button
-                                onClick={() => setShowHistory(!showHistory)}
+                                onClick={handleChangeHistory}
                                 className="fixed top-5 left-5 z-50"
                             >
                                 <PanelLeft />
@@ -285,10 +292,10 @@ export default function History() {
                                     返回主页
                                 </Button>
                                 <Button
-                                    onClick={() => setShowHistory(!showHistory)}
+                                    onClick={handleChangeHistory}
                                     variant="ghost"
                                 >
-                                    <PanelLeft onClick={() => setShowHistory(!showHistory)} className="" />
+                                    <PanelLeft onClick={handleChangeHistory} className="" />
                                 </Button>
                             </div>
                             <div className="px-10 flex gap-5 items-center pb-5">
@@ -438,6 +445,7 @@ export default function History() {
                     </ScrollArea>
 
                     <MapComponent
+                        key={mapRefresh}
                         showZoomLevel={true}
                         center={currentCenter}
                         zoom={14}

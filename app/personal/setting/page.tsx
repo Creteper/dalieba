@@ -1,11 +1,42 @@
 "use client"
 
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { DrawerTrigger, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription, DrawerFooter, DrawerClose, Drawer } from "@/components/ui/drawer";
+import {
+    DrawerTrigger,
+    DrawerContent,
+    DrawerHeader,
+    DrawerTitle,
+    DrawerDescription,
+    DrawerFooter,
+    DrawerClose,
+    Drawer
+} from "@/components/ui/drawer";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { Popover, PopoverTrigger, PopoverContent } from "@radix-ui/react-popover";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
+
 import { useState } from "react";
+import { toast } from "sonner";
+import UpdatePwd from "./components/updatePwd";
 
 type CardItemProps = React.ComponentProps<"div"> & {
     hasTop?: boolean;
@@ -26,12 +57,26 @@ export default function Setting() {
 
     const [userEmail, setUserEmail] = useState("lijianlin050416@gmail.com")
 
+    const [pwdMode, setPwdMode] = useState("update")
+
     return (
         <Card className="w-full">
             <CardContent>
                 <CardItem className="pb-5 justify-between" hasBottom={true}>
-                    <p>更改账号或密码</p>
-                    <Button variant="outline" className="">点击更改</Button>
+                    <p>忘记&更新密码</p>
+                    <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                            <Button variant="outline">点击更改</Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle>
+                                    <p>更新您的密码</p>
+                                </AlertDialogTitle>
+                            </AlertDialogHeader>
+                            <UpdatePwd />
+                        </AlertDialogContent>
+                    </AlertDialog>
                 </CardItem>
                 <CardItem className="py-5 justify-between" hasBottom={true}>
                     <p>查看收藏路线</p>
@@ -39,17 +84,29 @@ export default function Setting() {
                 </CardItem>
                 <CardItem className="justify-between py-5">
                     <p>管理历史回答记录</p>
-                    <Popover>
-                        <PopoverTrigger asChild>
+                    <AlertDialog>
+                        <AlertDialogTrigger asChild>
                             <Button variant="outline" className="">
                                 清空记录
                             </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-fit flex items-center gap-5">
-                            <p>确认清空记录？</p>
-                            <Button variant="destructive">确认</Button>
-                        </PopoverContent>
-                    </Popover>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle>
+                                    <p>确认清空记录？</p>
+                                </AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    清空后您当前的历史记录将无法找回，请您确认此操作
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <AlertDialogCancel>取消</AlertDialogCancel>
+                                <AlertDialogAction>
+                                    确认
+                                </AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
                 </CardItem>
                 <CardItem hasTop={true} className="pt-5 flex flex-col md:flex-row md:items-center md:justify-between items-start gap-5">
                     <div>
