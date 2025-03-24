@@ -19,7 +19,11 @@ export default function ControlBar({
     className,
     variant,
     ...props
-}: { title?: string, variant?: "link" | "default" | "outline" | "ghost" | undefined} & React.ComponentProps<"div">) {
+}: { 
+    title?: string;
+    variant?: "link" | "default" | "outline" | "ghost";
+    className?: string;
+} & Omit<React.ComponentProps<"div">, "title" | "className">) {
     // 使用CSS实现动画代替motion库
     return (
         <div
