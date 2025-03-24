@@ -266,8 +266,8 @@ export default function NewPlanPage(
       
       // 图标配置
       const defaultIcon = {
-        url: '/images/location.svg',
-        size: [32, 32] as [number, number],
+          url: '/images/location.svg',
+          size: [32, 32] as [number, number],
       };
 
       const dayTwoIcon = {
@@ -431,7 +431,7 @@ export default function NewPlanPage(
               <img src="/images/logo.svg" alt="GO TOGETHER!" className="w-8 h-8" />
               GO! TOGETHER
             </div>
-            <motion.div 
+            <motion.div
               className='mb-4 fixed top-15 left-4 right-4 md:w-[400px]  z-50 rounded-lg flex flex-col gap-45'
               initial={{ opacity: 0, x: -100 }}
               animate={{ opacity: 1, x: 0 }}
@@ -458,8 +458,8 @@ export default function NewPlanPage(
                           <ChevronDown />
                         </div>
                       </div>
-                    </div>
-                </summary>
+                              </div>
+                          </summary>
                 
                 <AnimatePresence>
                   {isOpen && (
@@ -501,7 +501,7 @@ export default function NewPlanPage(
                   <Button className='fixed bottom-4 -translate-x-1/2 left-1/2 z-999 bg-background/90 backdrop-blur-sm text-foreground hover:bg-background/90 hover:text-foreground'>
                     查看攻略
                   </Button>
-                </motion.div>
+            </motion.div>
               </DrawerTrigger>
               <DrawerContent className='z-999 h-[400px] bg-background/90 backdrop-blur-sm'>
                 <DrawerHeader>

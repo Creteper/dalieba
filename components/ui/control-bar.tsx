@@ -2,7 +2,7 @@
  * @Author: Creteper 7512254@qq.com
  * @Date: 2025-03-18 18:04:57
  * @LastEditors: Creteper 7512254@qq.com
- * @LastEditTime: 2025-03-18 20:59:04
+ * @LastEditTime: 2025-03-22 13:48:50
  * @FilePath: \dalieba\components\ui\control-bar.tsx
  * @Description: control-bar 封装了主题切换和用户下拉菜单
  */
@@ -17,8 +17,9 @@ import { Button } from "./button"
 export default function ControlBar({
     title,
     className,
+    variant,
     ...props
-}: { title?: string } & React.ComponentProps<"div">) {
+}: { title?: string, variant?: "link" | "default" | "outline" | "ghost" | undefined} & React.ComponentProps<"div">) {
     // 使用CSS实现动画代替motion库
     return (
         <div
@@ -36,7 +37,7 @@ export default function ControlBar({
                         </p>
                     </Button>
                 ) : null}
-                <ModeToggle variant="default" className="rounded-full" />
+                <ModeToggle variant={variant} className="rounded-full" />
                 <DropdownAvatar className="h-9 w-9" />
             </div>
         </div>
