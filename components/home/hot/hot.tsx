@@ -1,15 +1,7 @@
 "use client";
-import { ChevronRight } from "lucide-react";
-import { useRouter } from "next/navigation";
 import React from "react";
 import ClassBox from "../componentsHome/classBox";
 export default function HotContent() {
-
-    const router = useRouter()
-
-    const handleTabChange = (tab: string) => {
-        router.push(`/community?tag=${tab}`);
-    }
 
     return (
         <>

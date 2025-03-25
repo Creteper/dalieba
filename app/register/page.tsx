@@ -3,24 +3,18 @@
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { motion } from "motion/react"
-import { User, Lock, Mail, Phone } from "lucide-react"
+import { User, Lock, Mail } from "lucide-react"
 import { Separator } from "@/components/ui/separator"
 import { useState, useEffect } from "react"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
 import { useTheme } from "next-themes"
-import UserClient from "@/lib/use-client"
 import { Http } from "@/lib/axios"
-import { url } from "inspector"
-import { useRouter } from "next/navigation"
-import { Toaster } from "@/components/ui/sonner"
 import { toast } from "sonner"
 
 export default function Register() {
     const { setTheme } = useTheme()
 
-    const router = useRouter()
-    const userClient = new UserClient()
     const httpClient = new Http(process.env.NEXT_PUBLIC_USER_API_URL as string)
 
     useEffect(() => {

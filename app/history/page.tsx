@@ -11,22 +11,28 @@ import { useEffect, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
 import ControlBar from "@/components/ui/control-bar"
 import { useIsMobile } from "@/hooks/use-mobile"
-import { AlwaysDrawerContent, AlwaysDrawerHeader, AlwaysDrawerTrigger } from "@/components/ui/alwaysDrawer"
+import { AlwaysDrawerContent, AlwaysDrawerHeader } from "@/components/ui/alwaysDrawer"
 export default function History() {
+
+    // 地图相关变量
     const [currentCenter, setCurrentCenter] = useState([45.780654, 126.617203] as [number, number])
     const resumeTimeout = useRef<NodeJS.Timeout | null>(null)
+
+    // 历史记录高度
     const [historyHeight, setHistoryHeight] = useState(400)
-    const [showDrag, setShowDrag] = useState(true)
     const [windowHeight, setWindowHeight] = useState(0)
+
+    // 历史记录中以时间分组
     const [showToday, setShowToday] = useState(true)
     const [showYesterday, setShowYesterday] = useState(true)
     const [showAgo, setShowAgo] = useState(true)
-    const [mapRefresh, setMapRefresh] = useState(0)
 
+    // 展开与关闭历史记录
     const [showHistory, setShowHistory] = useState(true)
 
     const router = useRouter()
 
+    // 处理地图拖拽操作
     const handleDragStart = () => {
         if (resumeTimeout.current) {
             clearTimeout(resumeTimeout.current)
@@ -39,6 +45,7 @@ export default function History() {
         }
     }
 
+    // 初始化窗口高度
     useEffect(() => {
         // 在客户端初始化窗口高度
         setWindowHeight(window.innerHeight)
@@ -47,10 +54,8 @@ export default function History() {
             setWindowHeight(window.innerHeight)
             if (window.innerWidth < 1024) {
                 setHistoryHeight(400)
-                setShowDrag(true)
             } else {
                 setHistoryHeight(window.innerHeight)
-                setShowDrag(false)
             }
         }
 
@@ -63,9 +68,12 @@ export default function History() {
 
     const isMobile = useIsMobile()
 
+    // 地图刷新变量
+    const [mapRefresh, setMapRefresh] = useState(0)
+    // 在展开与关闭历史记录时刷新地图
     const handleChangeHistory = () => {
         setShowHistory(!showHistory)
-        setMapRefresh((prev) => prev + 1) // 更新状态以触发重新渲染
+        setMapRefresh((prev) => prev + 1)
     }
 
     return (

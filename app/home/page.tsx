@@ -9,9 +9,7 @@
 
 "use client";
 
-import { useIsMobile } from "@/hooks/use-mobile";
 import { useEffect, useState } from "react";
-import MapComponent from "@/components/map/MapComponent";
 import ControlBar from "@/components/ui/control-bar";
 import { Typewriter } from "react-simple-typewriter";
 import { motion } from "motion/react";
@@ -19,17 +17,16 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Map, Flame, ChevronsRight } from "lucide-react";
 import { useRouter, usePathname } from "next/navigation";
-import AnyTravel from "@/components/home/anyTravel/anyTravel";
 import AnyTravelContent from "@/components/home/anyTravel/anyTravel";
 import HotContent from "@/components/home/hot/hot";
 import SearchBox from "@/components/home/search/search";
 export default function HomePage() {
     const [helloTitle, setHelloTitle] = useState("");
-    const isMobile = useIsMobile();
     const router = useRouter();
     const pathname = usePathname();
     const [activeTab, setActiveTab] = useState("hot"); // 默认选中hot
 
+    // 社区跳转功能
     const handleTabChange = (tab: string) => {
         setActiveTab(tab);
         router.push(`/home/${tab}`);
@@ -150,19 +147,18 @@ export default function HomePage() {
     );
 }
 
+// 获取当前时间状态,设定欢迎语
 export function getTimeState() {
     let timeNow = new Date();
     let hours = timeNow.getHours();
     let state = "";
 
-    if (hours >= 0 && hours <= 10) {
+    if (hours >= 0 && hours <= 9) {
         state = "早上好";
-    } else if (hours > 10 && hours >= 14) {
+    } else if (hours >= 10 && hours <= 13) {
         state = "中午好";
-    } else if (hours > 14 && hours <= 18) {
+    } else if (hours >= 14 && hours <= 17) {
         state = "下午好";
-    } else if (hours > 18 && hours <= 24) {
-        state = "晚上好";
     } else {
         state = "晚上好";
     }

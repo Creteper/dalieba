@@ -18,15 +18,6 @@ export default function UpdatePwd() {
         confirmChangePwd: ''
     })
 
-    const validateOldPwd = (oldPwd: string) => {
-        if (!oldPwd) {
-            return '请输入密码'
-        } else if (oldPwd.length < 6) {
-            return '密码长度不能小于6位'
-        }
-        return ''
-    }
-
     const validateChangePwd = (changePwd: string) => {
         if (!changePwd) {
             return '请输入密码'

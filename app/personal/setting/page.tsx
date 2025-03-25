@@ -23,19 +23,9 @@ import {
     DrawerClose,
     Drawer
 } from "@/components/ui/drawer";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select"
 
 import { useState } from "react";
-import { toast } from "sonner";
 import UpdatePwd from "./components/updatePwd";
 
 type CardItemProps = React.ComponentProps<"div"> & {

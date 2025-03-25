@@ -7,12 +7,8 @@
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card'
 import { motion } from 'motion/react'
-import { AnimatePresence } from 'motion/react'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { useRef } from 'react'
 import { ArrowRight } from 'lucide-react'
 
 export interface SpotCardProps {
@@ -66,12 +62,12 @@ export default function SpotCard({ title, description, spot, DayPlan = [] }: Spo
                                 <div className="relative pl-4 space-y-4">
                                     {/* 左侧时间线 */}
                                     <div className="absolute left-0 top-0 bottom-0 w-px bg-border" />
-                                    
+
                                     {day.spotDescription.map((spot, spotIndex) => (
                                         <div key={spotIndex} className="relative">
                                             {/* 时间线上的圆点 */}
                                             <div className="absolute -left-[1.15rem] top-4 w-3 h-3 rounded-full bg-background border-2 border-primary" />
-                                            
+
                                             <div className="w-full p-4 bg-background/40 rounded-lg">
                                                 <div className="space-y-3">
                                                     <div className="flex items-start justify-between">
@@ -84,17 +80,17 @@ export default function SpotCard({ title, description, spot, DayPlan = [] }: Spo
                                                             <span>{spot.openTime} - {spot.closeTime}</span>
                                                         </div>
                                                     </div>
-                                                    
+
                                                     <p className="text-sm text-gray-600">{spot.description}</p>
 
                                                     {spotIndex < day.spotDescription.length - 1 && spot.toNextSpotDescription.map((transport, transportIndex) => (
-                                                        <div key={transportIndex} 
+                                                        <div key={transportIndex}
                                                             className="flex items-center gap-3 text-sm bg-background/60 p-3 rounded border border-border/50">
                                                             <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10">
                                                                 <span className="text-lg">
-                                                                    {transport.goType === '公交' ? '🚌' : 
-                                                                     transport.goType === '地铁' ? '🚇' : 
-                                                                     transport.goType === '步行' ? '🚶' : '🚗'}
+                                                                    {transport.goType === '公交' ? '🚌' :
+                                                                        transport.goType === '地铁' ? '🚇' :
+                                                                            transport.goType === '步行' ? '🚶' : '🚗'}
                                                                 </span>
                                                             </div>
                                                             <div className="flex-1">

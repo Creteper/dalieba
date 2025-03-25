@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react'
 import { MapContainer, TileLayer, useMap, Marker, Polyline } from 'react-leaflet'
-import { Icon, Marker as LeafletMarker } from 'leaflet'
+import { Icon } from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import { cn } from '@/lib/utils'
 import { ServerConfig } from '@/lib/site'

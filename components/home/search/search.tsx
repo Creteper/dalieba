@@ -9,7 +9,6 @@
 
 "use client";
 import {
-  Command,
   CommandDialog,
   CommandEmpty,
   CommandGroup,
@@ -17,14 +16,12 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
-  CommandShortcut,
 } from "@/components/ui/command";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Search, Flame } from "lucide-react";
-import { useEffect } from "react";
 import * as React from "react";
 export default function SearchBox({
   ...prop
