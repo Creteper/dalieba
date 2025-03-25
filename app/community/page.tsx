@@ -123,6 +123,9 @@ export default function Community() {
             case "goEat":
                 setTag("吃遍全国");
                 break;
+            case "anyTravel":
+                setTag("AnyTravel");
+                break;
             default:
                 setTag("为您推荐");
         }
@@ -148,10 +151,6 @@ export default function Community() {
                     <div className="flex w-full items-center space-x-2 ml-auto">
                         <Input className="ml-3" type="text" placeholder="搜索帖子" />
                         <Button type="submit">搜索</Button>
-                    </div>
-                    <div className="flex flex-col gap-3">
-                        <p className="text-lg">为您推荐</p>
-                        <Separator />
                     </div>
                 </div>
                 <WaterFall articles={articles} />

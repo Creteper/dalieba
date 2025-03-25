@@ -2,13 +2,20 @@
 
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface ClassBoxProps {
   title: string;
   description: string;
 }
 
-export default function ClassBox({ title, description }: ClassBoxProps) {
+export default function ClassBox({ title, description, tag }: ClassBoxProps & { tag: string }) {
+  const router = useRouter()
+
+  const handleTabChange = (tab: string) => {
+    router.push(`/community?tag=${tab}`);
+  }
+
   return (
     <>
       <div className="flex">
@@ -16,7 +23,7 @@ export default function ClassBox({ title, description }: ClassBoxProps) {
           <h1 className="font-bold text-xl">{title}</h1>
           <p className="text-muted-foreground text-sm">{description}</p>
         </div>
-        <Button className="ml-auto" variant="outline">
+        <Button onClick={() => handleTabChange(tag)} className="ml-auto" variant="outline">
           浏览更多
           <ArrowRight />
         </Button>

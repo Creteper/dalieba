@@ -43,9 +43,9 @@ export default function HotContent() {
             </div>
             {/* 内容卡片区域 */}
             <div className="flex flex-col gap-8">
-                <ClassBox title="全国旅行" description="飞遍全中国！指日可待" />
-                <ClassBox title="全国美食" description="我吃吃吃,吃遍全国" />
-                <ClassBox title="Any Travel" description="抱网友大腿！" />
+                <ClassBox tag="goTravel" title="全国旅行" description="飞遍全中国！指日可待" />
+                <ClassBox tag="goEat" title="全国美食" description="我吃吃吃,吃遍全国" />
+                <ClassBox tag="anyTravel" title="Any Travel" description="抱网友大腿！" />
             </div>
         </>
     );
