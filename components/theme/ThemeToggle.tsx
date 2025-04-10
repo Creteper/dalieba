@@ -1,8 +1,8 @@
 /*
  * @Author: Creteper 7512254@qq.com
  * @Date: 2025-03-18 18:04:57
- * @LastEditors: Creteper 7512254@qq.com
- * @LastEditTime: 2025-03-18 18:55:13
+ * @LastEditors: ceteper 75122254@qq.com
+ * @LastEditTime: 2025-03-28 14:02:09
  * @FilePath: \dalieba\components\theme\ThemeToggle.tsx
  * @Description: 主题切换
  */
@@ -78,7 +78,11 @@ export function ModeToggle({ variant = "ghost", className }: ModeToggleProps) {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => setTheme("light")}>
+        <DropdownMenuItem onClick={() => {
+          setTheme("light")
+          localStorage.setItem("theme", "light")
+          window.postMessage('hi! RN')
+        }}>
           <motion.div 
             className="flex gap-2 items-center"
             whileHover="hover"
@@ -101,7 +105,11 @@ export function ModeToggle({ variant = "ghost", className }: ModeToggleProps) {
             </motion.span>
           </motion.div>
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("dark")}>
+        <DropdownMenuItem onClick={() => {
+          setTheme("dark")
+          localStorage.setItem("theme", "dark")
+          window.postMessage('hi! RN')
+        }}>
           <motion.div 
             className="flex gap-2 items-center"
             whileHover="hover"
@@ -124,7 +132,11 @@ export function ModeToggle({ variant = "ghost", className }: ModeToggleProps) {
             </motion.span>
           </motion.div>
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("system")}>
+        <DropdownMenuItem onClick={() => {
+          setTheme("system")
+          localStorage.setItem("theme", "system")
+          window.postMessage('hi! RN')
+        }}>
           <motion.div
             className="flex gap-2 items-center"
             whileHover="hover"

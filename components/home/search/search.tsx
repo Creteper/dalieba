@@ -1,8 +1,8 @@
 /*
  * @Author: Creteper 7512254@qq.com
  * @Date: 2025-03-25 09:04:24
- * @LastEditors: Creteper 7512254@qq.com
- * @LastEditTime: 2025-03-25 10:06:11
+ * @LastEditors: ceteper 75122254@qq.com
+ * @LastEditTime: 2025-03-28 14:26:01
  * @FilePath: \dalieba\components\home\search\search.tsx
  * @Description: 用于显示搜索框
  */
@@ -29,15 +29,15 @@ export default function SearchBox({
   const [open, setOpen] = useState(false);
   const isMobile = useIsMobile();
   return (
-    <div className={cn("md:w-1/2 w-[50px] sm:w-[50px]", prop.className)}>
+    <div className={cn("md:w-1/2 w-[150px] sm:w-[150px]", prop.className)}>
       {isMobile ? (
         <Button
           variant="outline"
-          className=" absolute right-32 top-3"
+          className="justify-start w-full text-muted-foreground hover:scale-100"
           onClick={() => setOpen(true)}
         >
           <Search />
-          搜索
+          搜索内容
         </Button>
       ) : (
         <Button
@@ -47,9 +47,6 @@ export default function SearchBox({
         >
           <Search />
           搜索内容以表决心
-          <div className="ml-auto bg-muted p-1 text-[12px] rounded-md">
-            Ctrl + Alt + F
-          </div>
         </Button>
       )}
       <CommandDialog open={open} onOpenChange={setOpen}>

@@ -368,7 +368,7 @@ function MapImpl({
                 <MapClickHandler onClick={onMapClick} />
 
                 <TileLayer
-                    attribution='&copy; 大列巴地图服务'
+                    attribution='&copy; GO！ TOGETHER'
                     url={layOutisPoints ? ServerConfig.mapApiUrl + 'tiles/{z}/{x}/{y}/x={x}&y={y}&z={z}.png' : ServerConfig.mapApiUrl + 'w_tiles/{z}/{x}/{y}/x={x}&y={y}&z={z}.png'}
                 />
 

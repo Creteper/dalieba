@@ -1,3 +1,11 @@
+/*
+ * @Author: Creteper 7512254@qq.com
+ * @Date: 2025-03-25 12:12:49
+ * @LastEditors: Creteper 7512254@qq.com
+ * @LastEditTime: 2025-03-25 15:53:40
+ * @FilePath: \dalieba\components\home\componentsHome\classBox.tsx
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -38,7 +46,7 @@ export default function ClassBox({ title, description, tag }: ClassBoxProps & { 
                 <div className="w-full h-full bg-gradient-to-br from-muted to-accent/5"></div>
               </div>
               <h3 className="text-sm font-medium line-clamp-2 group-hover:text-primary transition-colors">
-                推荐内容标题12312311123123131231312x1231231 {i + 1}
+                推荐内容标题12312311123123131231312x1231231123123123 {i + 1}
               </h3>
               <div className="flex items-center gap-2 mt-2 text-xs text-muted-foreground">
                 <span>作者名称</span>
