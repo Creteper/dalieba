@@ -1,8 +1,9 @@
+
 /*
  * @Author: Creteper 7512254@qq.com
  * @Date: 2025-03-22 13:16:50
  * @LastEditors: ceteper 75122254@qq.com
- * @LastEditTime: 2025-04-08 14:52:06
+ * @LastEditTime: 2025-04-11 08:37:19
  * @FilePath: \dalieba\app\home\page.tsx
  * @Description: 用于显示首页内容
  */
@@ -32,27 +33,43 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import UserClient from "@/lib/use-client";
 import { UserInfoResponse } from "@/types/article";
 import SpotCard from "@/components/home/componentsHome/spot-card";
-
+import ScenicSpot from "@/lib/scenic-spot";
+import { RecommendScenicSpotResponse } from "@/types/article";
 export default function HomePage() {
   const [helloTitle, setHelloTitle] = useState("");
   const router = useRouter();
   const pathname = usePathname();
   const isMobile = useIsMobile();
   const userClient = new UserClient();
+  const scenicSpot = new ScenicSpot();
+  const [myRecommendScenicSpot, setMyRecommendScenicSpot] =
+    useState<RecommendScenicSpotResponse>({ sights: [] });
+  const [isLogin, setIsLogin] = useState(false);
   const plugin = React.useRef(
     Autoplay({ delay: 5000, stopOnInteraction: true })
   );
   useEffect(() => {
-    // async function checkedToken() {
-    //   const isValid = await userClient.verifyToken();
-    //   console.log(isValid);
-    //   if (!isValid) {
-    //     router.push("/login");
-    //   }
-    // }
-    // checkedToken();
+    async function checkedToken() {
+      const res = await userClient.verifyToken();
+      setIsLogin(res);
+    }
+    checkedToken();
     setHelloTitle(getTimeState() + "，最新旅行资讯");
   }, [pathname]);
+
+  useEffect(() => {
+    async function getRecommendScenicSpot() {
+      const recommendScenicSpot =
+        await scenicSpot.recommendScenicSpot<RecommendScenicSpotResponse>();
+      setMyRecommendScenicSpot(recommendScenicSpot);
+    }
+    getRecommendScenicSpot();
+  }, []);
+
+  // 监听状态变化
+  useEffect(() => {
+    console.log("状态更新:", myRecommendScenicSpot);
+  }, [myRecommendScenicSpot]);
 
   return (
     <div className="w-full min-h-screen bg-background">
@@ -80,7 +97,7 @@ export default function HomePage() {
       </motion.div>
 
       {/* 主内容区域 */}
-      <div className="pt-[60px] w-full">
+      <div className="pt-[60px] w-full flex">
         <div className="w-full px-4 md:px-20 py-4">
           {/* 欢迎语 */}
           <motion.p
@@ -103,10 +120,10 @@ export default function HomePage() {
               plugins={[plugin.current]}
               onMouseEnter={plugin.current.stop}
               onMouseLeave={plugin.current.reset}
-              className="w-full select-none"
+              className=" select-none"
             >
               <CarouselContent>
-                {Array.from({ length: 2 }).map((_, index) => (
+                {Array.from({ length: 1 }).map((_, index) => (
                   <CarouselItem key={index}>
                     <div className="bg-[url(/images/950_1x_shots_so.png)] shadow-md bg-cover rounded-md w-full h-[300px]">
                       <div className="h-full px-6 py-6 flex flex-col gap-4">
@@ -121,7 +138,7 @@ export default function HomePage() {
                           </p>
                         </div>
                         <div className="mt-auto">
-                          <Button className="bg-black text-white hover:bg-black/80">
+                          <Button className="bg-black text-white hover:bg-black/80" onClick={() => router.push("/createplan")}>
                             去试试 <ChevronsRight />
                           </Button>
                         </div>
@@ -134,9 +151,52 @@ export default function HomePage() {
               {isMobile ? null : <CarouselNext />}
             </Carousel>
           </motion.div>
-
-          {/* AI规划部分 */}
           <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: 0.3 }}
+              className="mt-10"
+            >
+              <div className="flex items-center justify-between mb-4">
+                <p className="text-xl font-bold">热门景点推荐</p>
+                <Button variant="ghost" size="sm" className="text-sm">
+                  查看更多
+                  <ChevronsRight className="ml-1 h-4 w-4" />
+                </Button>
+              </div>
+
+              <div className="flex md:grid md:grid-cols-4 gap-4 pb-2 overflow-x-auto snap-x snap-mandatory">
+                <SpotCard
+                  name={myRecommendScenicSpot?.sights?.[0]?.name}
+                  rating="5.0"
+                  description={myRecommendScenicSpot?.sights?.[0]?.address}
+                  imageUrl="/images/djt.jpeg"
+                />
+
+                <SpotCard
+                  name={myRecommendScenicSpot?.sights?.[1]?.name}
+                  rating="4.8"
+                  description={myRecommendScenicSpot?.sights?.[1]?.address}
+                  imageUrl="/images/djt.jpeg"
+                />
+
+                <SpotCard
+                  name={myRecommendScenicSpot?.sights?.[2]?.name}
+                  rating="4.7"
+                  description={myRecommendScenicSpot?.sights?.[2]?.address}
+                  imageUrl="/images/djt.jpeg"
+                />
+
+                <SpotCard
+                  name={myRecommendScenicSpot?.sights?.[3]?.name}
+                  rating="4.6"
+                  description={myRecommendScenicSpot?.sights?.[3]?.address}
+                  imageUrl="/images/djt.jpeg"
+                />
+              </div>
+            </motion.div>
+
+          {/* <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.2 }}
@@ -194,53 +254,7 @@ export default function HomePage() {
                 </div>
               </div>
             </div>
-          </motion.div>
-
-          {/* 热门景点推荐 */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: 0.3 }}
-            className="mt-10"
-          >
-            <div className="flex items-center justify-between mb-4">
-              <p className="text-xl font-bold">热门景点推荐</p>
-              <Button variant="ghost" size="sm" className="text-sm">
-                查看更多
-                <ChevronsRight className="ml-1 h-4 w-4" />
-              </Button>
-            </div>
-
-            <div className="flex md:grid md:grid-cols-4 gap-4 pb-2 overflow-x-auto snap-x snap-mandatory">
-              <SpotCard
-                name="哈尔滨冰雪大世界"
-                rating="5.0"
-                description="冬季最佳，冰灯艺术的盛宴"
-                imageUrl="/images/djt.jpeg"
-              />
-
-              <SpotCard
-                name="中央大街"
-                rating="4.8"
-                description="全年适宜，欧式建筑风情"
-                imageUrl="/images/djt.jpeg"
-              />
-
-              <SpotCard
-                name="索菲亚教堂"
-                rating="4.7"
-                description="全年适宜，巴洛克风格建筑"
-                imageUrl="/images/djt.jpeg"
-              />
-
-              <SpotCard
-                name="太阳岛风景区"
-                rating="4.6"
-                description="夏季最佳，自然风光与雕塑艺术"
-                imageUrl="/images/djt.jpeg"
-              />
-            </div>
-          </motion.div>
+          </motion.div> */}
 
           {/* 全景点展示 */}
           <motion.div
@@ -258,14 +272,26 @@ export default function HomePage() {
                 <div className="absolute inset-0 bg-[url(/images/bg-all-jd.png)] bg-cover bg-center"></div>
                 <div className="absolute inset-0 backdrop-blur-sm bg-black/30 flex flex-col items-center justify-center p-4">
                   <div className="text-white text-center">
-                    <h2 className="text-2xl md:text-3xl font-bold mb-2">不知道哈尔滨有什么？</h2>
-                    <p className="text-xl md:text-2xl font-semibold mt-1">哈尔滨全部景点</p>
+                    <h2 className="text-2xl md:text-3xl font-bold mb-2">
+                      不知道哈尔滨有什么？
+                    </h2>
+                    <p className="text-xl md:text-2xl font-semibold mt-1">
+                      哈尔滨全部景点
+                    </p>
                     <Button
+                      onClick={() => {
+                        if (isLogin) {
+                          router.push("/allScenicSpot");
+                        } else {
+                          router.push("/login");
+                        }
+                      }}
                       variant="outline"
                       size="lg"
                       className="mt-5 bg-white/10 backdrop-blur-sm hover:bg-white/20 hover:text-white"
                     >
-                      立即探索 <Navigation className="ml-1 h-4 w-4" />
+                      {isLogin ? "立即探索" : "立即登录"}{" "}
+                      <Navigation className="ml-1 h-4 w-4" />
                     </Button>
                   </div>
                 </div>

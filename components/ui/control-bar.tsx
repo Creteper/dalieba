@@ -21,7 +21,7 @@ export default function ControlBar({
   ...props
 }: {
   title?: string;
-  variant?: "link" | "default" | "outline" | "ghost";
+  variant?: "link" | "default" | "outline" | "ghost" | "reversalDefault";
   className?: string;
 } & Omit<React.ComponentProps<"div">, "title" | "className">) {
   // 使用CSS实现动画代替motion库

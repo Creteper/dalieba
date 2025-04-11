@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg width="48" height="48" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
     <g filter="url(#filter0_d)">
         <path d="M16 4C11.6 4 8 7.6 8 12C8 18 16 26 16 26C16 26 24 18 24 12C24 7.6 20.4 4 16 4ZM16 15C14.3 15 13 13.7 13 12C13 10.3 14.3 9 16 9C17.7 9 19 10.3 19 12C19 13.7 17.7 15 16 15Z" fill="#FF4B4B"/>
         <path d="M16 4C11.6 4 8 7.6 8 12C8 18 16 26 16 26C16 26 24 18 24 12C24 7.6 20.4 4 16 4ZM16 15C14.3 15 13 13.7 13 12C13 10.3 14.3 9 16 9C17.7 9 19 10.3 19 12C19 13.7 17.7 15 16 15Z" fill="url(#paint0_linear)"/>
@@ -15,8 +15,8 @@
             <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape"/>
         </filter>
         <linearGradient id="paint0_linear" x1="8" y1="4" x2="24" y2="26" gradientUnits="userSpaceOnUse">
-            <stop stop-color="#3B82F6"/>
-            <stop offset="1" stop-color="#3B82F6"/>
+            <stop stop-color="#fa694f"/>
+            <stop offset="1" stop-color="#fa694f"/>
         </linearGradient>
     </defs>
 </svg> 

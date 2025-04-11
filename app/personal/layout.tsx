@@ -2,7 +2,7 @@
  * @Author: ceteper 75122254@qq.com
  * @Date: 2025-03-25 12:01:47
  * @LastEditors: ceteper 75122254@qq.com
- * @LastEditTime: 2025-04-08 15:29:02
+ * @LastEditTime: 2025-04-10 16:44:19
  * @FilePath: \dalieba\app\personal\layout.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -52,8 +52,8 @@ export default function PersonalLayout({
   return (
     <div className="min-h-screen w-full bg-background flex flex-col">
       {/* 顶部导航栏 */}
-      <div className="px-20 flex items-center h-32">
-        <h1 className="text-3xl font-bold">个人中心</h1>
+      <div className="px-4 sm:px-20 flex items-center h-16 sm:h-32">
+        <h1 className="text-lg sm:text-3xl font-bold whitespace-nowrap">个人中心</h1>
         <div className="ml-auto flex gap-2 items-center">
           <motion.div
             initial={{ opacity: 0, y: -20 }}
@@ -63,11 +63,11 @@ export default function PersonalLayout({
           >
             <Button
               variant="ghost"
-              className="mr-4"
+              className="mr-2 sm:mr-4"
               onClick={() => router.push("/")}
             >
-              <ArrowLeft className="h-5 w-5" />
-              返回主页
+              <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5" />
+              <span className="hidden sm:inline">返回主页</span>
             </Button>
           </motion.div>
           <ControlBar className="static!" variant="outline" />

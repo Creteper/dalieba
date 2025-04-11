@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { MapContainer, TileLayer, useMap, Marker, Polyline } from 'react-leaflet'
 import { Icon } from 'leaflet'
 import 'leaflet/dist/leaflet.css'
@@ -274,6 +274,7 @@ interface MapImplProps {
     selectedMarker?: number | null
     onMarkerClose?: () => void
     onMapClick?: (e: L.LeafletMouseEvent) => void
+    onMarkerClick?: (marker: { position: [number, number], popup?: string, description?: string, title?: string }) => void
 }
 
 // 默认图标配置
@@ -286,8 +287,8 @@ function MapImpl({
     zoom = 13,
     maxZoom = 15,
     minZoom = 10,
-    titleMaxZoom = 15,    // 标题最大显示缩放级别
-    titleMinZoom = 12,    // 添加标题最小显示缩放级别
+    titleMaxZoom = 15,
+    titleMinZoom = 12,
     markers = [],
     showZoomLevel = true,
     className,
@@ -298,53 +299,83 @@ function MapImpl({
     routes = [],
     selectedMarker = null,
     onMarkerClose,
-    onMapClick
+    onMapClick,
+    onMarkerClick
 }: MapImplProps) {
-    const [selectedMarkerInfo, setSelectedMarkerInfo] = useState<{
+    const [hoveredMarker, setHoveredMarker] = useState<{
         content: string;
         description: string;
         position: { x: number; y: number };
     } | null>(null);
+    const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const mapRef = useRef<L.Map | null>(null);
 
-    // 处理标记点击
-    const handleMarkerClick = (e: L.LeafletMouseEvent, content: string, description: string) => {
+    // 处理标记悬停
+    const handleMarkerMouseOver = useCallback((e: L.LeafletMouseEvent, marker: { position: [number, number], popup?: string, description?: string, title?: string }) => {
+        if (hoverTimeoutRef.current) {
+            clearTimeout(hoverTimeoutRef.current);
+        }
+        
         const { containerPoint } = e;
-        setSelectedMarkerInfo({
-            content,
-            description,
+        setHoveredMarker({
+            content: marker.popup || '',
+            description: marker.description || '',
             position: {
                 x: containerPoint.x,
                 y: containerPoint.y
             }
         });
-    };
+    }, []);
 
-    // 处理视图改变
-    const handleViewChange = () => {
-        setSelectedMarkerInfo(null);
-        onMarkerClose?.();
-    };
-
-    // 自动显示选中的标记
-    useEffect(() => {
-        if (selectedMarker !== null && markers[selectedMarker]) {
-            const marker = markers[selectedMarker];
-            const map = document.querySelector('.leaflet-container');
-            if (map) {
-                const rect = map.getBoundingClientRect();
-                setSelectedMarkerInfo({
-                    content: marker.popup || '',
-                    description: marker.description || '',
-                    position: {
-                        x: rect.width / 2,
-                        y: rect.height / 2
-                    }
-                });
-            }
-        } else {
-            setSelectedMarkerInfo(null);
+    // 处理标记离开
+    const handleMarkerMouseOut = useCallback(() => {
+        if (hoverTimeoutRef.current) {
+            clearTimeout(hoverTimeoutRef.current);
         }
-    }, [selectedMarker, markers]);
+        hoverTimeoutRef.current = setTimeout(() => {
+            setHoveredMarker(null);
+        }, 100);
+    }, []);
+
+    // 更新提示框位置
+    const updatePopupPosition = useCallback(() => {
+        if (!hoveredMarker || !mapRef.current) return;
+
+        const marker = markers.find(m => m.popup === hoveredMarker.content);
+        if (!marker) return;
+
+        const point = mapRef.current.latLngToContainerPoint(marker.position);
+        setHoveredMarker(prev => prev ? {
+            ...prev,
+            position: {
+                x: point.x,
+                y: point.y
+            }
+        } : null);
+    }, [hoveredMarker, markers]);
+
+    // 监听地图移动事件
+    useEffect(() => {
+        if (!mapRef.current) return;
+
+        const map = mapRef.current;
+        map.on('move', updatePopupPosition);
+        map.on('zoom', updatePopupPosition);
+
+        return () => {
+            map.off('move', updatePopupPosition);
+            map.off('zoom', updatePopupPosition);
+        };
+    }, [updatePopupPosition]);
+
+    // 清理定时器
+    useEffect(() => {
+        return () => {
+            if (hoverTimeoutRef.current) {
+                clearTimeout(hoverTimeoutRef.current);
+            }
+        };
+    }, []);
 
     // 处理图标配置
     const getMarkerIcon = (markerIcon?: NonNullable<MapImplProps['markers']>[number]['icon']) => {
@@ -362,8 +393,9 @@ function MapImpl({
                 minZoom={minZoom}
                 zoomControl={false}
                 style={{ height: '100%', width: '100%' }}
+                ref={mapRef}
             >
-                <ChangeView center={center} zoom={zoom} onViewChange={handleViewChange} />
+                <ChangeView center={center} zoom={zoom} onViewChange={onMarkerClose} />
                 <MapEvents onDragStart={onDragStart} onDragEnd={onDragEnd} />
                 <MapClickHandler onClick={onMapClick} />
 
@@ -404,7 +436,9 @@ function MapImpl({
                             position={marker.position}
                             icon={getMarkerIcon(marker.icon)}
                             eventHandlers={{
-                                click: (e: any) => marker.popup && handleMarkerClick(e, marker.popup, marker.description || ''),
+                                mouseover: (e: any) => handleMarkerMouseOver(e, marker),
+                                mouseout: handleMarkerMouseOut,
+                                click: (e: any) => onMarkerClick?.(marker),
                             }}
                         />
                         {marker.title && (
@@ -419,16 +453,28 @@ function MapImpl({
                 ))}
             </MapContainer>
 
-            {selectedMarkerInfo && (
-                <CustomPopup
-                    content={selectedMarkerInfo.content}
-                    description={selectedMarkerInfo.description}
-                    position={selectedMarkerInfo.position}
-                    onClose={() => {
-                        setSelectedMarkerInfo(null);
-                        onMarkerClose?.();
+            {hoveredMarker && (
+                <div
+                    className="absolute z-[1000] transform -translate-x-1/2 -translate-y-full pointer-events-none"
+                    style={{
+                        left: hoveredMarker.position.x,
+                        top: hoveredMarker.position.y - 8,
                     }}
-                />
+                >
+                    <div className="relative">
+                        <div className="bg-background/80 backdrop-blur-sm rounded-lg shadow-lg pt-2 px-4">
+                            <div className="flex flex-col gap-2">
+                                <div className="flex items-start justify-between">
+                                    <span className="text-sm font-medium">{hoveredMarker.content}</span>
+                                </div>
+                                <p className="text-sm text-gray-500 pb-2">
+                                    {hoveredMarker.description}
+                                </p>
+                            </div>
+                        </div>
+                        <div className="absolute left-1/2 -translate-x-1/2 border-8 border-transparent border-t-background/80 backdrop-blur-sm" style={{ bottom: '-16px' }} />
+                    </div>
+                </div>
             )}
         </div>
     )

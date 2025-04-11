@@ -63,6 +63,7 @@ interface MapProps {
     selectedMarker?: number | null
     onMarkerClose?: () => void
     onMapClick?: (e: L.LeafletMouseEvent) => void
+    onMarkerClick?: (marker: { position: [number, number], popup?: string, description?: string, title?: string }) => void
 }
 
 // 导出 MapComponent 组件

@@ -2,7 +2,7 @@
  * @Author: Creteper 7512254@qq.com
  * @Date: 2025-03-19 13:59:54
  * @LastEditors: ceteper 75122254@qq.com
- * @LastEditTime: 2025-04-08 14:56:07
+ * @LastEditTime: 2025-04-10 16:20:00
  * @FilePath: \dalieba\app\login\page.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -103,9 +103,8 @@ export default function Login() {
     });
 
     if (!userNameError && !passwordError) {
-      // TODO: 处理登录逻辑
-      setIsLogIn(true);
       try {
+        setIsLogIn(true);
         const response = await userClient.Login<LoginResponse>(
           formData.username,
           formData.password
@@ -113,6 +112,7 @@ export default function Login() {
         if (response.code === 200) {
           toast.success("登录成功, 一秒后跳转主页");
           localStorage.setItem("token", response.token);
+          localStorage.setItem("user_id", response.user_id.toString());
           setTimeout(() => {
             router.push("/home");
           }, 1000);

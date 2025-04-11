@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 
 interface ModeToggleProps {
-  variant?: "default" | "outline" | "ghost" | "link"
+  variant?: "default" | "outline" | "ghost" | "link" | "reversalDefault"
   className?: string
 }
 

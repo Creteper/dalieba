@@ -113,10 +113,10 @@ export default function Setting() {
         </CardItem>
 
         <CardItem className="py-5 justify-between" hasBottom={true}>
-          <p>查看收藏路线</p>
+          <p>查看历史 AI 攻略</p>
           <Button variant="outline" className="">
             查看收藏
-          </Button>
+          </Button>q
         </CardItem>
         <CardItem className="justify-between py-5">
           <p>管理历史回答记录</p>

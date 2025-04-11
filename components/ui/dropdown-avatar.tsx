@@ -2,7 +2,7 @@
  * @Author: Creteper 7512254@qq.com
  * @Date: 2025-03-18 18:04:57
  * @LastEditors: ceteper 75122254@qq.com
- * @LastEditTime: 2025-04-08 15:06:19
+ * @LastEditTime: 2025-04-10 15:13:17
  * @FilePath: \dalieba\components\uiodropdawn-avatar.tsx
  * @Description: 用户下拉菜单
  */
@@ -100,41 +100,7 @@ export default function DropdownAvatar({
               <User className="h-4 w-4" />
               个人中心
             </DropdownMenuItem>
-            <DropdownMenuSub>
-              <DropdownMenuSubTrigger>
-                <div className="flex gap-2 items-center">
-                  <Bell className="h-4 w-4" />
-                  消息提醒
-                  <motion.div
-                    className="inline-block"
-                    initial={{ scale: 1 }}
-                    whileHover={{ scale: 1.2 }}
-                    whileTap={{ scale: 0.5 }}
-                    transition={{
-                      duration: 1,
-                      repeat: Infinity,
-                      repeatType: "reverse",
-                    }}
-                    animate={{ scale: 1.2 }}
-                  >
-                    <Badge className="ml-1 w-2! p-0 h-2 bg-red-500"></Badge>
-                  </motion.div>
-                </div>
-              </DropdownMenuSubTrigger>
-              <DropdownMenuPortal>
-                <DropdownMenuSubContent>
-                  <DropdownMenuItem>点赞</DropdownMenuItem>
-                  <DropdownMenuItem>关注</DropdownMenuItem>
-                  <DropdownMenuItem>收藏</DropdownMenuItem>
-                  <DropdownMenuItem>回复</DropdownMenuItem>
-                </DropdownMenuSubContent>
-              </DropdownMenuPortal>
-            </DropdownMenuSub>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => router.push("/community")}>
-              <Sprout className="h-4 w-4" />
-              Together Go!
-            </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => {
                 userClient.LogOut();
