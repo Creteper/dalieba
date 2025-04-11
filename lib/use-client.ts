@@ -79,4 +79,9 @@ export default class UserClient {
     const response = await this.usersFunc.LogOut(userInfo);
     return response as T;
   }
+
+  async UpdatePwd<T>(oldPwd: string, newPwd: string, repeatPwd: string): Promise<T> {
+    const response = await this.usersFunc.UpdatePwd(oldPwd, newPwd, repeatPwd);
+    return response as T;
+  }
 }

@@ -1,102 +1,88 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Getting Started
+# 十宗罪——徐某人全占工程师的故事
 
-First, run the development server:
+# 1. 贪婪
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+*  胁迫他人出去吃好吃的
+*  抢人打火机
+*  喝别人水 不自个买
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+# 2. 色欲
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- 自己功能没写完去找女的玩去了（20次 一次没成功过）
+- 大半夜开闪光灯和别人聊天
+- 教别人买避孕套
+- 教唆个任女朋友飞他家
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+# 3. 饕餮
 
-## 地图组件使用指南
+- 80块钱 ***麻辣香锅
+- 70块钱 ***麻辣烫
+- 教唆别人吃好吃的（一礼拜吃5次馆子）
 
-本项目集成了基于 Leaflet 的地图组件，可用于展示自定义地图瓦片和标记点。
+# 4. 妒忌
 
-### 安装依赖
+- 天天念叨梅赛德斯奔驰E300L
+- 兰德酷路泽fj
+- 小米su7 ultra
+- 苹果16 PRO MAX
+- 华为MATE 60 PRO +
 
-地图组件依赖于以下包：
-```bash
-npm install leaflet react-leaflet
-npm install --save-dev @types/leaflet
-```
+# 5. 懒惰
 
-### 组件使用方法
+- 置项目于水火之中
+- 画大饼 自个不干活
+-  ***电话！！！
+- 自个不买东西，专拿别人的（自个出去，不给带）
+- 床垫子
+- 听老师的建议表面答应（实则忘了）
+- Docker让别人部自己刷抖音
+- 至理名言： ***I don't give a shit.
+- 别人专心工作，骚扰别人出去抽烟
+- 老弟给我收拾一下电脑
+- 桌子一层烟油（擦不掉）
+- 吃完东西不收拾
+- 吃完扔别人桌子上了
+- 垃圾不扔
+- 塑料袋不扔
+- 烟灰弹地上
+- 桌子上现在还有圣遗物
 
-1. 基本使用：
-```tsx
-import MapComponent from '@/components/map/MapComponent'
+# 6. 傲慢
 
-<MapComponent 
-  className="h-[500px]" 
-  center={[45.75, 126.63]} // 纬度, 经度（默认为哈尔滨坐标）
-  zoom={13}                // 缩放级别（默认为13）
-/>
-```
+- `I don't give a shit.
+- 站在你面前的是.......
+	- 神话
+	- 5e 2300
+	- 双服宗师
+- 我手里拿的是 HUAWEI MATE 60 PRO +
+- 还得是........
+	- 小米
+	- 苹果
+	- 华为
+	- 酷路泽 FJ
+	- E300L
+	- su7 ultra
+	- yu7
+	- 还待挖掘
+# 7. 暴怒
 
-2. 添加标记点：
-```tsx
-<MapComponent 
-  className="h-[70vh]" 
-  markers={[
-    {
-      position: [45.7733, 126.6425],  // 纬度, 经度
-      popup: "索菲亚大教堂"           // 弹出信息（可选）
-    },
-    {
-      position: [45.7563, 126.6353],
-      popup: "中央大街"
-    }
-  ]}
-/>
-```
+- 怎么三个C啊
+- 怎么吃不到奶啊！！！！！！！！！！！！！！！！！！！！！！
+- 释然的笑
+- `Noway to win
+- ***I don’t give a shit
+- docker就是部不上我操你个血妈
+- 我要炸缸了
 
-3. 自定义瓦片服务器：
+# 8. 不睦
 
-地图组件默认使用以下瓦片服务URL：
-```
-http://localhost:3002/tiles/{z}/{x}/{y}/x={x}&y={y}&z={z}.png
-```
+- 待挖掘（暂未发现）
 
-确保您的瓦片服务已正确配置并在指定端口运行。
+# 9. 不义
 
-### 技术说明
+- 待挖掘（暂未发现）
 
-- 地图组件使用客户端渲染，确保与Next.js的SSR/SSG兼容
-- 支持响应式设计，可通过className调整尺寸
-- 支持深色模式适配
-- 自定义标记图标使用CDN资源，确保在各种环境下正常显示
+# 10. 内乱
 
-### 示例页面
-
-访问 `/map` 路径可以查看地图组件的完整示例实现。
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-
-## About
-
-大列巴项目正式启动，选择使用next js 框架和 tailwind css + shadcn ui 来制作
+- 待挖掘（暂未发现）

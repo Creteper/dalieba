@@ -28,7 +28,10 @@ import { useTheme } from "next-themes";
 import { Moon, Sun, Monitor } from "lucide-react";
 import { useEffect, useState } from "react";
 import UpdatePwd from "./components/updatePwd";
-
+import UserClient from "@/lib/use-client";
+import { UserInfoResponse } from "@/types/article";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 type CardItemProps = React.ComponentProps<"div"> & {
   hasTop?: boolean;
   hasBottom?: boolean;
@@ -54,11 +57,33 @@ export default function Setting() {
   const [pwdMode, setPwdMode] = useState("update");
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
-
+  const userClient = new UserClient()
+  const router = useRouter()
   // 只在客户端挂载后渲染主题切换按钮
   useEffect(() => {
     setMounted(true);
-  }, []);
+
+    async function getUserInfo() {
+      try {
+        const userInfo = await userClient.getUserInfo<UserInfoResponse>()
+        setUserEmail(userInfo.email)
+      } catch (error: any) {
+        toast.error("获取用户信息失败,", error.message)
+        router.push("/login")
+      }
+    }
+    getUserInfo()
+    }, []);
+
+  const handleLogout = async () => {
+    try {
+      await userClient.LogOut<UserInfoResponse>()
+      toast.success("退出登录成功")
+      router.push("/login")
+    } catch (error: any) {
+      toast.error("退出登录失败,", error.message)
+    }
+  }
 
   return (
     <Card className="w-full">
@@ -112,11 +137,11 @@ export default function Setting() {
           )}
         </CardItem>
 
-        <CardItem className="py-5 justify-between" hasBottom={true}>
+        {/* <CardItem className="py-5 justify-between" hasBottom={true}>
           <p>查看历史 AI 攻略</p>
           <Button variant="outline" className="">
             查看收藏
-          </Button>q
+          </Button>
         </CardItem>
         <CardItem className="justify-between py-5">
           <p>管理历史回答记录</p>
@@ -141,7 +166,7 @@ export default function Setting() {
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
-        </CardItem>
+        </CardItem> */}
         <CardItem
           hasTop={true}
           className="pt-5 flex flex-col md:flex-row md:items-center md:justify-between items-start gap-5"
@@ -166,7 +191,7 @@ export default function Setting() {
                   </DrawerDescription>
                 </DrawerHeader>
                 <DrawerFooter className="flex flex-col">
-                  <Button>确认</Button>
+                  <Button onClick={handleLogout}>确认</Button>
                   <DrawerClose asChild className="w-full">
                     <Button variant="outline" className="w-full">
                       取消

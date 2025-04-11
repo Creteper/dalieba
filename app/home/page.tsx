@@ -1,9 +1,8 @@
-
 /*
  * @Author: Creteper 7512254@qq.com
  * @Date: 2025-03-22 13:16:50
  * @LastEditors: ceteper 75122254@qq.com
- * @LastEditTime: 2025-04-11 08:37:19
+ * @LastEditTime: 2025-04-11 13:44:45
  * @FilePath: \dalieba\app\home\page.tsx
  * @Description: 用于显示首页内容
  */
@@ -31,10 +30,11 @@ import Autoplay from "embla-carousel-autoplay";
 import SearchBox from "@/components/home/search/search";
 import { useIsMobile } from "@/hooks/use-mobile";
 import UserClient from "@/lib/use-client";
-import { UserInfoResponse } from "@/types/article";
+import { UserInfoResponse, RecommendScenicSpotResponse, StarredScenicSpotResponse } from "@/types/article";
 import SpotCard from "@/components/home/componentsHome/spot-card";
 import ScenicSpot from "@/lib/scenic-spot";
-import { RecommendScenicSpotResponse } from "@/types/article";
+import { toast } from "sonner";
+
 export default function HomePage() {
   const [helloTitle, setHelloTitle] = useState("");
   const router = useRouter();
@@ -48,6 +48,8 @@ export default function HomePage() {
   const plugin = React.useRef(
     Autoplay({ delay: 5000, stopOnInteraction: true })
   );
+  const [starredIds, setStarredIds] = useState<number[]>([]);
+
   useEffect(() => {
     async function checkedToken() {
       const res = await userClient.verifyToken();
@@ -70,6 +72,73 @@ export default function HomePage() {
   useEffect(() => {
     console.log("状态更新:", myRecommendScenicSpot);
   }, [myRecommendScenicSpot]);
+
+  // 获取已收藏的景点
+  useEffect(() => {
+    const fetchStarredSpots = async () => {
+      if (isLogin) {
+        try {
+          const starredData = await scenicSpot.getStarredScenicSpot<{code: number, data: StarredScenicSpotResponse[]}>(); 
+          if (starredData.code === 0 && starredData.data) {
+            const ids = starredData.data.map(item => item.id);
+            setStarredIds(ids);
+          }
+        } catch (error) {
+          console.error("获取收藏景点失败", error);
+        }
+      }
+    };
+    
+    fetchStarredSpots();
+  }, [isLogin]);
+
+  // 处理收藏/取消收藏
+  const handleStarClick = async (id: number) => {
+    if (!isLogin) {
+      toast.error("请先登录");
+      router.push("/login");
+      return;
+    }
+
+    try {
+      // 找到对应的景点数据
+      const spot = myRecommendScenicSpot?.sights?.find(s => s.id === id);
+      if (!spot) {
+        toast.error("景点数据不存在");
+        return;
+      }
+
+      const spotData: StarredScenicSpotResponse = {
+        id: spot.id,
+        pname: spot.pname || "",
+        city_name: spot.city_name || "",
+        adname: spot.adname || "",
+        name: spot.name || "",
+        address: spot.address || "",
+        localtion: spot.localtion || ""
+      };
+
+      if (starredIds.includes(id)) {
+        // 取消收藏
+        await scenicSpot.deleteStarredScenicSpot(spotData);
+        setStarredIds(prev => prev.filter(itemId => itemId !== id));
+        toast.success("已取消收藏");
+      } else {
+        // 添加收藏
+        await scenicSpot.addStarredScenicSpot(spotData);
+        setStarredIds(prev => [...prev, id]);
+        toast.success("已添加到收藏");
+      }
+    } catch (error) {
+      toast.error("操作失败，请重试");
+    }
+  };
+
+  // 处理点击景点卡片
+  const handleSpotClick = (id: number, name: string) => {
+    // 跳转到景点详情页
+    router.push(`/${id}`);
+  };
 
   return (
     <div className="w-full min-h-screen bg-background">
@@ -159,40 +228,32 @@ export default function HomePage() {
             >
               <div className="flex items-center justify-between mb-4">
                 <p className="text-xl font-bold">热门景点推荐</p>
-                <Button variant="ghost" size="sm" className="text-sm">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="text-sm"
+                  onClick={() => router.push("/allScenicSpotCard")}
+                >
                   查看更多
                   <ChevronsRight className="ml-1 h-4 w-4" />
                 </Button>
               </div>
 
-              <div className="flex md:grid md:grid-cols-4 gap-4 pb-2 overflow-x-auto snap-x snap-mandatory">
-                <SpotCard
-                  name={myRecommendScenicSpot?.sights?.[0]?.name}
-                  rating="5.0"
-                  description={myRecommendScenicSpot?.sights?.[0]?.address}
-                  imageUrl="/images/djt.jpeg"
-                />
-
-                <SpotCard
-                  name={myRecommendScenicSpot?.sights?.[1]?.name}
-                  rating="4.8"
-                  description={myRecommendScenicSpot?.sights?.[1]?.address}
-                  imageUrl="/images/djt.jpeg"
-                />
-
-                <SpotCard
-                  name={myRecommendScenicSpot?.sights?.[2]?.name}
-                  rating="4.7"
-                  description={myRecommendScenicSpot?.sights?.[2]?.address}
-                  imageUrl="/images/djt.jpeg"
-                />
-
-                <SpotCard
-                  name={myRecommendScenicSpot?.sights?.[3]?.name}
-                  rating="4.6"
-                  description={myRecommendScenicSpot?.sights?.[3]?.address}
-                  imageUrl="/images/djt.jpeg"
-                />
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {myRecommendScenicSpot?.sights?.slice(0, 4).map((spot, index) => (
+                  <SpotCard
+                    key={index}
+                    id={spot.id || index + 1}
+                    name={spot.name || `景点${index + 1}`}
+                    rating={(4.5 - index * 0.1).toFixed(1)}
+                    description={spot.address || "哈尔滨热门景点"}
+                    imageUrl="/images/djt.jpeg"
+                    isStarred={starredIds.includes(spot.id || index + 1)}
+                    onStarClick={(id) => handleStarClick(id)}
+                    onClick={() => handleSpotClick(spot.id || index + 1, spot.name || `景点${index + 1}`)}
+                    className="w-full h-full"
+                  />
+                ))}
               </div>
             </motion.div>
 

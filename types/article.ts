@@ -107,3 +107,15 @@ export type PlanDetailResponse = {
   }[],
   status: number,
 }
+
+export type StarredScenicSpotResponse = {
+  id: number;
+  pname: string;
+  city_name: string;
+  adname: string;
+  name: string;
+  address: string;
+  localtion: string;
+}
+
+
