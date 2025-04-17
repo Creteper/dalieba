@@ -161,7 +161,12 @@ export default function CreatePlanPage() {
       return;
     }
     const message = `哈尔滨${days}天攻略 ${budget}元预算，偏好:“${preference}”`;
-    const res = await aiChat.createPlan<CreatePlanResponse>(userId, message, "哈尔滨市", message);
+    const res = await aiChat.createPlan<CreatePlanResponse>(
+      userId,
+      message + ScenicSpot,
+      "哈尔滨市",
+      message
+    );
     if (res.status === 200) {
       toast.success("攻略生成成功");
       router.push("/createplan/" + message);
