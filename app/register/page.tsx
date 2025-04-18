@@ -377,22 +377,6 @@ export default function Register() {
           </div>
         </div>
       </motion.div>
-
-      <div className="text-muted-foreground text-xs fixed bottom-12 left-0 right-0 text-center z-10">
-        <p>
-          注册即表示同意
-          <Link href="/terms" className="hover:text-primary transition-colors">
-            《用户协议》
-          </Link>
-          和
-          <Link
-            href="/privacy"
-            className="hover:text-primary transition-colors"
-          >
-            《隐私政策》
-          </Link>
-        </p>
-      </div>
     </div>
   );
 }

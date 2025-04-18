@@ -2,7 +2,7 @@
  * @Author: Creteper 7512254@qq.com
  * @Date: 2025-03-22 13:16:50
  * @LastEditors: ceteper 75122254@qq.com
- * @LastEditTime: 2025-04-17 12:45:34
+ * @LastEditTime: 2025-04-18 15:26:10
  * @FilePath: \dalieba\app\home\page.tsx
  * @Description: 用于显示首页内容
  */
@@ -47,9 +47,12 @@ import SpotCard from "@/components/home/componentsHome/spot-card";
 import ScenicSpot from "@/lib/scenic-spot";
 import { toast } from "sonner";
 import CalcTime from "@/components/home/componentsHome/calc-time";
-import TripCard from "@/components/home/componentsHome/tripCard";
+import TripCard, {
+  TripCardType,
+} from "@/components/home/componentsHome/tripCard";
 import { ServerConfig } from "@/lib/site";
 import { ReplaceParentheses } from "@/lib/scenic-spot";
+import { tripData } from "@/lib/data-static";
 
 export default function HomePage() {
   const [helloTitle, setHelloTitle] = useState("");
@@ -185,6 +188,10 @@ export default function HomePage() {
     } else {
       router.push("/login");
     }
+  };
+
+  const handleRouteClick = (item: TripCardType) => {
+    router.push("/routeRecommend/" + item.id);
   };
 
   return (
@@ -460,7 +467,7 @@ export default function HomePage() {
               </Button>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {isLoading
                 ? Array.from({ length: 4 }).map((_, index) => (
                     <Skeleton
@@ -531,7 +538,7 @@ export default function HomePage() {
                 </TabsTrigger>
               </TabsList>
               <TabsContent value="parkinglot" className="w-full">
-                <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4 w-full">
+                <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
                   {parkinglotData.map((item) => (
                     <SpotCard
                       description=""
@@ -565,7 +572,7 @@ export default function HomePage() {
                 </div>
               </TabsContent>
               <TabsContent value="food">
-                <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4 w-full">
+                <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
                   {foodData.map((item) => (
                     <SpotCard
                       description={item.description || ""}
@@ -583,7 +590,7 @@ export default function HomePage() {
               </TabsContent>
               <TabsContent value="traffic">
                 <div className="mt-4">
-                  <div className="grid grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     <CalcTime
                       type="taxi"
                       icon={<Car className="h-6 w-6" />}
@@ -622,42 +629,24 @@ export default function HomePage() {
               </Button>
             </div>
 
-            <div className="mt-4">
+            <div className="mt-4 mb-10">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <TripCard
-                  title="哈尔滨 3 日游"
-                  days={3}
-                  location="哈尔滨"
-                  bestSeason="冬季"
-                  highlights="中央大街、冰雪大世界、松花江滑雪..."
-                  image="/images/bg-mountain.png"
-                />
-                <TripCard
-                  title="哈尔滨 2 日游"
-                  days={2}
-                  location="长白山"
-                  bestSeason="四季皆宜"
-                  highlights="天池、瀑布群、温泉度假..."
-                  image="/images/bg-all-jd.png"
-                />
-                <TripCard
-                  title="City Walk：中央大街"
-                  days={1}
-                  location="哈尔滨"
-                  bestSeason="四季皆宜"
-                  highlights="中央大街、索菲亚教堂、防洪纪念塔..."
-                  image="/images/djt.jpeg"
-                  type="cityWalk"
-                />
-                <TripCard
-                  title="City Walk：松花江畔"
-                  days={1}
-                  location="哈尔滨"
-                  bestSeason="夏秋季"
-                  highlights="斯大林公园、防洪纪念塔、松花江风光带..."
-                  image="/images/210shots_so.png"
-                  type="cityWalk"
-                />
+                {tripData.map((item) => {
+                  return (
+                    <TripCard
+                      onClick={(item) => handleRouteClick(item)}
+                      key={item.id}
+                      id={item.id}
+                      title={item.title}
+                      days={item.days}
+                      location={item.location}
+                      bestSeason={item.bestSeason}
+                      highlights={item.highlights}
+                      image={item.image}
+                      type={item.type}
+                    />
+                  );
+                })}
               </div>
             </div>
           </motion.div>

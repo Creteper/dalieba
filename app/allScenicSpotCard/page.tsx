@@ -23,6 +23,7 @@ import {
   MapPinIcon,
   X,
 } from "lucide-react";
+import { ReplaceParentheses } from "@/lib/scenic-spot";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
@@ -283,13 +284,13 @@ export default function AllScenicSpotCardPage() {
       className="min-h-screen bg-background pb-20"
     >
       {/* 顶部导航栏 */}
-      <div className="sticky top-0 z-50 w-full bg-background/80 backdrop-blur-md border-b border-border/20 shadow-sm">
+      <div className="sticky top-0 z-50 w-full bg-background/80 backdrop-blur-md border-b border-border">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center">
             <Button
-              variant="ghost"
+              variant="outline"
               size="icon"
-              className="mr-2"
+              className="mr-4"
               onClick={() => router.back()}
             >
               <ArrowLeft className="h-5 w-5" />
@@ -328,12 +329,12 @@ export default function AllScenicSpotCardPage() {
               transition={{ duration: 0.2 }}
               className="container mx-auto px-4 pb-4 pt-2 overflow-hidden"
             >
-              <Command className="w-full border rounded-lg overflow-hidden shadow-md">
+              <Command className="w-full border rounded-lg overflow-hidden">
                 <CommandInput
                   placeholder="搜索景点..."
                   value={searchQuery}
                   onValueChange={setSearchQuery}
-                  className="h-10"
+                  className="h-10 shadow-none!"
                 />
                 {searchQuery && (
                   <div className="max-h-[200px] overflow-y-auto">
@@ -371,7 +372,7 @@ export default function AllScenicSpotCardPage() {
               transition={{ duration: 0.2 }}
               className="container mx-auto px-4 pb-4 pt-2 overflow-hidden"
             >
-              <div className="bg-background/80 border rounded-lg p-3 shadow-md">
+              <div className="bg-background/80 border rounded-lg p-3">
                 <div className="flex items-center justify-between mb-2">
                   <h3 className="text-sm font-medium">按区域筛选</h3>
                   {selectedDistrict && (
@@ -484,7 +485,10 @@ export default function AllScenicSpotCardPage() {
                   rating={(4.5 - Math.random() * 0.5).toFixed(1)}
                   description={spot.address || "哈尔滨景点"}
                   imageUrl={
-                    ServerConfig.userApiUrl + "/img/" + spot.name + ".jpg"
+                    ServerConfig.userApiUrl +
+                    "/img/" +
+                    ReplaceParentheses(spot.name) +
+                    ".jpg"
                   }
                   isStarred={starredIds.includes(spot.id)}
                   onStarClick={(id) => handleStarToggle(id)}

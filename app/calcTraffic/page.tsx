@@ -2,7 +2,7 @@
  * @Author: ceteper 75122254@qq.com
  * @Date: 2025-04-16 18:23:49
  * @LastEditors: ceteper 75122254@qq.com
- * @LastEditTime: 2025-04-16 19:47:25
+ * @LastEditTime: 2025-04-17 14:53:18
  * @FilePath: \dalieba\app\calcTraffic\page.tsx
  * @Description: 用于计算出行时间
  */
@@ -18,6 +18,7 @@ import {
   Navigation,
   Route,
   Clock,
+  ArrowLeft,
 } from "lucide-react";
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -34,8 +35,15 @@ export default function CalcTrafficPage() {
       {/* 顶部导航栏 */}
       <header className="w-full h-16 fixed top-0 bg-background/90 backdrop-blur-sm shadow-sm z-50 flex justify-center">
         <div className="container max-w-7xl px-4 h-full flex items-center justify-between">
-          <div className="flex items-center">
-            <img src="/images/logo.svg" alt="Logo" className="w-8 h-8 mr-3" />
+          <div className="flex items-center gap-4">
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => router.push("/")}
+            >
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
+            <img src="/images/logo.svg" alt="Logo" className="w-8 h-8" />
             <h1 className="text-xl font-bold">GO! TOGETHER</h1>
           </div>
           <ControlBar variant="outline" className="static" />
@@ -60,9 +68,6 @@ export default function CalcTrafficPage() {
               <span className="text-sm">为您提供更精确的时间规划</span>
             </div>
           </div>
-          <Button variant="outline" onClick={() => router.push("/")}>
-            返回主页
-          </Button>
           {/* 时间计算器 */}
           <div className="flex justify-center w-full">
             <div className="w-full max-w-3xl mx-auto bg-muted/30 rounded-xl p-8 border shadow-sm">

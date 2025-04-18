@@ -2,7 +2,7 @@
  * @Author: ceteper 75122254@qq.com
  * @Date: 2025-04-16 19:50:08
  * @LastEditors: ceteper 75122254@qq.com
- * @LastEditTime: 2025-04-17 12:31:11
+ * @LastEditTime: 2025-04-17 15:36:12
  * @FilePath: \dalieba\app\routeRecommend\page.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -13,7 +13,9 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeftIcon } from "lucide-react";
 import ControlBar from "@/components/ui/control-bar";
 import { useRouter } from "next/navigation";
-import TripCard from "@/components/home/componentsHome/tripCard";
+import TripCard, {
+  TripCardType,
+} from "@/components/home/componentsHome/tripCard";
 import { useEffect, useState } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { tripData } from "@/lib/data-static";
@@ -27,10 +29,10 @@ export default function RouteRecommendPage() {
     setMounted(true);
   }, []);
 
-  const handleTripCardClick = (item: any) => {
+  const handleTripCardClick = (item: TripCardType) => {
     console.log("点击了", item);
     // 这里可以跳转到详情页面
-    // router.push(`/routeDetail/${item.id}`);
+    router.push(`/routeRecommend/${item.id}`);
   };
 
   return (
@@ -68,7 +70,11 @@ export default function RouteRecommendPage() {
           <TabsContent value="all">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {tripData.map((trip) => (
-                <TripCard key={trip.id} {...trip} />
+                <TripCard
+                  onClick={() => handleTripCardClick(trip)}
+                  key={trip.id}
+                  {...trip}
+                />
               ))}
             </div>
           </TabsContent>
@@ -77,7 +83,11 @@ export default function RouteRecommendPage() {
               {tripData.map(
                 (trip) =>
                   trip.type === "cityWalk" && (
-                    <TripCard key={trip.id} {...trip} />
+                    <TripCard
+                      onClick={() => handleTripCardClick(trip)}
+                      key={trip.id}
+                      {...trip}
+                    />
                   )
               )}
             </div>
@@ -87,7 +97,11 @@ export default function RouteRecommendPage() {
               {tripData.map(
                 (trip) =>
                   trip.type === "regular" && (
-                    <TripCard key={trip.id} {...trip} />
+                    <TripCard
+                      onClick={() => handleTripCardClick(trip)}
+                      key={trip.id}
+                      {...trip}
+                    />
                   )
               )}
             </div>

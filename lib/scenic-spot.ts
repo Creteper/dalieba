@@ -98,6 +98,34 @@ export default class ScenicSpot {
     console.log("删除收藏响应:", res.data);
     return res.data as T;
   }
+
+  public async getScenicSpotPathBox<T>(
+    origin: string,
+    destination: string
+  ): Promise<T> {
+    try {
+      this.http.setHeaders({
+        "Content-Type": "application/json",
+      });
+      if (typeof window !== "undefined") {
+        this.http.setAuthToken(localStorage.getItem("token") || "");
+      }
+
+      // 使用POST请求代替GET请求发送数据
+      const requestData = {
+        origin: origin,
+        destination: destination,
+      };
+
+      console.log("发送路径规划请求:", requestData);
+      const res = await this.http.post("/search", requestData);
+
+      console.log("路径规划API响应:", res.data);
+      return res.data as T;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 export function ReplaceParentheses(str: string) {

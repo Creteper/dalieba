@@ -3,7 +3,8 @@
 import { cn } from "@/lib/utils";
 import { MapPin, Clock, Calendar, Footprints } from "lucide-react";
 
-export interface TripCardProps {
+interface TripCardProps {
+  id: number;
   title: string;
   days: number;
   nights?: number;
@@ -16,7 +17,21 @@ export interface TripCardProps {
   onClick?: (tripData: Omit<TripCardProps, "onClick" | "className">) => void;
 }
 
+export interface TripCardType {
+  title: string;
+  days: number;
+  nights?: number;
+  location: string;
+  bestSeason: string;
+  highlights: string;
+  image: string;
+  className?: string;
+  type?: "regular" | "cityWalk";
+  id: number;
+}
+
 export default function TripCard({
+  id,
   title,
   days,
   nights = days - 1,
@@ -36,6 +51,7 @@ export default function TripCard({
 
   // 创建要传递给onClick的数据对象
   const tripData = {
+    id,
     title,
     days,
     nights,
@@ -48,6 +64,7 @@ export default function TripCard({
 
   return (
     <div
+      data-id={id}
       onClick={() => onClick?.(tripData)}
       className={cn(
         "w-full h-[200px] rounded-lg shadow-lg overflow-hidden relative group hover:shadow-xl transition-all duration-300",

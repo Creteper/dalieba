@@ -163,3 +163,13 @@ export function calculateDistance(
 
   return distance;
 }
+
+/**
+ * 将经纬度转换成 纬度,经度 格式
+ * @param lat 纬度
+ * @param lon 经度
+ * @returns 纬度,经度 格式
+ */
+export function convertToPos(lat: number, lon: number): [number, number] {
+  return [lat, lon];
+}

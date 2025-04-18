@@ -2,7 +2,7 @@
  * @Author: ceteper 75122254@qq.com
  * @Date: 2025-04-10 10:15:44
  * @LastEditors: ceteper 75122254@qq.com
- * @LastEditTime: 2025-04-16 18:09:36
+ * @LastEditTime: 2025-04-18 15:24:38
  * @FilePath: \dalieba\app\allScenicSpot\page.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -360,9 +360,12 @@ export default function AllScenicSpotPage() {
         className="w-full h-full rounded-md shadow-xl border border-border/20 z-10"
         center={center}
         zoom={zoom}
-        maxZoom={17}
-        minZoom={13}
+        maxZoom={18}
+        minZoom={12}
+        titleMaxZoom={18}
+        titleMinZoom={14}
         markers={points.map((point) => ({
+          title: point.name,
           position: point.location,
           popup: point.name,
           description: point.description,
@@ -433,7 +436,7 @@ export default function AllScenicSpotPage() {
           }}
           whileTap={{ scale: 0.95 }}
           onClick={() => router.push("/")}
-          className="px-4 py-2 rounded-full bg-gradient-to-r from-primary/90 to-primary/80 text-white flex items-center gap-2 shadow-lg border border-primary/20"
+          className="px-4 py-2 rounded-full dark:bg-gradient-to-r dark:from-background/90 dark:to-background/80 bg-gradient-to-r from-primary/90 to-primary/80 text-white flex items-center gap-2 shadow-lg border border-primary/20"
         >
           <Home className="h-4 w-4" />
           <span className="text-sm font-medium">返回首页</span>

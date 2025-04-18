@@ -2,7 +2,7 @@
  * @Author: ceteper 75122254@qq.com
  * @Date: 2025-04-02 15:39:27
  * @LastEditors: ceteper 75122254@qq.com
- * @LastEditTime: 2025-04-16 19:36:06
+ * @LastEditTime: 2025-04-17 15:36:37
  * @FilePath: \dalieba\components\home\componentsHome\spot-card.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -54,7 +54,7 @@ function StaticSpotCard({
   return (
     <div
       className={cn(
-        "group flex-shrink-0 min-w-[220px] md:w-auto rounded-xl shadow-md overflow-hidden snap-start cursor-pointer border border-transparent hover:border-primary/20 transition-all duration-300",
+        "group flex-shrink-0 md:w-auto rounded-xl shadow-md overflow-hidden snap-start cursor-pointer border border-transparent hover:border-primary/20 transition-all duration-300",
         "bg-background", // 静态默认为亮色主题
         className
       )}
