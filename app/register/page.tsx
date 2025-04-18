@@ -14,16 +14,22 @@ import { toast } from "sonner";
 import UserClient from "@/lib/use-client";
 import { RegisterResponse } from "@/types/article";
 import { useRouter } from "next/navigation";
+import { ModeToggle } from "@/components/theme/ThemeToggle";
 
 export default function Register() {
-  const { setTheme } = useTheme();
   const router = useRouter();
 
   const userClient = new UserClient();
   const [isRegister, setIsRegister] = useState(false);
   useEffect(() => {
-    setTheme("dark");
-  }, [setTheme]);
+    const checkToken = async () => {
+      const isValid = await userClient.verifyToken();
+      if (isValid) {
+        router.push("/home");
+      }
+    };
+    checkToken();
+  }, []);
 
   const [formData, setFormData] = useState({
     username: "",
@@ -222,6 +228,7 @@ export default function Register() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
+        <ModeToggle className="fixed top-4 right-4" />
         {/* Logo */}
         <div className="text-center">
           <h1 className="text-4xl font-bold">Go! Together</h1>
@@ -343,7 +350,8 @@ export default function Register() {
           </div>
 
           <div className="mt-8">
-            <Button className="w-full h-12"
+            <Button
+              className="w-full h-12"
               disabled={isRegister}
               onClick={handleSubmit}
             >

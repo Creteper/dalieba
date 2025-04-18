@@ -1,9 +1,8 @@
-
 /*
  * @Author: ceteper 75122254@qq.com
  * @Date: 2025-04-11 08:35:21
  * @LastEditors: ceteper 75122254@qq.com
- * @LastEditTime: 2025-04-11 12:24:13
+ * @LastEditTime: 2025-04-16 13:47:49
  * @FilePath: \dalieba\app\createplan\page.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -16,7 +15,17 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight, Plus, Minus, MapPin, Calendar, Wallet, Heart, Home } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Plus,
+  Minus,
+  MapPin,
+  Calendar,
+  Wallet,
+  Heart,
+  Home,
+} from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import ControlBar from "@/components/ui/control-bar";
@@ -25,10 +34,10 @@ import { CreatePlanResponse } from "@/types/article";
 type Preference = "游玩" | "综合" | "观景" | "美食";
 
 const preferenceIcons = {
-  "游玩": "🎮",
-  "综合": "🌟",
-  "观景": "🏞️",
-  "美食": "🍜"
+  游玩: "🎮",
+  综合: "🌟",
+  观景: "🏞️",
+  美食: "🍜",
 };
 
 const ScenicSpot = `
@@ -124,7 +133,7 @@ const ScenicSpot = `
 上坞沙滩戏雪乐园
 圣清观
 火车主题广场-中东铁路印象馆
-天恒山冰雪运动大世界(暂停营业)`
+天恒山冰雪运动大世界(暂停营业)`;
 
 export default function CreatePlanPage() {
   const router = useRouter();
@@ -184,7 +193,7 @@ export default function CreatePlanPage() {
       transition={{ delay: 0.2 }}
     >
       <div className="w-full h-screen bg-black/70 flex items-center justify-center">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="container max-w-2xl mx-auto py-8 px-4 relative"
@@ -200,8 +209,8 @@ export default function CreatePlanPage() {
             <Home className="h-5 w-5" />
             <span className="text-sm font-medium">返回主页</span>
           </motion.button>
-          
-          <motion.h1 
+
+          <motion.h1
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
@@ -209,15 +218,15 @@ export default function CreatePlanPage() {
           >
             创建AI攻略
           </motion.h1>
-          
-          <motion.div 
+
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4 }}
             className="space-y-8"
           >
             {/* 预算输入 */}
-            <motion.div 
+            <motion.div
               whileHover={{ scale: 1 }}
               className="space-y-2 p-4 rounded-lg bg-card backdrop-blur-sm border border-border/50"
             >
@@ -235,7 +244,7 @@ export default function CreatePlanPage() {
             </motion.div>
 
             {/* 偏好选择 */}
-            <motion.div 
+            <motion.div
               whileHover={{ scale: 1 }}
               className="space-y-2 p-4 rounded-lg bg-card backdrop-blur-sm border border-border/50"
             >
@@ -256,8 +265,13 @@ export default function CreatePlanPage() {
                     className="flex items-center space-x-2 p-2 rounded-lg hover:bg-primary/10 transition-colors"
                   >
                     <RadioGroupItem value={item} id={item} />
-                    <Label htmlFor={item} className="text-lg cursor-pointer flex items-center gap-2">
-                      <span className="text-2xl">{preferenceIcons[item as Preference]}</span>
+                    <Label
+                      htmlFor={item}
+                      className="text-lg cursor-pointer flex items-center gap-2"
+                    >
+                      <span className="text-2xl">
+                        {preferenceIcons[item as Preference]}
+                      </span>
                       {item}
                     </Label>
                   </motion.div>
@@ -266,7 +280,7 @@ export default function CreatePlanPage() {
             </motion.div>
 
             {/* 天数选择 */}
-            <motion.div 
+            <motion.div
               whileHover={{ scale: 1 }}
               className="space-y-2 p-4 rounded-lg bg-card backdrop-blur-sm border border-border/50"
             >
@@ -283,7 +297,7 @@ export default function CreatePlanPage() {
                 >
                   <Minus className="h-6 w-6" />
                 </motion.button>
-                
+
                 <div className="relative">
                   <AnimatePresence mode="wait">
                     {isEditingDays ? (
@@ -296,7 +310,9 @@ export default function CreatePlanPage() {
                         <Input
                           type="number"
                           value={days}
-                          onChange={(e) => handleDaysChange(Number(e.target.value))}
+                          onChange={(e) =>
+                            handleDaysChange(Number(e.target.value))
+                          }
                           onBlur={() => setIsEditingDays(false)}
                           className="w-20 h-12 text-center text-2xl"
                           autoFocus
@@ -330,7 +346,7 @@ export default function CreatePlanPage() {
             </motion.div>
 
             {/* 地点显示 */}
-            <motion.div 
+            <motion.div
               whileHover={{ scale: 1 }}
               className="space-y-2 p-4 rounded-lg bg-card backdrop-blur-sm border border-border/50"
             >
@@ -338,7 +354,7 @@ export default function CreatePlanPage() {
                 <MapPin className="h-5 w-5 text-primary" />
                 <Label className="text-lg">地点</Label>
               </div>
-              <motion.div 
+              <motion.div
                 whileHover={{ scale: 1 }}
                 className="h-12 flex items-center justify-center text-xl font-bold text-primary bg-primary/10 rounded-lg"
               >
@@ -347,7 +363,7 @@ export default function CreatePlanPage() {
             </motion.div>
 
             {/* 提交按钮 */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6 }}
@@ -371,7 +387,11 @@ export default function CreatePlanPage() {
                     >
                       <motion.div
                         animate={{ rotate: 360 }}
-                        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                        transition={{
+                          duration: 1,
+                          repeat: Infinity,
+                          ease: "linear",
+                        }}
                         className="h-5 w-5 border-2 border-current border-t-transparent rounded-full"
                       />
                       生成中...

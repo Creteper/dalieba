@@ -10,11 +10,9 @@ import type { Metadata } from "next";
 import HomePage from "./page";
 export const metadata: Metadata = {
   title: "Go! Together 出去玩？ 走！",
-  description: "Go ! Together 首页"
-}
+  description: "Go ! Together 首页",
+};
 
 export default function HomeLayOut() {
-  return (
-    <HomePage />
-  )
+  return <HomePage />;
 }

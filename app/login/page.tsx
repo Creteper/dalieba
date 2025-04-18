@@ -2,7 +2,7 @@
  * @Author: Creteper 7512254@qq.com
  * @Date: 2025-03-19 13:59:54
  * @LastEditors: ceteper 75122254@qq.com
- * @LastEditTime: 2025-04-10 16:20:00
+ * @LastEditTime: 2025-04-16 19:27:56
  * @FilePath: \dalieba\app\login\page.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -21,17 +21,15 @@ import { useRouter } from "next/navigation";
 import UserClient from "@/lib/use-client";
 import { toast } from "sonner";
 import { LoginResponse } from "@/types/article";
+import { ModeToggle } from "@/components/theme/ThemeToggle";
 
 export default function Login() {
-  const { setTheme } = useTheme();
   const router = useRouter();
   const userClient = new UserClient();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isLogIn, setIsLogIn] = useState(false);
   useEffect(() => {
-    setTheme("dark");
-
     const checkToken = async () => {
       const isValid = await userClient.verifyToken();
       if (isValid) {
@@ -41,7 +39,7 @@ export default function Login() {
     };
 
     checkToken();
-  }, [setTheme]);
+  }, []);
 
   const [formData, setFormData] = useState({
     username: "",
@@ -202,6 +200,7 @@ export default function Login() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
+        <ModeToggle className="fixed top-4 right-4" />
         {/* Logo */}
         <div className="text-center">
           <div className="w-full flex items-center justify-center mb-2">
@@ -278,11 +277,7 @@ export default function Login() {
               onClick={handleSubmit}
               disabled={isLogIn}
             >
-              {isLogIn ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                "登录"
-              )}
+              {isLogIn ? <Loader2 className="w-4 h-4 animate-spin" /> : "登录"}
             </Button>
           </div>
 

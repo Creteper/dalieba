@@ -1,0 +1,143 @@
+export const parkinglotData = [
+  {
+    id: 1,
+    name: "北广场地下停车场",
+    address: "哈尔滨市道里区安宁街与地工街交叉口南60米",
+    imageUrl: "/parlot/bgcdxtcc.jpg",
+    rating: 4.5,
+  },
+  {
+    id: 2,
+    name: "新一百地面停车场",
+    address: "哈尔滨市道里区石头道街118号哈尔滨新一百(西北角)",
+    imageUrl: "/parlot/xybdmtcc.jpg",
+    rating: 4.0,
+  },
+  {
+    id: 3,
+    name: "天竹快捷宾馆地下停车场",
+    address: "哈尔滨市南岗区松花江街6号天竹宾馆(哈尔大巴店)",
+    imageUrl: "/parlot/tzkjbgdxtcc.jpg",
+    rating: 4.5,
+  },
+  {
+    id: 4,
+    name: "青年广场停车场",
+    address: "哈尔滨市南岗区哈尔滨站地铁站3号口步行440米",
+    imageUrl: "/parlot/qngctcc.jpg",
+    rating: 4.5,
+  },
+];
+
+export const hotelData = [
+  {
+    id: 1,
+    name: "白玉兰酒店(哈尔滨医大一院店)",
+    address: "哈尔滨市道外区南坎街56号天鹅大厦院内",
+    imageUrl: "/hotel/byljd.jpg",
+    rating: 4.6,
+    description: "经济型",
+  },
+  {
+    id: 2,
+    name: "恒旗假日宾馆(果戈里秋林店)",
+    address: "哈尔滨市南岗区人和街112号",
+    imageUrl: "/hotel/hqjrbg.jpg",
+    rating: 4.2,
+    description: "经济型",
+  },
+  {
+    id: 3,
+    name: "鑫岭宾馆(博物馆店)",
+    address: "哈尔滨市南岗区阿什河街66号",
+    imageUrl: "/hotel/xljd.jpg",
+    description: "经济型",
+    rating: 4.7,
+  },
+  {
+    id: 4,
+    name: "如家酒店",
+    address: "哈尔滨市南岗区文林街101号",
+    imageUrl: "/hotel/rjjd.jpg",
+    description: "经济型",
+    rating: 4.3,
+  },
+];
+
+export const foodData = [
+  {
+    id: 1,
+    name: "米德维奇俄式西餐厅",
+    address: "哈尔滨市道里区西六道街27号",
+    imageUrl: "/food/mdwq.jpg",
+    rating: 4.6,
+    description: "俄餐",
+  },
+  {
+    id: 2,
+    name: "那些年记忆烧烤",
+    address: "哈尔滨市道里区红霞街16号",
+    imageUrl: "/food/nxnjy.jpg",
+    rating: 4.2,
+    description: "烧烤",
+  },
+  {
+    id: 3,
+    name: "福龙碳火烤羊腿",
+    address: "哈尔滨市道里区通江街172号",
+    imageUrl: "/food/flth.jpg",
+    description: "烤羊腿",
+    rating: 4.7,
+  },
+  {
+    id: 4,
+    name: "金汉斯",
+    address: "哈尔滨市道里区哈尔滨印象城A座二楼",
+    imageUrl: "/food/jhs.jpg",
+    description: "烤肉",
+    rating: 4.3,
+  },
+];
+
+export const tripData = [
+  {
+    id: 1,
+    title: "哈尔滨 3 日游",
+    days: 3,
+    location: "哈尔滨",
+    bestSeason: "冬季",
+    highlights: "中央大街、冰雪大世界、松花江滑雪...",
+    image: "/images/bg-mountain.png",
+    type: "regular" as const,
+  },
+  {
+    id: 2,
+    title: "哈尔滨 2 日游",
+    days: 2,
+    location: "长白山",
+    bestSeason: "四季皆宜",
+    highlights: "天池、瀑布群、温泉度假...",
+    image: "/images/bg-all-jd.png",
+    type: "regular" as const,
+  },
+  {
+    id: 3,
+    title: "City Walk：中央大街",
+    days: 1,
+    location: "哈尔滨",
+    bestSeason: "四季皆宜",
+    highlights: "中央大街、索菲亚教堂、防洪纪念塔...",
+    image: "/images/djt.jpeg",
+    type: "cityWalk" as const,
+  },
+  {
+    id: 4,
+    title: "City Walk：松花江畔",
+    days: 1,
+    location: "哈尔滨",
+    bestSeason: "夏秋季",
+    highlights: "斯大林公园、防洪纪念塔、松花江风光带...",
+    image: "/images/210shots_so.png",
+    type: "cityWalk" as const,
+  },
+];

@@ -24,22 +24,24 @@ export default class ScenicSpot {
   public async keywordSearch<T>(keyword: string): Promise<T> {
     try {
       const res = await this.http.get(`/keyword_search/${keyword}`);
-      console.log('关键词搜索API返回:', res);
-      
+      console.log("关键词搜索API返回:", res);
+
       // 如果res.data为空，返回一个空的sights数组作为默认值
       if (!res.data) {
         return { sights: [] } as unknown as T;
       }
-      
+
       return res.data as T;
     } catch (error) {
-      console.error('关键词搜索API错误:', error);
+      console.error("关键词搜索API错误:", error);
       // 出错时也返回一个空的sights数组
       return { sights: [] } as unknown as T;
     }
   }
 
-  public async getStarredScenicSpot<T>(token: string | null = null): Promise<T> {
+  public async getStarredScenicSpot<T>(
+    token: string | null = null
+  ): Promise<T> {
     if (token) {
       this.http.setAuthToken(token);
     } else {
@@ -51,7 +53,10 @@ export default class ScenicSpot {
     return res.data as T;
   }
 
-  public async addStarredScenicSpot<T>(sight: StarredScenicSpotResponse, token: string | null = null): Promise<T> {
+  public async addStarredScenicSpot<T>(
+    sight: StarredScenicSpotResponse,
+    token: string | null = null
+  ): Promise<T> {
     if (token) {
       this.http.setAuthToken(token);
     } else {
@@ -72,7 +77,10 @@ export default class ScenicSpot {
     return res.data as T;
   }
 
-  public async deleteStarredScenicSpot<T>(sight: StarredScenicSpotResponse, token: string | null = null ): Promise<T> {
+  public async deleteStarredScenicSpot<T>(
+    sight: StarredScenicSpotResponse,
+    token: string | null = null
+  ): Promise<T> {
     if (token) {
       this.http.setAuthToken(token);
     } else {
@@ -85,9 +93,13 @@ export default class ScenicSpot {
       gd_id: sight.id,
       name: sight.name,
       address: sight.address,
-      location: sight.localtion
+      location: sight.localtion,
     });
     console.log("删除收藏响应:", res.data);
     return res.data as T;
   }
+}
+
+export function ReplaceParentheses(str: string) {
+  return str.replace(/\(/g, "%28").replace(/\)/g, "%29");
 }
