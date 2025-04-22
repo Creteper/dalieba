@@ -1,417 +1,812 @@
-/*
- * @Author: ceteper 75122254@qq.com
- * @Date: 2025-04-11 08:35:21
- * @LastEditors: ceteper 75122254@qq.com
- * @LastEditTime: 2025-04-16 13:47:49
- * @FilePath: \dalieba\app\createplan\page.tsx
- * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
- */
-
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Http } from "@/lib/axios";
+import ControlBar from "@/components/ui/control-bar";
+import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
+import { Typewriter } from "react-simple-typewriter";
+import MapComponent from "@/components/map/MapComponent";
+import { ReplaceParentheses } from "@/lib/scenic-spot";
 import {
-  ChevronLeft,
-  ChevronRight,
-  Plus,
-  Minus,
-  MapPin,
+  Loader2,
+  DollarSign,
   Calendar,
-  Wallet,
-  Heart,
+  BrainCircuit,
+  Sparkles,
+  LayoutIcon,
+  ChevronRight,
+  ChevronLeft,
+  ArrowRight,
+  ArrowLeft,
   Home,
 } from "lucide-react";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
-import ControlBar from "@/components/ui/control-bar";
-import AiChat from "@/lib/ai-chat";
-import { CreatePlanResponse } from "@/types/article";
-type Preference = "游玩" | "综合" | "观景" | "美食";
+import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import AnalyzeRoute from "@/lib/analyze-route";
+import { RouteData } from "@/types/article";
+import { Route } from "@/components/map/MapComponent";
+import {
+  Timeline,
+  TimelineItem,
+  TimelineHeader,
+  TimelineTitle,
+  TimelineSeparator,
+  TimelineDate,
+  TimelineIndicator,
+  TimelineContent,
+} from "@/components/ui/timeline";
+import { ServerConfig } from "@/lib/site";
+// 移除滚动条样式对象
+export default function CreatePlan() {
+  const router = useRouter();
+  const [data, setData] = useState({});
+  const http = new Http("http://localhost:3000/api");
+  const [showRightTravelBox, setShowRightTravelBox] = useState(false);
+  const [analyzeRoute, setAnalyzeRoute] = useState<AnalyzeRoute | null>(null);
+  const [dayRoutes, setDayRoutes] = useState<{ [key: number]: Route[] }>({});
+  const [activeTab, setActiveTab] = useState("0");
+  const [generatingDay, setGeneratingDay] = useState(0); // 当前正在生成第几天的数据
+  const [generationComplete, setGenerationComplete] = useState(false); // 是否全部生成完成
+  const [totalDays, setTotalDays] = useState(3); // 总天数，默认3天
 
-const preferenceIcons = {
-  游玩: "🎮",
-  综合: "🌟",
-  观景: "🏞️",
-  美食: "🍜",
+  useEffect(() => {
+    async function getTravel() {
+      const res = await http.post("/getTravel", {
+        data: { city: "哈尔滨", days: 3, type: "cityWalk" },
+      });
+      const routeData = JSON.parse(res.data.data);
+      setData(routeData);
+      const analyzeRoute = new AnalyzeRoute(routeData as RouteData);
+      setAnalyzeRoute(analyzeRoute);
+    }
+    getTravel();
+  }, []);
+
+  useEffect(() => {
+    if (analyzeRoute && activeTab && generatingDay >= parseInt(activeTab) + 1) {
+      const day = parseInt(activeTab) + 1;
+      if (!dayRoutes[day]) {
+        async function fetchRoutes() {
+          try {
+            console.log(`获取第${day}天路线数据`);
+            const routes = (await analyzeRoute?.getDayRoutes(day)) || [];
+            console.log(`第${day}天路线数据:`, routes);
+            setDayRoutes((prev) => ({ ...prev, [day]: routes }));
+          } catch (error) {
+            console.error(`获取第${day}天路线数据失败:`, error);
+            setDayRoutes((prev) => ({ ...prev, [day]: [] }));
+          }
+        }
+        fetchRoutes();
+      }
+    }
+  }, [analyzeRoute, activeTab, dayRoutes, generatingDay]);
+
+  // 监听生成天数变化，逐步生成每天的路线
+  useEffect(() => {
+    if (generatingDay > 0 && generatingDay <= totalDays && analyzeRoute) {
+      async function generateDayRoute() {
+        try {
+          console.log(`生成第${generatingDay}天路线数据`);
+          const routes =
+            (await analyzeRoute?.getDayRoutes(generatingDay)) || [];
+          console.log(`第${generatingDay}天路线数据:`, routes);
+          setDayRoutes((prev) => ({ ...prev, [generatingDay]: routes }));
+
+          // 检查是否已生成所有天数的数据
+          if (generatingDay === totalDays) {
+            setGenerationComplete(true);
+          }
+        } catch (error) {
+          console.error(`生成第${generatingDay}天路线数据失败:`, error);
+          setDayRoutes((prev) => ({ ...prev, [generatingDay]: [] }));
+        }
+      }
+      generateDayRoute();
+    }
+  }, [generatingDay, totalDays, analyzeRoute]);
+
+  useEffect(() => {
+    console.log(data);
+  }, [data]);
+
+  return (
+    <div className="w-full h-screen overflow-hidden p-4">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => router.push("/")}
+            className="h-9 w-9"
+          >
+            <Home className="h-4 w-4" />
+          </Button>
+          <h1 className="text-xl font-bold">行程规划</h1>
+        </div>
+        <ControlBar className="static" />
+      </div>
+      <div
+        className={cn(
+          "w-full h-[calc(100%-3rem)] grid gap-4 mr-4",
+          showRightTravelBox
+            ? "grid-cols-[400px_calc(100%-400px)]"
+            : "grid-cols-[1fr_0]"
+        )}
+      >
+        <div className="h-full w-[400px] rounded-md bg-background shadow-sm border-border border-1 dark:bg-muted flex flex-col">
+          <div className="flex justify-between items-center p-4 border-b">
+            <div className="text-xl font-bold">
+              <Typewriter words={["行程规划"]} typeSpeed={100} />
+            </div>
+          </div>
+          {/* 内容区域 - 将消息列表和交互区域放在此处 */}
+          <CreateMessage
+            title="嘿，我的朋友！👋"
+            setShowRightTravelBox={setShowRightTravelBox}
+            showRightTravelBox={showRightTravelBox}
+            setGeneratingDay={setGeneratingDay}
+            setTotalDays={setTotalDays}
+          />
+        </div>
+        <AnimatePresence mode="wait">
+          {showRightTravelBox && (
+            <motion.div
+              className="h-full w-full rounded-md bg-background shadow-sm border-border border-1 dark:bg-muted overflow-y-auto custom-scrollbar"
+              initial={{ opacity: 0, x: 100 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 100 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+            >
+              <div className="w-full justify-between flex items-center border-border border-b-1 p-4">
+                <div className="text-xl font-bold">
+                  <Typewriter words={["查看规划行程"]} typeSpeed={100} />
+                </div>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => setShowRightTravelBox(false)}
+                >
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              </div>
+              <div className="p-4 w-full">
+                <div className="w-full p-4 bg-blue-100 dark:bg-blue-500 rounded-md border-border border-1">
+                  <h1 className="text-2xl font-bold">哈尔滨{totalDays}日游</h1>
+                  <p className="text-sm text-foreground mt-2">
+                    此行程为您规划了{totalDays}
+                    天的哈尔滨之旅，总预算¥5000，涵盖了城市最著名的景点和体验。
+                  </p>
+                </div>
+              </div>
+              <div className="w-full p-4">
+                <Tabs
+                  defaultValue="0"
+                  onValueChange={setActiveTab}
+                  className="w-full"
+                >
+                  <TabsList className="w-full justify-start bg-muted/50 p-1 rounded-lg mb-4 dark:bg-background">
+                    {Array.from({ length: totalDays }).map((_, index) => (
+                      <TabsTrigger
+                        key={index}
+                        value={index.toString()}
+                        disabled={index + 1 > generatingDay}
+                        className="flex-1 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-md transition-all dark:data-[state=active]:bg-orange-500 dark:data-[state=active]:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        Day {index + 1}
+                        {index + 1 > generatingDay && (
+                          <Loader2 className="w-3 h-3 ml-1 animate-spin" />
+                        )}
+                      </TabsTrigger>
+                    ))}
+                  </TabsList>
+                  {Array.from({ length: totalDays }).map((_, index) => (
+                    <TabsContent
+                      key={index}
+                      value={index.toString()}
+                      className="animate-in fade-in-50 duration-300"
+                    >
+                      {index + 1 <= generatingDay ? (
+                        <>
+                          <div className="w-full rounded-lg overflow-hidden border border-border shadow-sm bg-card mb-4">
+                            <div className="p-3 border-b bg-muted/30">
+                              <h3 className="text-lg font-medium">
+                                第{index + 1}天地图导览
+                              </h3>
+                            </div>
+                            <div className="w-full h-[350px] rounded-b-md overflow-hidden">
+                              <MapComponent
+                                maxZoom={18}
+                                minZoom={13}
+                                layOutisPoints={false}
+                                className="w-full h-full"
+                                markers={analyzeRoute?.getDayMakers(index + 1)}
+                                routes={dayRoutes[index + 1] || []}
+                              />
+                            </div>
+                          </div>
+
+                          <div className="w-full rounded-lg overflow-hidden border border-border shadow-sm bg-card">
+                            <div className="p-3 border-b bg-muted/30">
+                              <h3 className="text-lg font-medium">
+                                第{index + 1}天行程安排
+                              </h3>
+                            </div>
+                            <div className="p-4">
+                              <Timeline>
+                                {analyzeRoute
+                                  ?.getDayDetailData(index + 1)
+                                  ?.trip.map((trip, tripIndex) => (
+                                    <TimelineItem
+                                      key={`trip-${index}-${trip.id}`}
+                                      step={tripIndex + 1}
+                                      className="group-data-[orientation=vertical]/timeline:ms-10"
+                                    >
+                                      <TimelineHeader>
+                                        <TimelineSeparator className="group-data-[orientation=vertical]/timeline:-left-7 group-data-[orientation=vertical]/timeline:h-[calc(100%-1.5rem-0.25rem)] group-data-[orientation=vertical]/timeline:translate-y-6.5" />
+                                        <TimelineDate className="mt-0.5 text-xs rounded-full">
+                                          {trip.arrivalTime}
+                                        </TimelineDate>
+                                        <TimelineTitle className="mt-0.5 font-medium mb-4">
+                                          {trip.name}
+                                        </TimelineTitle>
+                                        <TimelineIndicator className="bg-primary/10 text-primary group-data-completed/timeline-item:bg-primary group-data-completed/timeline-item:text-primary-foreground flex size-6 items-center justify-center border-none group-data-[orientation=vertical]/timeline:-left-7">
+                                          {tripIndex + 1}
+                                        </TimelineIndicator>
+                                      </TimelineHeader>
+                                      <TimelineContent>
+                                        <div className="p-3 bg-muted/50 rounded-lg shadow-sm hover:bg-muted/70 transition-colors cursor-pointer">
+                                          <div className="flex items-start gap-3">
+                                            <div className="w-20 h-20 rounded-md overflow-hidden flex-shrink-0 border border-border/50 shadow-sm">
+                                              <img
+                                                src={`${
+                                                  ServerConfig.userApiUrl
+                                                }/img/${ReplaceParentheses(
+                                                  trip.name
+                                                )}.jpg`}
+                                                alt={trip.name}
+                                                className="w-full h-full object-cover hover:scale-110 transition-transform duration-700"
+                                              />
+                                            </div>
+                                            <div className="flex-1">
+                                              <div className="text-sm text-foreground/90 line-clamp-2 mb-2">
+                                                {trip.description}
+                                              </div>
+                                              {trip.nextSpot && (
+                                                <div className="flex items-center gap-2">
+                                                  <span className="text-xs bg-blue-500/10 text-blue-500 rounded-full px-2 py-0.5 inline-flex items-center">
+                                                    <svg
+                                                      xmlns="http://www.w3.org/2000/svg"
+                                                      className="w-3 h-3 mr-1"
+                                                      fill="none"
+                                                      viewBox="0 0 24 24"
+                                                      stroke="currentColor"
+                                                    >
+                                                      <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        strokeWidth={2}
+                                                        d="M13 5l7 7-7 7M5 5l7 7-7 7"
+                                                      />
+                                                    </svg>
+                                                    {
+                                                      trip.nextSpot.travelMode
+                                                        .mode
+                                                    }
+                                                  </span>
+                                                  <span className="text-xs bg-yellow-500/10 text-yellow-500 rounded-full px-2 py-0.5 inline-flex items-center">
+                                                    <svg
+                                                      xmlns="http://www.w3.org/2000/svg"
+                                                      className="w-3 h-3 mr-1"
+                                                      fill="none"
+                                                      viewBox="0 0 24 24"
+                                                      stroke="currentColor"
+                                                    >
+                                                      <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        strokeWidth={2}
+                                                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                                                      />
+                                                    </svg>
+                                                    {
+                                                      trip.nextSpot.travelMode
+                                                        .travelTime
+                                                    }
+                                                    分钟
+                                                  </span>
+                                                </div>
+                                              )}
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </TimelineContent>
+                                    </TimelineItem>
+                                  ))}
+                              </Timeline>
+                            </div>
+                          </div>
+                        </>
+                      ) : (
+                        <div className="w-full p-12 flex flex-col items-center justify-center">
+                          <Loader2 className="w-8 h-8 text-primary animate-spin mb-4" />
+                          <p className="text-muted-foreground">
+                            正在生成第{index + 1}天行程，请稍候...
+                          </p>
+                        </div>
+                      )}
+                    </TabsContent>
+                  ))}
+                </Tabs>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      {/* 添加全局CSS */}
+      <style jsx global>{`
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 6px;
+          height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: rgba(0, 0, 0, 0.1);
+          border-radius: 3px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: rgba(0, 0, 0, 0.2);
+        }
+        .custom-scrollbar {
+          scrollbar-width: thin;
+          scrollbar-color: rgba(0, 0, 0, 0.1) transparent;
+        }
+      `}</style>
+    </div>
+  );
+}
+
+// 消息类型定义
+type MessageType = {
+  id: string;
+  content: string;
+  type: "system" | "user" | "input" | "loading" | "toggle";
+  inputType?: "budget" | "days";
+  selected?: string | number;
+  loadingStage?: "thinking" | "planning" | "generating";
+  icon?: React.ReactNode;
+  onClick?: () => void;
 };
 
-const ScenicSpot = `
-只允许存在以下景点
+export function CreateMessage({
+  title,
+  setShowRightTravelBox,
+  showRightTravelBox,
+  setGeneratingDay,
+  setTotalDays,
+}: {
+  title: string;
+  setShowRightTravelBox: (show: boolean) => void;
+  showRightTravelBox: boolean;
+  setGeneratingDay: (day: number) => void;
+  setTotalDays: (days: number) => void;
+}) {
+  const [createPlanIsLoading, setCreatePlanIsLoading] = useState(false);
+  const [showBudgetInput, setShowBudgetInput] = useState(false);
+  const [showDaysSelector, setShowDaysSelector] = useState(false);
+  const [budget, setBudget] = useState("");
+  const [days, setDays] = useState(0);
+  const [showStartButton, setShowStartButton] = useState(true);
+  const [planningStage, setPlanningStage] = useState<
+    "idle" | "thinking" | "planning" | "generating"
+  >("idle");
+  const [planComplete, setPlanComplete] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [currentGeneratingDay, setCurrentGeneratingDay] = useState(0); // 当前生成的天数
+  const [messageIdCounter, setMessageIdCounter] = useState(1); // 添加消息ID计数器
 
-哈尔滨中央大街
-哈尔滨极地公园
-哈尔滨融创文旅城
-哈尔滨极地公园·极地馆
-东北虎林园
-银河欢乐世界
-哈尔滨音乐公园
-音乐长廊
-索菲亚广场
-哈尔滨防洪纪念塔广场
-圣·索菲亚教堂
-哈尔滨热雪奇迹
-哈尔滨市人民防洪胜利纪念塔
-松花江湿地
-哈尔滨市兆麟公园
-群力音乐公园大雪人
-关东古巷
-中华巴洛克风情街
-松花江索道
-斯大林公园
-哈尔滨博物馆
-新区中心公园
-枫叶小镇温泉度假村
-哈尔滨极地公园·海洋馆
-虎园
-哈尔滨冰雪大世界四季游乐馆
-金河湾湿地植物园
-人民广场
-黑龙江省博物馆
-沙滩部落.冰雪欢乐岛
-太阳岛绿色运动公园
-市政府广场
-极乐寺
-体育公园
-哈药六版画博物馆
-冰雪大世界梦幻冰雪馆
-火车主题广场
-龙塔
-音乐主题广场
-丁香公园
-清真寺
-哈尔滨群力外滩生态湿地公园
-九站公园
-波塞冬旅游度假区
-世界欢乐城
-哈尔滨音乐博物馆
-阿拉伯广场
-中东铁路桥头堡
-音乐公园音乐长廊
-巧克力星人博物馆
-波塞冬海底世界
-劳动公园
-哈尔滨文庙
-太阳岛风景区俄罗斯风情小镇
-侵华日军第七三一部队遗址
-松花江观光索道-太阳城堡站
-东北烈士纪念馆
-金河公园
-哈尔滨市儿童公园
-哈尔滨工业大学博物馆
-黑龙江哈尔滨太阳岛国家湿地公园
-哈尔滨市少年宫
-哈尔滨市长青公园
-外滩雪人码头大雪人
-哈尔滨冰雪大世界-大阪城(日本)
-湘江公园
-东北林业大学中国(哈尔滨)森林博物馆
-雨阳公园
-靖宇公园
-侵华日军第七三一部队罪证陈列馆
-萧红故居
-哈尔滨市道外区古梨园
-梦想大舞台
-伯特利教堂
-乐松广场(太平桥店)
-道外巴洛克博物馆
-激情广场
-黛秀湖公园
-冰雪大世界(暂停开放)
-太阳岛风景区
-哈尔滨融创乐园(暂停开放)
-钻石海(暂停开放)
-太阳岛风景区-太阳岛雪博会(暂停开放)
-外滩雪人码头
-建国公园
-太阳岛西区外滩湿地公园
-黑龙江省博物馆新馆(装修中)
-上坞沙滩戏雪乐园
-圣清观
-火车主题广场-中东铁路印象馆
-天恒山冰雪运动大世界(暂停营业)`;
-
-export default function CreatePlanPage() {
-  const router = useRouter();
-  const [budget, setBudget] = useState<string>("");
-  const [preference, setPreference] = useState<Preference>("综合");
-  const [days, setDays] = useState<number>(3);
-  const [isEditingDays, setIsEditingDays] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const aiChat = new AiChat();
-  const handleDaysChange = (value: number) => {
-    if (value < 1) {
-      toast.error("最少需要1天");
-      return;
-    }
-    if (value > 7) {
-      toast.error("最多支持7天");
-      return;
-    }
-    setDays(value);
+  // 生成唯一ID的函数 - 使用随机数，避免重复key
+  const generateUniqueId = (): string => {
+    // 使用时间戳 + 随机数 + 计数器确保唯一性
+    const id = `${Date.now()}-${Math.random()
+      .toString(36)
+      .substr(2, 9)}-${messageIdCounter}`;
+    setMessageIdCounter((prev) => prev + 1);
+    return id;
   };
 
-  const handleSubmit = async () => {
-    if (!budget) {
-      toast.error("请输入预算");
-      return;
+  // 消息历史记录
+  const [messages, setMessages] = useState<MessageType[]>([
+    {
+      id: "initial-message",
+      content:
+        "想去 哈尔滨 旅游，但是不知道怎么规划行程，需要我帮您规划一下吗？",
+      type: "system",
+    },
+  ]);
+
+  // 滚动到底部
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  // 消息变化时滚动到底部
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  // 组件挂载时和窗口尺寸变化时确保滚动正常
+  useEffect(() => {
+    scrollToBottom();
+    window.addEventListener("resize", scrollToBottom);
+    return () => {
+      window.removeEventListener("resize", scrollToBottom);
+    };
+  }, []);
+
+  // 当加载状态改变时，如果处于加载中状态，设置3秒后显示预算输入
+  useEffect(() => {
+    if (createPlanIsLoading) {
+      const timer = setTimeout(() => {
+        setCreatePlanIsLoading(false);
+        setShowBudgetInput(true);
+        setShowStartButton(false);
+
+        // 添加系统消息
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: generateUniqueId(),
+            content: "请告诉我您的预算是多少？",
+            type: "system",
+            inputType: "budget",
+          },
+        ]);
+      }, 3000);
+
+      return () => clearTimeout(timer);
     }
-    setIsSubmitting(true);
-    // TODO: 调用AI生成攻略
-    const userId = localStorage.getItem("user_id") || "";
-    if (userId === "") {
-      toast.error("请先登录");
-      setIsSubmitting(false);
-      router.push("/login");
-      return;
+  }, [createPlanIsLoading]);
+
+  // 切换右侧面板显示/隐藏
+  const toggleRightPanel = () => {
+    setShowRightTravelBox(!showRightTravelBox);
+  };
+
+  // 监控规划阶段变化
+  useEffect(() => {
+    if (planningStage === "thinking") {
+      // AI思考阶段
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: generateUniqueId(),
+          content: "正在分析您的需求...",
+          type: "loading",
+          loadingStage: "thinking",
+          icon: (
+            <BrainCircuit className="h-5 w-5 text-blue-500 animate-pulse" />
+          ),
+        },
+      ]);
+
+      // 2秒后进入构思计划阶段
+      const timer = setTimeout(() => {
+        setPlanningStage("planning");
+      }, 2000);
+
+      return () => clearTimeout(timer);
+    } else if (planningStage === "planning") {
+      // 构思计划阶段
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: generateUniqueId(),
+          content: "正在构思最佳行程方案...",
+          type: "loading",
+          loadingStage: "planning",
+          icon: <Sparkles className="h-5 w-5 text-amber-500 animate-pulse" />,
+        },
+      ]);
+
+      // 在planning阶段就显示右侧面板
+      setShowRightTravelBox(true);
+
+      // 2秒后进入生成计划阶段
+      const timer = setTimeout(() => {
+        setPlanningStage("generating");
+      }, 2000);
+
+      return () => clearTimeout(timer);
+    } else if (planningStage === "generating") {
+      // 生成计划阶段
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: generateUniqueId(),
+          content: "正在生成详细行程规划...",
+          type: "loading",
+          loadingStage: "generating",
+          icon: <LayoutIcon className="h-5 w-5 text-green-500 animate-pulse" />,
+        },
+      ]);
+
+      // 开始逐天生成行程数据
+      setCurrentGeneratingDay(1);
+
+      // 完成后将阶段设置为idle，防止重复触发
+      setPlanningStage("idle");
     }
-    const message = `哈尔滨${days}天攻略 ${budget}元预算，偏好:“${preference}”`;
-    const res = await aiChat.createPlan<CreatePlanResponse>(
-      userId,
-      message + ScenicSpot,
-      "哈尔滨市",
-      message
-    );
-    if (res.status === 200) {
-      toast.success("攻略生成成功");
-      router.push("/createplan/" + message);
-    } else {
-      toast.error("攻略生成失败");
+  }, [planningStage, setShowRightTravelBox]);
+
+  // 监控当前生成的天数，逐步生成内容
+  useEffect(() => {
+    if (currentGeneratingDay > 0 && currentGeneratingDay <= days) {
+      // 模拟第currentGeneratingDay天数据生成
+      const generateTimer = setTimeout(() => {
+        // 添加消息提示当前正在生成的天数
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: generateUniqueId(),
+            content: `正在生成第${currentGeneratingDay}天行程安排...`,
+            type: "system",
+          },
+        ]);
+
+        // 通知父组件当前正在生成第几天
+        setGeneratingDay(currentGeneratingDay);
+
+        // 生成完一天后，继续生成下一天，直到全部天数生成完毕
+        if (currentGeneratingDay < days) {
+          setCurrentGeneratingDay(currentGeneratingDay + 1);
+        } else {
+          // 全部生成完毕
+          setPlanComplete(true);
+          // 添加完成消息，可点击切换右侧面板
+          setMessages((prev) => [
+            ...prev,
+            {
+              id: generateUniqueId(),
+              content: "行程规划已完成，点击切换右侧详细安排！",
+              type: "toggle",
+              onClick: toggleRightPanel,
+            },
+          ]);
+        }
+      }, 2000);
+
+      return () => clearTimeout(generateTimer);
     }
-    setIsSubmitting(false);
+  }, [currentGeneratingDay, days, setMessages, setGeneratingDay]);
+
+  const handleBudgetSelect = (amount: string) => {
+    setBudget(amount);
+  };
+
+  const handleBudgetConfirm = () => {
+    if (budget) {
+      setShowBudgetInput(false);
+      setShowDaysSelector(true);
+
+      // 添加用户预算选择消息
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: generateUniqueId(),
+          content: `我的预算是 ${budget} 元`,
+          type: "user",
+          selected: budget,
+        },
+        {
+          id: generateUniqueId(),
+          content: "您计划游玩几天？",
+          type: "system",
+          inputType: "days",
+        },
+      ]);
+    }
+  };
+
+  const handleDaysSelect = (selectedDays: number) => {
+    setDays(selectedDays);
+    setTotalDays(selectedDays);
+    setShowDaysSelector(false);
+
+    // 添加用户天数选择消息
+    setMessages((prev) => [
+      ...prev,
+      {
+        id: generateUniqueId(),
+        content: `我计划游玩 ${selectedDays} 天`,
+        type: "user",
+        selected: selectedDays,
+      },
+    ]);
+
+    // 开始三阶段加载过程
+    setPlanningStage("thinking");
   };
 
   return (
-    <motion.div
-      className="w-full h-screen flex items-center justify-center bg-[url('/images/bg-all-jd.png')] bg-cover"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ delay: 0.2 }}
-    >
-      <div className="w-full h-screen bg-black/70 flex items-center justify-center">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="container max-w-2xl mx-auto py-8 px-4 relative"
-        >
-          <ControlBar variant="reversalDefault" />
-          {/* 返回主页按钮 */}
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => router.push("/")}
-            className="absolute top-0 left-4 p-2 rounded-lg bg-black/50 hover:bg-black/70 text-white flex items-center gap-2"
-          >
-            <Home className="h-5 w-5" />
-            <span className="text-sm font-medium">返回主页</span>
-          </motion.button>
+    <div className="flex flex-col h-full relative">
+      {/* 消息历史记录区域 - 可滚动 */}
+      <div className="absolute inset-0 top-0 bottom-[80px] overflow-y-auto px-4 pt-4 pb-2 custom-scrollbar">
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4 p-4 bg-background rounded-xl border-border border-1 dark:bg-muted">
+            <div className="text-xl font-bold">{title}</div>
+            <div className="text-sm">{messages[0].content}</div>
+          </div>
 
-          <motion.h1
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="text-3xl text-white font-bold mb-8 text-center"
-          >
-            创建AI攻略
-          </motion.h1>
-
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.4 }}
-            className="space-y-8"
-          >
-            {/* 预算输入 */}
+          {messages.slice(1).map((message) => (
             <motion.div
-              whileHover={{ scale: 1 }}
-              className="space-y-2 p-4 rounded-lg bg-card backdrop-blur-sm border border-border/50"
-            >
-              <div className="flex items-center gap-2">
-                <Wallet className="h-5 w-5 text-primary" />
-                <Label className="text-lg">预算（元）</Label>
-              </div>
-              <Input
-                type="number"
-                placeholder="请输入您的预算"
-                value={budget}
-                onChange={(e) => setBudget(e.target.value)}
-                className="h-12 text-lg"
-              />
-            </motion.div>
-
-            {/* 偏好选择 */}
-            <motion.div
-              whileHover={{ scale: 1 }}
-              className="space-y-2 p-4 rounded-lg bg-card backdrop-blur-sm border border-border/50"
-            >
-              <div className="flex items-center gap-2">
-                <Heart className="h-5 w-5 text-primary" />
-                <Label className="text-lg">偏好</Label>
-              </div>
-              <RadioGroup
-                value={preference}
-                onValueChange={(value) => setPreference(value as Preference)}
-                className="grid grid-cols-2 gap-4"
-              >
-                {["游玩", "综合", "观景", "美食"].map((item) => (
-                  <motion.div
-                    key={item}
-                    whileHover={{ scale: 1 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="flex items-center space-x-2 p-2 rounded-lg hover:bg-primary/10 transition-colors"
-                  >
-                    <RadioGroupItem value={item} id={item} />
-                    <Label
-                      htmlFor={item}
-                      className="text-lg cursor-pointer flex items-center gap-2"
-                    >
-                      <span className="text-2xl">
-                        {preferenceIcons[item as Preference]}
-                      </span>
-                      {item}
-                    </Label>
-                  </motion.div>
-                ))}
-              </RadioGroup>
-            </motion.div>
-
-            {/* 天数选择 */}
-            <motion.div
-              whileHover={{ scale: 1 }}
-              className="space-y-2 p-4 rounded-lg bg-card backdrop-blur-sm border border-border/50"
-            >
-              <div className="flex items-center gap-2">
-                <Calendar className="h-5 w-5 text-primary" />
-                <Label className="text-lg">天数</Label>
-              </div>
-              <div className="flex items-center justify-center space-x-4">
-                <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  onClick={() => handleDaysChange(days - 1)}
-                  className="p-2 rounded-full bg-primary/10 hover:bg-primary/20"
-                >
-                  <Minus className="h-6 w-6" />
-                </motion.button>
-
-                <div className="relative">
-                  <AnimatePresence mode="wait">
-                    {isEditingDays ? (
-                      <motion.div
-                        key="input"
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.8 }}
-                      >
-                        <Input
-                          type="number"
-                          value={days}
-                          onChange={(e) =>
-                            handleDaysChange(Number(e.target.value))
-                          }
-                          onBlur={() => setIsEditingDays(false)}
-                          className="w-20 h-12 text-center text-2xl"
-                          autoFocus
-                        />
-                      </motion.div>
-                    ) : (
-                      <motion.div
-                        key="display"
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.8 }}
-                        whileHover={{ scale: 1.05 }}
-                        className="w-20 h-12 flex items-center justify-center text-2xl font-bold cursor-pointer"
-                        onClick={() => setIsEditingDays(true)}
-                      >
-                        {days}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-
-                <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  onClick={() => handleDaysChange(days + 1)}
-                  className="p-2 rounded-full bg-primary/10 hover:bg-primary/20"
-                >
-                  <Plus className="h-6 w-6" />
-                </motion.button>
-              </div>
-            </motion.div>
-
-            {/* 地点显示 */}
-            <motion.div
-              whileHover={{ scale: 1 }}
-              className="space-y-2 p-4 rounded-lg bg-card backdrop-blur-sm border border-border/50"
-            >
-              <div className="flex items-center gap-2">
-                <MapPin className="h-5 w-5 text-primary" />
-                <Label className="text-lg">地点</Label>
-              </div>
-              <motion.div
-                whileHover={{ scale: 1 }}
-                className="h-12 flex items-center justify-center text-xl font-bold text-primary bg-primary/10 rounded-lg"
-              >
-                哈尔滨
-              </motion.div>
-            </motion.div>
-
-            {/* 提交按钮 */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              key={message.id}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6 }}
-              className="pt-8"
+              className={cn(
+                "p-4 rounded-xl",
+                message.type === "user"
+                  ? "bg-primary ml-auto max-w-[85%]"
+                  : message.type === "loading"
+                  ? "bg-gray-50 border border-gray-100 dark:bg-gray-800 dark:border-gray-700"
+                  : message.type === "toggle"
+                  ? "bg-green-50 border border-green-100 dark:bg-green-900/20 dark:border-green-800/30 cursor-pointer hover:bg-green-100 dark:hover:bg-green-900/30 transition-colors"
+                  : "bg-background border-border border-1 dark:bg-muted"
+              )}
+              onClick={message.onClick}
             >
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={handleSubmit}
-                disabled={isSubmitting}
-                className="w-full h-12 text-lg bg-primary text-primary-foreground rounded-lg flex items-center justify-center gap-2"
+              <div
+                className={
+                  message.type === "user"
+                    ? "text-background"
+                    : message.type === "toggle"
+                    ? "text-green-800 dark:text-green-300"
+                    : "text-foreground"
+                }
               >
-                <AnimatePresence mode="wait">
-                  {isSubmitting ? (
-                    <motion.div
-                      key="loading"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      className="flex items-center gap-2"
-                    >
-                      <motion.div
-                        animate={{ rotate: 360 }}
-                        transition={{
-                          duration: 1,
-                          repeat: Infinity,
-                          ease: "linear",
-                        }}
-                        className="h-5 w-5 border-2 border-current border-t-transparent rounded-full"
+                {message.type === "loading" && message.icon && (
+                  <div className="flex items-center gap-2 mb-1">
+                    {message.icon}
+                    <div className="font-medium text-sm">
+                      <Typewriter
+                        words={
+                          message.loadingStage === "thinking"
+                            ? ["AI思考分析"]
+                            : message.loadingStage === "planning"
+                            ? ["构思行程方案"]
+                            : ["生成行程规划"]
+                        }
+                        cursor={true}
                       />
-                      生成中...
-                    </motion.div>
-                  ) : (
-                    <motion.div
-                      key="text"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                    >
-                      生成攻略
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </motion.button>
+                    </div>
+                  </div>
+                )}
+                {message.type === "toggle" ? (
+                  <div className="flex items-center justify-between">
+                    <span>{message.content}</span>
+                    {showRightTravelBox ? (
+                      <ChevronLeft className="h-4 w-4 ml-2" />
+                    ) : (
+                      <ChevronRight className="h-4 w-4 ml-2" />
+                    )}
+                  </div>
+                ) : message.type === "system" ? (
+                  <Typewriter words={[message.content]} cursor={true} />
+                ) : (
+                  message.content
+                )}
+              </div>
             </motion.div>
-          </motion.div>
-        </motion.div>
+          ))}
+          <div ref={messagesEndRef} />
+        </div>
       </div>
-    </motion.div>
+
+      {/* 底部输入区域 - 固定在底部 */}
+      <div className={cn("absolute bottom-0 left-0 right-0 p-4")}>
+        <div className="flex flex-col gap-3">
+          {showStartButton && (
+            <CreatePlanButton
+              createPlanIsLoading={createPlanIsLoading}
+              setCreatePlanIsLoading={setCreatePlanIsLoading}
+            />
+          )}
+
+          {showBudgetInput && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex flex-col gap-4 p-4 bg-background rounded-xl border-border border-1 dark:bg-muted"
+            >
+              <div className="relative">
+                <Input
+                  type="number"
+                  placeholder="输入您的预算"
+                  value={budget}
+                  onChange={(e) => setBudget(e.target.value)}
+                  className="pl-8"
+                />
+                <DollarSign className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              </div>
+              <Button
+                className="w-full mt-2"
+                onClick={handleBudgetConfirm}
+                disabled={!budget}
+              >
+                确认预算
+              </Button>
+            </motion.div>
+          )}
+
+          {showDaysSelector && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex flex-col gap-4 p-4 bg-background rounded-xl border-border border-1 dark:bg-muted"
+            >
+              <div className="grid grid-cols-4 gap-3">
+                {[1, 2, 3, 4, 5, 6, 7].map((dayOption) => (
+                  <Button
+                    key={dayOption}
+                    variant={days === dayOption ? "default" : "outline"}
+                    onClick={() => handleDaysSelect(dayOption)}
+                  >
+                    <Calendar className="h-5 w-5 mb-1" />
+                    <span>{dayOption} 天</span>
+                  </Button>
+                ))}
+              </div>
+            </motion.div>
+          )}
+
+          {planComplete && !showBudgetInput && !showDaysSelector && (
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={toggleRightPanel}
+            >
+              {showRightTravelBox ? "隐藏行程详情" : "显示行程详情"}
+              {showRightTravelBox ? (
+                <ChevronLeft className="h-4 w-4 ml-2" />
+              ) : (
+                <ChevronRight className="h-4 w-4 ml-2" />
+              )}
+            </Button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function CreatePlanButton({
+  createPlanIsLoading,
+  setCreatePlanIsLoading,
+}: {
+  createPlanIsLoading: boolean;
+  setCreatePlanIsLoading: (isLoading: boolean) => void;
+}) {
+  return (
+    <Button
+      variant="default"
+      className="w-full"
+      disabled={createPlanIsLoading}
+      onClick={() => setCreatePlanIsLoading(true)}
+    >
+      {createPlanIsLoading ? (
+        <div className="flex items-center justify-center">
+          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+          规划中...
+        </div>
+      ) : (
+        "帮我规划一下"
+      )}
+    </Button>
   );
 }

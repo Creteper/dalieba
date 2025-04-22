@@ -21,6 +21,18 @@ export default class ScenicSpot {
     return res.data as T;
   }
 
+  public async getAllHotel<T>(token: string | null = null): Promise<T> {
+    if (token) {
+      this.http.setAuthToken(token);
+    } else {
+      if (typeof window !== "undefined") {
+        this.http.setAuthToken(localStorage.getItem("token") || "");
+      }
+    }
+    const res = await this.http.get("/all_sights_hotel");
+    return res.data as T;
+  }
+
   public async keywordSearch<T>(keyword: string): Promise<T> {
     try {
       const res = await this.http.get(`/keyword_search/${keyword}`);

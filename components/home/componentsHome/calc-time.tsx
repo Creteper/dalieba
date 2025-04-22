@@ -235,7 +235,7 @@ export default function CalcTime({ type, icon, title }: CalcTimeProps) {
                         <motion.div
                           initial={{ opacity: 0, y: 5 }}
                           animate={{ opacity: 1, y: 0 }}
-                          key={result.id}
+                          key={result.id + result.name}
                           className="px-3 py-2.5 hover:bg-accent cursor-pointer border-b last:border-b-0"
                           onClick={() => {
                             const [lng, lat] = result.localtion
@@ -306,7 +306,7 @@ export default function CalcTime({ type, icon, title }: CalcTimeProps) {
                         <motion.div
                           initial={{ opacity: 0, y: 5 }}
                           animate={{ opacity: 1, y: 0 }}
-                          key={result.id}
+                          key={result.id + result.name + result.id}
                           className="px-3 py-2.5 hover:bg-accent cursor-pointer border-b last:border-b-0"
                           onClick={() => {
                             const [lng, lat] = result.localtion

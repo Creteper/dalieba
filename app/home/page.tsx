@@ -2,7 +2,7 @@
  * @Author: Creteper 7512254@qq.com
  * @Date: 2025-03-22 13:16:50
  * @LastEditors: ceteper 75122254@qq.com
- * @LastEditTime: 2025-04-18 15:26:10
+ * @LastEditTime: 2025-04-22 13:26:30
  * @FilePath: \dalieba\app\home\page.tsx
  * @Description: 用于显示首页内容
  */
@@ -13,7 +13,7 @@ import { useEffect, useState } from "react";
 import * as React from "react";
 import ControlBar from "@/components/ui/control-bar";
 import { Typewriter } from "react-simple-typewriter";
-import { motion } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
 import { Button } from "@/components/ui/button";
 import {
   ChevronsRight,
@@ -23,6 +23,12 @@ import {
   Bus,
   Footprints,
   MapPin,
+  Menu,
+  X,
+  Map,
+  Clock,
+  BookOpen,
+  UserRound,
 } from "lucide-react";
 import { useRouter, usePathname } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -53,6 +59,87 @@ import TripCard, {
 import { ServerConfig } from "@/lib/site";
 import { ReplaceParentheses } from "@/lib/scenic-spot";
 import { tripData } from "@/lib/data-static";
+
+// 悬浮吉祥物组件
+const FloatingMascot = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const router = useRouter();
+
+  const toggleMenu = () => {
+    setIsOpen(!isOpen);
+  };
+
+  const handleNavigation = (path: string) => {
+    router.push(path);
+    setIsOpen(false); // 导航后关闭菜单
+  };
+
+  const menuItems = [
+    { icon: <BookOpen size={20} />, label: "AI旅行规划", path: "/createplan" },
+    {
+      icon: <MapPin size={20} />,
+      label: "全部景点",
+      path: "/allScenicSpot/all",
+    },
+    { icon: <Clock size={20} />, label: "交通计算", path: "/calcTraffic" },
+    { icon: <Map size={20} />, label: "推荐路线", path: "/routeRecommend" },
+    { icon: <UserRound size={20} />, label: "个人中心", path: "/profile" },
+  ];
+
+  return (
+    <div className="fixed bottom-8 right-8 z-50">
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.5, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.5, y: 20 }}
+            transition={{ duration: 0.3 }}
+            className="mb-4 bg-white dark:bg-slate-800 rounded-lg shadow-lg p-2"
+          >
+            <div className="flex flex-col space-y-1">
+              {menuItems.map((item, index) => (
+                <motion.button
+                  key={index}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  className="flex items-center gap-2 p-2 text-sm rounded-md hover:bg-slate-100 dark:hover:bg-slate-700"
+                  onClick={() => handleNavigation(item.path)}
+                >
+                  {item.icon}
+                  <span>{item.label}</span>
+                </motion.button>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <motion.button
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+        onClick={toggleMenu}
+        className="bg-primary shadow-lg rounded-full w-16 h-16 flex items-center justify-center"
+      >
+        {isOpen ? (
+          <X className="text-white dark:text-black" size={24} />
+        ) : (
+          <div className="relative">
+            <img
+              src="/images/logo.svg"
+              alt="吉祥物"
+              className="w-10 h-10 object-contain"
+            />
+            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+              5
+            </span>
+          </div>
+        )}
+      </motion.button>
+    </div>
+  );
+};
 
 export default function HomePage() {
   const [helloTitle, setHelloTitle] = useState("");
@@ -652,6 +739,9 @@ export default function HomePage() {
           </motion.div>
         </div>
       </div>
+
+      {/* 悬浮吉祥物 */}
+      <FloatingMascot />
     </div>
   );
 }

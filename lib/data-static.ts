@@ -937,3 +937,254 @@ export const routeData = [
     ],
   },
 ];
+
+export const showFakeData = `
+{
+  "id": 3,
+  "title": "哈尔滨经典3日深度游",
+  "days": 3,
+  "startTime": "2024-12-20 09:00",
+  "night": 2,
+  "city": "哈尔滨",
+  "center": [126.617682, 45.774835],
+  "spots": [
+    {
+      "day": 1,
+      "trip": [
+        {
+          "id": 1,
+          "type": "start",
+          "arrivalTime": "09:00",
+          "name": "哈尔滨中央大街",
+          "rating": 4.8,
+          "address": "哈尔滨市道里区",
+          "description": "亚洲最长步行街，汇集文艺复兴与巴洛克风格建筑",
+          "location": [126.617682, 45.774835],
+          "nextSpot": {
+            "name": "圣·索菲亚教堂",
+            "address": "哈尔滨市道里区透笼街88号",
+            "location": [126.627215, 45.770125],
+            "travelMode": {
+              "mode": "步行",
+              "travelTime": 15,
+              "distance": 1.2,
+              "price": 0
+            }
+          }
+        },
+        {
+          "id": 2,
+          "type": "spot",
+          "arrivalTime": "09:30",
+          "name": "圣·索菲亚教堂",
+          "rating": 4.9,
+          "address": "哈尔滨市道里区透笼街88号",
+          "description": "远东地区最大的东正教教堂，标志性历史建筑",
+          "location": [126.627215, 45.770125],
+          "beforeSpot": {
+            "name": "哈尔滨中央大街",
+            "address": "哈尔滨市道里区",
+            "location": [126.617682, 45.774835],
+            "travelMode": {
+              "mode": "步行",
+              "travelTime": 15,
+              "distance": 1.2,
+              "price": 0
+            }
+          },
+          "nextSpot": {
+            "name": "哈尔滨防洪纪念塔广场",
+            "address": "道里区斯大林街",
+            "location": [126.617203, 45.780654],
+            "travelMode": {
+              "mode": "步行",
+              "travelTime": 10,
+              "distance": 0.8,
+              "price": 0
+            }
+          }
+        },
+        {
+          "id": 3,
+          "type": "end",
+          "arrivalTime": "18:00",
+          "name": "哈尔滨防洪纪念塔广场",
+          "rating": 4.6,
+          "address": "道里区斯大林街",
+          "description": "纪念1957年哈尔滨人民战胜特大洪水而建",
+          "location": [126.617203, 45.780654],
+          "beforeSpot": {
+            "name": "圣·索菲亚教堂",
+            "address": "哈尔滨市道里区透笼街88号",
+            "location": [126.627215, 45.770125],
+            "travelMode": {
+              "mode": "步行",
+              "travelTime": 10,
+              "distance": 0.8,
+              "price": 0
+            }
+          }
+        }
+      ]
+    },
+    {
+      "day": 2,
+      "trip": [
+        {
+          "id": 1,
+          "type": "start",
+          "arrivalTime": "09:00",
+          "name": "东北虎林园",
+          "rating": 4.7,
+          "address": "松北区松北街88号",
+          "description": "全球规模最大的东北虎繁育基地",
+          "location": [126.600650, 45.817483],
+          "nextSpot": {
+            "name": "哈尔滨极地公园·极地馆",
+            "address": "松北区太阳大道3号",
+            "location": [126.585969, 45.784728],
+            "travelMode": {
+              "mode": "出租车",
+              "travelTime": 25,
+              "distance": 12,
+              "price": 30
+            }
+          }
+        },
+        {
+          "id": 2,
+          "type": "spot",
+          "arrivalTime": "10:00",
+          "name": "哈尔滨极地公园·极地馆",
+          "rating": 4.8,
+          "address": "松北区太阳大道3号",
+          "description": "观赏北极熊、白鲸等极地动物",
+          "location": [126.585969, 45.784728],
+          "beforeSpot": {
+            "name": "东北虎林园",
+            "address": "松北区松北街88号",
+            "location": [126.600650, 45.817483],
+            "travelMode": {
+              "mode": "出租车",
+              "travelTime": 25,
+              "distance": 12,
+              "price": 30
+            }
+          },
+          "nextSpot": {
+            "name": "太阳岛风景区",
+            "address": "松北区太阳大道1号",
+            "location": [126.597880, 45.791584],
+            "travelMode": {
+              "mode": "出租车",
+              "travelTime": 10,
+              "distance": 3.5,
+              "price": 15
+            }
+          }
+        },
+        {
+          "id": 3,
+          "type": "end",
+          "arrivalTime": "17:00",
+          "name": "太阳岛风景区",
+          "rating": 4.6,
+          "address": "松北区太阳大道1号",
+          "description": "国家5A级旅游景区，冬季可体验雪博会",
+          "location": [126.597880, 45.791584],
+          "beforeSpot": {
+            "name": "哈尔滨极地公园·极地馆",
+            "address": "松北区太阳大道3号",
+            "location": [126.585969, 45.784728],
+            "travelMode": {
+              "mode": "出租车",
+              "travelTime": 10,
+              "distance": 3.5,
+              "price": 15
+            }
+          }
+        }
+      ]
+    },
+    {
+      "day": 3,
+      "trip": [
+        {
+          "id": 1,
+          "type": "start",
+          "arrivalTime": "09:00",
+          "name": "中华巴洛克风情街",
+          "rating": 4.5,
+          "address": "道外区南二道街",
+          "description": "融合中西建筑风格的历史文化街区",
+          "location": [126.640729, 45.781791],
+          "nextSpot": {
+            "name": "松花江索道",
+            "address": "道里区通江街218号",
+            "location": [126.610547, 45.777900],
+            "travelMode": {
+              "mode": "公交车",
+              "travelTime": 20,
+              "distance": 5,
+              "price": 2
+            }
+          }
+        },
+        {
+          "id": 2,
+          "type": "spot",
+          "arrivalTime": "10:00",
+          "name": "松花江索道",
+          "rating": 4.4,
+          "address": "道里区通江街218号",
+          "description": "俯瞰松花江全景的空中走廊",
+          "location": [126.610547, 45.777900],
+          "beforeSpot": {
+            "name": "中华巴洛克风情街",
+            "address": "道外区南二道街",
+            "location": [126.640729, 45.781791],
+            "travelMode": {
+              "mode": "公交车",
+              "travelTime": 20,
+              "distance": 5,
+              "price": 2
+            }
+          },
+          "nextSpot": {
+            "name": "哈尔滨音乐公园",
+            "address": "道里区友谊西路",
+            "location": [126.548455, 45.749011],
+            "travelMode": {
+              "mode": "出租车",
+              "travelTime": 15,
+              "distance": 6,
+              "price": 20
+            }
+          }
+        },
+        {
+          "id": 3,
+          "type": "end",
+          "arrivalTime": "16:00",
+          "name": "哈尔滨音乐公园",
+          "rating": 4.3,
+          "address": "道里区友谊西路",
+          "description": "以音乐为主题的开放式公园",
+          "location": [126.548455, 45.749011],
+          "beforeSpot": {
+            "name": "松花江索道",
+            "address": "道里区通江街218号",
+            "location": [126.610547, 45.777900],
+            "travelMode": {
+              "mode": "出租车",
+              "travelTime": 15,
+              "distance": 6,
+              "price": 20
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
+`;

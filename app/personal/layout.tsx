@@ -19,6 +19,7 @@ import { UserInfoResponse } from "@/types/article";
 import UserClient from "@/lib/use-client";
 import { toast } from "sonner";
 
+
 export default function PersonalLayout({
   children,
 }: {

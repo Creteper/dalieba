@@ -38,6 +38,9 @@ export default function AllScenicSpotCardPage() {
   const [allScenicSpot, setAllScenicSpot] = useState<ScenicSpotResponse>({
     sights: [],
   });
+  const [allHotel, setAllHotel] = useState<ScenicSpotResponse>({
+    sights: [],
+  });
   const [displayedSpots, setDisplayedSpots] = useState<
     ScenicSpotResponse["sights"]
   >([]);
@@ -68,6 +71,15 @@ export default function AllScenicSpotCardPage() {
     };
 
     checkToken();
+
+    async function fetchAllHotel() {
+      const data = await scenicSpot.getAllHotel<ScenicSpotResponse>();
+      if (data?.sights) {
+        setAllHotel(data);
+      }
+    }
+
+    // 获取所有景点数据
     async function fetchScenicSpots() {
       try {
         const data = await scenicSpot.getAllScenicSpot<ScenicSpotResponse>();
@@ -96,7 +108,7 @@ export default function AllScenicSpotCardPage() {
         setIsLoading(false);
       }
     }
-
+    fetchAllHotel();
     fetchScenicSpots();
   }, []);
 
@@ -131,7 +143,8 @@ export default function AllScenicSpotCardPage() {
 
   // 应用筛选
   useEffect(() => {
-    let results = allScenicSpot.sights;
+    let results =
+      activeTab === "hotel" ? allHotel.sights : allScenicSpot.sights;
 
     // 应用搜索筛选
     if (searchQuery.trim() !== "") {
@@ -159,6 +172,7 @@ export default function AllScenicSpotCardPage() {
   }, [
     searchQuery,
     allScenicSpot.sights,
+    allHotel.sights,
     activeTab,
     starredIds,
     selectedDistrict,
@@ -295,7 +309,9 @@ export default function AllScenicSpotCardPage() {
             >
               <ArrowLeft className="h-5 w-5" />
             </Button>
-            <h1 className="text-xl font-bold">哈尔滨景点</h1>
+            <h1 className="text-xl font-bold">
+              哈尔滨{activeTab === "hotel" ? "酒店" : "景点"}
+            </h1>
           </div>
 
           <div className="flex items-center gap-2">
@@ -331,7 +347,9 @@ export default function AllScenicSpotCardPage() {
             >
               <Command className="w-full border rounded-lg overflow-hidden">
                 <CommandInput
-                  placeholder="搜索景点..."
+                  placeholder={`搜索${
+                    activeTab === "hotel" ? "酒店" : "景点"
+                  }...`}
                   value={searchQuery}
                   onValueChange={setSearchQuery}
                   className="h-10 shadow-none!"
@@ -339,7 +357,7 @@ export default function AllScenicSpotCardPage() {
                 {searchQuery && (
                   <div className="max-h-[200px] overflow-y-auto">
                     <CommandEmpty className="py-2 text-sm text-muted-foreground">
-                      未找到相关景点
+                      未找到相关{activeTab === "hotel" ? "酒店" : "景点"}
                     </CommandEmpty>
                     <CommandGroup>
                       {filteredSpots.slice(0, 5).map((spot) => (
@@ -417,7 +435,9 @@ export default function AllScenicSpotCardPage() {
             探索哈尔滨景点
           </h1>
           <p className="text-muted-foreground max-w-2xl">
-            发现哈尔滨最受欢迎的旅游胜地，从历史地标到自然景观，这里有各种各样的景点等待您的探索。
+            {activeTab === "hotel"
+              ? "寻找哈尔滨优质的酒店住宿，为您的旅行提供舒适的休息场所。"
+              : "发现哈尔滨最受欢迎的旅游胜地，从历史地标到自然景观，这里有各种各样的景点等待您的探索。"}
           </p>
 
           <div className="mt-4">
@@ -426,9 +446,12 @@ export default function AllScenicSpotCardPage() {
               onValueChange={handleTabChange}
               className="w-full"
             >
-              <TabsList className="grid w-full max-w-md grid-cols-2">
+              <TabsList className="grid w-full max-w-md grid-cols-3">
                 <TabsTrigger value="all" className="text-sm">
                   全部景点
+                </TabsTrigger>
+                <TabsTrigger value="hotel" className="text-sm">
+                  全部酒店
                 </TabsTrigger>
                 <TabsTrigger value="starred" className="text-sm">
                   我的收藏
@@ -439,7 +462,14 @@ export default function AllScenicSpotCardPage() {
 
           <div className="mt-4 flex items-center text-sm">
             <MapPinIcon className="h-4 w-4 mr-1 text-primary" />
-            <span>共 {filteredSpots.length} 个景点</span>
+            <span>
+              共 {filteredSpots.length} 个
+              {activeTab === "hotel"
+                ? "酒店"
+                : activeTab === "starred"
+                ? "收藏"
+                : "景点"}
+            </span>
             {selectedDistrict && (
               <Badge variant="outline" className="ml-2">
                 {selectedDistrict}
@@ -531,7 +561,12 @@ export default function AllScenicSpotCardPage() {
               <MapPinIcon className="h-10 w-10 text-muted-foreground" />
             </div>
             <p className="text-muted-foreground text-lg font-medium mb-2">
-              未找到相关景点
+              未找到相关
+              {activeTab === "hotel"
+                ? "酒店"
+                : activeTab === "starred"
+                ? "收藏"
+                : "景点"}
             </p>
             <p className="text-muted-foreground text-sm mb-4">
               尝试调整您的筛选条件
