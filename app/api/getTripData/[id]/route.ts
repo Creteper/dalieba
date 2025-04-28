@@ -2,8 +2,8 @@
  * @Author: ceteper 75122254@qq.com
  * @Date: 2025-04-17 13:20:05
  * @LastEditors: ceteper 75122254@qq.com
- * @LastEditTime: 2025-04-17 13:20:05
- * @FilePath: \dalieba\app\api\[id]\route.tsx
+ * @LastEditTime: 2025-04-28 19:15:16
+ * @FilePath: \dalieba\app\api\getTripData\[id]\route.tsx
  * @Description: 路线详情API
  */
 import { NextRequest, NextResponse } from "next/server";
@@ -12,9 +12,9 @@ import { tripData } from "@/lib/data-static";
 // 获取单个路线详情
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
-  const { id } = params;
+  const { id } = context.params;
 
   // 尝试查找对应ID的路线
   const trip = tripData.find((trip) => trip.id === parseInt(id));
