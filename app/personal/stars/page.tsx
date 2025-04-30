@@ -2,7 +2,7 @@
  * @Author: ceteper 75122254@qq.com
  * @Date: 2025-03-24 08:38:55
  * @LastEditors: ceteper 75122254@qq.com
- * @LastEditTime: 2025-04-11 13:45:34
+ * @LastEditTime: 2025-04-29 17:23:26
  * @FilePath: \dalieba\app\personal\stars\page.tsx
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
@@ -16,7 +16,8 @@ import { toast } from "sonner";
 import ScenicSpot from "@/lib/scenic-spot";
 import { StarredScenicSpotResponse } from "@/types/article";
 import { useRouter } from "next/navigation";
-
+import { ServerConfig } from "@/lib/site";
+import { ReplaceParentheses } from "@/lib/scenic-spot";
 export default function Stars() {
     const router = useRouter();
     const scenicSpot = new ScenicSpot();
@@ -124,7 +125,7 @@ export default function Stars() {
                             rating="5.0"
                             description={spot.address}
                             location={spot.address}
-                            imageUrl="/images/djt.jpeg"
+                            imageUrl={ServerConfig.userApiUrl + "/img/" + ReplaceParentheses(spot.name) + ".jpg"}
                             isStarred={true}
                             onStarClick={handleUnstar}
                             onClick={() => handleSpotClick(spot.id)}

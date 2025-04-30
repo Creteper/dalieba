@@ -1,0 +1,207 @@
+Date : 2025-04-28 20:33:43
+Directory : d:\全部项目\dalieba
+Total : 119 files,  25154 codes, 931 comments, 2162 blanks, all 28247 lines
+
+Languages
++--------------------+------------+------------+------------+------------+------------+
+| language           | files      | code       | comment    | blank      | total      |
++--------------------+------------+------------+------------+------------+------------+
+| TypeScript JSX     |         84 |     13,449 |        684 |      1,136 |     15,269 |
+| JSON               |          3 |      4,517 |          0 |          2 |      4,519 |
+| YAML               |          1 |      3,326 |          0 |        678 |      4,004 |
+| TypeScript         |         19 |      3,287 |        234 |        270 |      3,791 |
+| Markdown           |          2 |        240 |          0 |         51 |        291 |
+| CSS                |          1 |        165 |          4 |         20 |        189 |
+| XML                |          5 |        110 |          0 |          0 |        110 |
+| JavaScript         |          2 |         32 |          9 |          4 |         45 |
+| JSON with Comments |          1 |         27 |          0 |          1 |         28 |
+| Batch              |          1 |          1 |          0 |          0 |          1 |
++--------------------+------------+------------+------------+------------+------------+
+
+Directories
++---------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                          | files      | code       | comment    | blank      | total      |
++---------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                             |        119 |     25,154 |        931 |      2,162 |     28,247 |
+| . (Files)                                                     |         10 |      7,975 |         10 |        708 |      8,693 |
+| app                                                           |         37 |      7,636 |        495 |        578 |      8,709 |
+| app (Files)                                                   |          4 |        355 |         19 |         41 |        415 |
+| app\allScenicSpot                                             |          2 |        841 |         32 |         48 |        921 |
+| app\allScenicSpotCard                                         |          1 |        529 |         32 |         44 |        605 |
+| app\allScenicSpot\[scenicSpotId]                              |          2 |        841 |         32 |         48 |        921 |
+| app\api                                                       |          4 |         37 |         31 |         15 |         83 |
+| app\api\getTravel                                             |          1 |         10 |          8 |          3 |         21 |
+| app\api\getTripData                                           |          2 |         19 |         21 |          8 |         48 |
+| app\api\getTripData (Files)                                   |          1 |          6 |          9 |          3 |         18 |
+| app\api\getTripData\[id]                                      |          1 |         13 |         12 |          5 |         30 |
+| app\api\getTripLocation                                       |          1 |          8 |          2 |          4 |         14 |
+| app\calcTraffic                                               |          2 |        124 |         19 |          9 |        152 |
+| app\community                                                 |          2 |        249 |         19 |         22 |        290 |
+| app\createplan                                                |          3 |      1,107 |         64 |         97 |      1,268 |
+| app\createplan (Files)                                        |          2 |        747 |         36 |         50 |        833 |
+| app\createplan\[planid]                                       |          1 |        360 |         28 |         47 |        435 |
+| app\history                                                   |          1 |        454 |         47 |         33 |        534 |
+| app\home                                                      |          2 |        714 |         36 |         35 |        785 |
+| app\login                                                     |          1 |        262 |         19 |         24 |        305 |
+| app\newplan                                                   |          1 |        516 |         25 |         24 |        565 |
+| app\newplan\[planid]                                          |          1 |        516 |         25 |         24 |        565 |
+| app\personal                                                  |          8 |        795 |         79 |         65 |        939 |
+| app\personal (Files)                                          |          2 |        154 |         20 |         19 |        193 |
+| app\personal\likes                                            |          1 |         36 |          0 |          2 |         38 |
+| app\personal\myposts                                          |          1 |         94 |          0 |          3 |         97 |
+| app\personal\setting                                          |          2 |        329 |         31 |         22 |        382 |
+| app\personal\setting (Files)                                  |          1 |        169 |         31 |          9 |        209 |
+| app\personal\setting\components                               |          1 |        160 |          0 |         13 |        173 |
+| app\personal\stars                                            |          2 |        182 |         28 |         19 |        229 |
+| app\personal\stars (Files)                                    |          1 |        112 |         14 |         11 |        137 |
+| app\personal\stars\components                                 |          1 |         70 |         14 |          8 |         92 |
+| app\register                                                  |          1 |        345 |          8 |         30 |        383 |
+| app\routeRecommend                                            |          4 |        625 |         38 |         41 |        704 |
+| app\routeRecommend (Files)                                    |          2 |        111 |         21 |         12 |        144 |
+| app\routeRecommend\[routeId]                                  |          2 |        514 |         17 |         29 |        560 |
+| app\scenicSpot                                                |          1 |        683 |         27 |         50 |        760 |
+| app\scenicSpot\[scenicspotId]                                 |          1 |        683 |         27 |         50 |        760 |
+| components                                                    |         52 |      6,076 |        230 |        608 |      6,914 |
+| components\home                                               |          7 |      1,278 |         86 |        106 |      1,470 |
+| components\home\anyTravel                                     |          1 |         30 |         10 |          4 |         44 |
+| components\home\componentsHome                                |          4 |        832 |         48 |         69 |        949 |
+| components\home\hot                                           |          1 |         41 |          2 |          2 |         45 |
+| components\home\search                                        |          1 |        375 |         26 |         31 |        432 |
+| components\map                                                |          4 |        731 |         39 |         96 |        866 |
+| components\navbar                                             |          1 |          5 |          8 |          1 |         14 |
+| components\plan                                               |          3 |        377 |         29 |         26 |        432 |
+| components\scenic-spot                                        |          1 |         68 |          3 |          6 |         77 |
+| components\theme                                              |          2 |        156 |          8 |         13 |        177 |
+| components\ui                                                 |         34 |      3,461 |         57 |        360 |      3,878 |
+| hooks                                                         |          2 |        131 |          0 |         19 |        150 |
+| lib                                                           |         12 |      2,960 |        175 |        231 |      3,366 |
+| public                                                        |          5 |        110 |          0 |          0 |        110 |
+| public\images                                                 |          5 |        110 |          0 |          0 |        110 |
+| types                                                         |          1 |        266 |         21 |         18 |        305 |
++---------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++---------------------------------------------------------------+--------------------+------------+------------+------------+------------+
+| filename                                                      | language           | code       | comment    | blank      | total      |
++---------------------------------------------------------------+--------------------+------------+------------+------------+------------+
+| d:\全部项目\dalieba\README.md                                     | Markdown           |         68 |          0 |         20 |         88 |
+| d:\全部项目\dalieba\app\allScenicSpotCard\page.tsx                | TypeScript JSX     |        529 |         32 |         44 |        605 |
+| d:\全部项目\dalieba\app\allScenicSpot\[scenicSpotId]\layout.tsx   | TypeScript JSX     |         12 |          8 |          3 |         23 |
+| d:\全部项目\dalieba\app\allScenicSpot\[scenicSpotId]\page.tsx     | TypeScript JSX     |        829 |         24 |         45 |        898 |
+| d:\全部项目\dalieba\app\api\getTravel\route.ts                    | TypeScript         |         10 |          8 |          3 |         21 |
+| d:\全部项目\dalieba\app\api\getTripData\[id]\route.ts             | TypeScript         |         13 |         12 |          5 |         30 |
+| d:\全部项目\dalieba\app\api\getTripData\route.ts                  | TypeScript         |          6 |          9 |          3 |         18 |
+| d:\全部项目\dalieba\app\api\getTripLocation\route.tsx             | TypeScript JSX     |          8 |          2 |          4 |         14 |
+| d:\全部项目\dalieba\app\calcTraffic\layout.tsx                    | TypeScript JSX     |         12 |          8 |          3 |         23 |
+| d:\全部项目\dalieba\app\calcTraffic\page.tsx                      | TypeScript JSX     |        112 |         11 |          6 |        129 |
+| d:\全部项目\dalieba\app\community\page.tsx                        | TypeScript JSX     |        139 |         17 |          6 |        162 |
+| d:\全部项目\dalieba\app\community\waterFall.tsx                   | TypeScript JSX     |        110 |          2 |         16 |        128 |
+| d:\全部项目\dalieba\app\createplan\[planid]\page.tsx              | TypeScript JSX     |        360 |         28 |         47 |        435 |
+| d:\全部项目\dalieba\app\createplan\layout.tsx                     | TypeScript JSX     |         16 |          0 |          4 |         20 |
+| d:\全部项目\dalieba\app\createplan\page.tsx                       | TypeScript JSX     |        731 |         36 |         46 |        813 |
+| d:\全部项目\dalieba\app\globals.css                               | CSS                |        165 |          4 |         20 |        189 |
+| d:\全部项目\dalieba\app\history\page.tsx                          | TypeScript JSX     |        454 |         47 |         33 |        534 |
+| d:\全部项目\dalieba\app\home\layout.tsx                           | TypeScript JSX     |          9 |          8 |          2 |         19 |
+| d:\全部项目\dalieba\app\home\page.tsx                             | TypeScript JSX     |        705 |         28 |         33 |        766 |
+| d:\全部项目\dalieba\app\layout.tsx                                | TypeScript JSX     |         40 |          0 |          5 |         45 |
+| d:\全部项目\dalieba\app\login\page.tsx                            | TypeScript JSX     |        262 |         19 |         24 |        305 |
+| d:\全部项目\dalieba\app\newplan\[planid]\page.tsx                 | TypeScript JSX     |        516 |         25 |         24 |        565 |
+| d:\全部项目\dalieba\app\not-found.tsx                             | TypeScript JSX     |        131 |          7 |         11 |        149 |
+| d:\全部项目\dalieba\app\page.tsx                                  | TypeScript JSX     |         19 |          8 |          5 |         32 |
+| d:\全部项目\dalieba\app\personal\layout.tsx                       | TypeScript JSX     |        144 |         12 |         15 |        171 |
+| d:\全部项目\dalieba\app\personal\likes\page.tsx                   | TypeScript JSX     |         36 |          0 |          2 |         38 |
+| d:\全部项目\dalieba\app\personal\myposts\page.tsx                 | TypeScript JSX     |         94 |          0 |          3 |         97 |
+| d:\全部项目\dalieba\app\personal\page.tsx                         | TypeScript JSX     |         10 |          8 |          4 |         22 |
+| d:\全部项目\dalieba\app\personal\setting\components\updatePwd.tsx | TypeScript JSX     |        160 |          0 |         13 |        173 |
+| d:\全部项目\dalieba\app\personal\setting\page.tsx                 | TypeScript JSX     |        169 |         31 |          9 |        209 |
+| d:\全部项目\dalieba\app\personal\stars\components\spot-card.tsx   | TypeScript JSX     |         70 |         14 |          8 |         92 |
+| d:\全部项目\dalieba\app\personal\stars\page.tsx                   | TypeScript JSX     |        112 |         14 |         11 |        137 |
+| d:\全部项目\dalieba\app\register\page.tsx                         | TypeScript JSX     |        345 |          8 |         30 |        383 |
+| d:\全部项目\dalieba\app\routeRecommend\[routeId]\layout.tsx       | TypeScript JSX     |         34 |          3 |          5 |         42 |
+| d:\全部项目\dalieba\app\routeRecommend\[routeId]\page.tsx         | TypeScript JSX     |        480 |         14 |         24 |        518 |
+| d:\全部项目\dalieba\app\routeRecommend\layout.tsx                 | TypeScript JSX     |         12 |          8 |          3 |         23 |
+| d:\全部项目\dalieba\app\routeRecommend\page.tsx                   | TypeScript JSX     |         99 |         13 |          9 |        121 |
+| d:\全部项目\dalieba\app\scenicSpot\[scenicspotId]\page.tsx        | TypeScript JSX     |        683 |         27 |         50 |        760 |
+| d:\全部项目\dalieba\components.json                               | JSON               |         21 |          0 |          0 |         21 |
+| d:\全部项目\dalieba\components\home\anyTravel\anyTravel.tsx       | TypeScript JSX     |         30 |         10 |          4 |         44 |
+| d:\全部项目\dalieba\components\home\componentsHome\calc-time.tsx  | TypeScript JSX     |        395 |          4 |         25 |        424 |
+| d:\全部项目\dalieba\components\home\componentsHome\classBox.tsx   | TypeScript JSX     |         47 |          9 |          6 |         62 |
+| d:\全部项目\dalieba\components\home\componentsHome\spot-card.tsx  | TypeScript JSX     |        279 |         30 |         28 |        337 |
+| d:\全部项目\dalieba\components\home\componentsHome\tripCard.tsx   | TypeScript JSX     |        111 |          5 |         10 |        126 |
+| d:\全部项目\dalieba\components\home\hot\hot.tsx                   | TypeScript JSX     |         41 |          2 |          2 |         45 |
+| d:\全部项目\dalieba\components\home\search\search.tsx             | TypeScript JSX     |        375 |         26 |         31 |        432 |
+| d:\全部项目\dalieba\components\map\MapComponent.tsx               | TypeScript JSX     |         81 |         11 |          7 |         99 |
+| d:\全部项目\dalieba\components\map\MapImpl.d.ts                   | TypeScript         |         13 |          8 |          2 |         23 |
+| d:\全部项目\dalieba\components\map\MapImpl.md                     | Markdown           |        172 |          0 |         31 |        203 |
+| d:\全部项目\dalieba\components\map\MapImpl.tsx                    | TypeScript JSX     |        465 |         20 |         56 |        541 |
+| d:\全部项目\dalieba\components\navbar\mobile-navbar.tsx           | TypeScript JSX     |          5 |          8 |          1 |         14 |
+| d:\全部项目\dalieba\components\plan\markdown.tsx                  | TypeScript JSX     |         56 |          8 |          3 |         67 |
+| d:\全部项目\dalieba\components\plan\spot-card.tsx                 | TypeScript JSX     |        100 |         10 |          8 |        118 |
+| d:\全部项目\dalieba\components\plan\time-line.tsx                 | TypeScript JSX     |        221 |         11 |         15 |        247 |
+| d:\全部项目\dalieba\components\scenic-spot\header.tsx             | TypeScript JSX     |         68 |          3 |          6 |         77 |
+| d:\全部项目\dalieba\components\theme\ThemeProvider.tsx            | TypeScript JSX     |          9 |          0 |          3 |         12 |
+| d:\全部项目\dalieba\components\theme\ThemeToggle.tsx              | TypeScript JSX     |        147 |          8 |         10 |        165 |
+| d:\全部项目\dalieba\components\ui\accordion.tsx                   | TypeScript JSX     |         59 |          0 |          8 |         67 |
+| d:\全部项目\dalieba\components\ui\alert-dialog.tsx                | TypeScript JSX     |        143 |          0 |         15 |        158 |
+| d:\全部项目\dalieba\components\ui\alwaysDrawer.tsx                | TypeScript JSX     |         92 |          2 |         10 |        104 |
+| d:\全部项目\dalieba\components\ui\articleCard.tsx                 | TypeScript JSX     |        142 |          0 |          4 |        146 |
+| d:\全部项目\dalieba\components\ui\articleControlBar.tsx           | TypeScript JSX     |         29 |          0 |          3 |         32 |
+| d:\全部项目\dalieba\components\ui\avatar.tsx                      | TypeScript JSX     |         47 |          0 |          7 |         54 |
+| d:\全部项目\dalieba\components\ui\badge.tsx                       | TypeScript JSX     |         41 |          0 |          6 |         47 |
+| d:\全部项目\dalieba\components\ui\button.tsx                      | TypeScript JSX     |         56 |          8 |          6 |         70 |
+| d:\全部项目\dalieba\components\ui\card.tsx                        | TypeScript JSX     |         83 |          0 |         10 |         93 |
+| d:\全部项目\dalieba\components\ui\carousel.tsx                    | TypeScript JSX     |        214 |          0 |         28 |        242 |
+| d:\全部项目\dalieba\components\ui\command.tsx                     | TypeScript JSX     |        165 |          0 |         13 |        178 |
+| d:\全部项目\dalieba\components\ui\control-bar.tsx                 | TypeScript JSX     |         39 |          9 |          3 |         51 |
+| d:\全部项目\dalieba\components\ui\dialog.tsx                      | TypeScript JSX     |        122 |          0 |         14 |        136 |
+| d:\全部项目\dalieba\components\ui\dragBar.tsx                     | TypeScript JSX     |         41 |          0 |         10 |         51 |
+| d:\全部项目\dalieba\components\ui\drawer.tsx                      | TypeScript JSX     |        119 |          0 |         14 |        133 |
+| d:\全部项目\dalieba\components\ui\dropdown-avatar.tsx             | TypeScript JSX     |        125 |          8 |          6 |        139 |
+| d:\全部项目\dalieba\components\ui\dropdown-menu.tsx               | TypeScript JSX     |        239 |          0 |         19 |        258 |
+| d:\全部项目\dalieba\components\ui\input.tsx                       | TypeScript JSX     |         18 |          0 |          4 |         22 |
+| d:\全部项目\dalieba\components\ui\label.tsx                       | TypeScript JSX     |         20 |          0 |          5 |         25 |
+| d:\全部项目\dalieba\components\ui\mapPersonalCard.tsx             | TypeScript JSX     |         45 |          0 |          3 |         48 |
+| d:\全部项目\dalieba\components\ui\navigation-menu.tsx             | TypeScript JSX     |        157 |          0 |         12 |        169 |
+| d:\全部项目\dalieba\components\ui\popover.tsx                     | TypeScript JSX     |         41 |          0 |          8 |         49 |
+| d:\全部项目\dalieba\components\ui\radio-group.tsx                 | TypeScript JSX     |         40 |          0 |          6 |         46 |
+| d:\全部项目\dalieba\components\ui\scroll-area.tsx                 | TypeScript JSX     |         53 |          0 |          6 |         59 |
+| d:\全部项目\dalieba\components\ui\select.tsx                      | TypeScript JSX     |        172 |          0 |         14 |        186 |
+| d:\全部项目\dalieba\components\ui\separator.tsx                   | TypeScript JSX     |         24 |          0 |          5 |         29 |
+| d:\全部项目\dalieba\components\ui\sheet.tsx                       | TypeScript JSX     |        126 |          0 |         14 |        140 |
+| d:\全部项目\dalieba\components\ui\sidebar.tsx                     | TypeScript JSX     |        660 |         12 |         55 |        727 |
+| d:\全部项目\dalieba\components\ui\skeleton.tsx                    | TypeScript JSX     |         11 |          0 |          3 |         14 |
+| d:\全部项目\dalieba\components\ui\sonner.tsx                      | TypeScript JSX     |         21 |          0 |          5 |         26 |
+| d:\全部项目\dalieba\components\ui\tabs.tsx                        | TypeScript JSX     |         59 |          8 |          8 |         75 |
+| d:\全部项目\dalieba\components\ui\timeline.tsx                    | TypeScript JSX     |        177 |         10 |         24 |        211 |
+| d:\全部项目\dalieba\components\ui\tooltip.tsx                     | TypeScript JSX     |         54 |          0 |          8 |         62 |
+| d:\全部项目\dalieba\components\ui\visually-hidden.tsx             | TypeScript JSX     |         27 |          0 |          4 |         31 |
+| d:\全部项目\dalieba\hooks\use-mobile.ts                           | TypeScript         |         15 |          0 |          5 |         20 |
+| d:\全部项目\dalieba\hooks\use-toast.tsx                           | TypeScript JSX     |        116 |          0 |         14 |        130 |
+| d:\全部项目\dalieba\lib\ai-chat.ts                                | TypeScript         |         26 |          8 |          6 |         40 |
+| d:\全部项目\dalieba\lib\analyze-route.ts                          | TypeScript         |        162 |         85 |         27 |        274 |
+| d:\全部项目\dalieba\lib\axios.ts                                  | TypeScript         |         48 |          9 |          3 |         60 |
+| d:\全部项目\dalieba\lib\client-theme.ts                           | TypeScript         |         13 |          0 |          6 |         19 |
+| d:\全部项目\dalieba\lib\data-static.ts                            | TypeScript         |      1,185 |          0 |          6 |      1,191 |
+| d:\全部项目\dalieba\lib\dev-data.ts                               | TypeScript         |      1,179 |          8 |        115 |      1,302 |
+| d:\全部项目\dalieba\lib\pos-split.ts                              | TypeScript         |         97 |         52 |         27 |        176 |
+| d:\全部项目\dalieba\lib\scenic-spot.ts                            | TypeScript         |        128 |          3 |         15 |        146 |
+| d:\全部项目\dalieba\lib\site.ts                                   | TypeScript         |          5 |          0 |          1 |          6 |
+| d:\全部项目\dalieba\lib\use-client.ts                             | TypeScript         |         73 |          2 |         13 |         88 |
+| d:\全部项目\dalieba\lib\users-func.ts                             | TypeScript         |         39 |          8 |         10 |         57 |
+| d:\全部项目\dalieba\lib\utils.ts                                  | TypeScript         |          5 |          0 |          2 |          7 |
+| d:\全部项目\dalieba\next.config.js                                | JavaScript         |         28 |          9 |          2 |         39 |
+| d:\全部项目\dalieba\next.config.ts                                | TypeScript         |          4 |          1 |          3 |          8 |
+| d:\全部项目\dalieba\package-lock.json                             | JSON               |      4,425 |          0 |          1 |      4,426 |
+| d:\全部项目\dalieba\package.json                                  | JSON               |         71 |          0 |          1 |         72 |
+| d:\全部项目\dalieba\pnpm-lock.yaml                                | YAML               |      3,326 |          0 |        678 |      4,004 |
+| d:\全部项目\dalieba\postcss.config.mjs                            | JavaScript         |          4 |          0 |          2 |          6 |
+| d:\全部项目\dalieba\public\images\black_marker.svg                | XML                |         22 |          0 |          0 |         22 |
+| d:\全部项目\dalieba\public\images\location-custom-green.svg       | XML                |         22 |          0 |          0 |         22 |
+| d:\全部项目\dalieba\public\images\location-custom.svg             | XML                |         22 |          0 |          0 |         22 |
+| d:\全部项目\dalieba\public\images\location.svg                    | XML                |         22 |          0 |          0 |         22 |
+| d:\全部项目\dalieba\public\images\logo.svg                        | XML                |         22 |          0 |          0 |         22 |
+| d:\全部项目\dalieba\start.bat                                     | Batch              |          1 |          0 |          0 |          1 |
+| d:\全部项目\dalieba\tsconfig.json                                 | JSON with Comments |         27 |          0 |          1 |         28 |
+| d:\全部项目\dalieba\types\article.ts                              | TypeScript         |        266 |         21 |         18 |        305 |
+| Total                                                         |                    |     25,154 |        931 |      2,162 |     28,247 |
++---------------------------------------------------------------+--------------------+------------+------------+------------+------------+
