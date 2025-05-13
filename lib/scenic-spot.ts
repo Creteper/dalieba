@@ -2,7 +2,15 @@ import { Http } from "@/lib/axios";
 import { ServerConfig } from "./site";
 import { StarredScenicSpotResponse } from "@/types/article";
 export default class ScenicSpot {
-  private http = new Http(ServerConfig.userApiUrl || "");
+  private http: Http;
+
+  constructor(urlHeader: string = "") {
+    if (urlHeader) {
+      this.http = new Http(urlHeader);
+    } else {
+      this.http = new Http(ServerConfig.userApiUrl || "");
+    }
+  }
 
   public async recommendScenicSpot<T>(): Promise<T> {
     const res = await this.http.get("/recommend_sights");

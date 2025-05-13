@@ -2,7 +2,7 @@
  * @Author: Creteper 7512254@qq.com
  * @Date: 2025-03-22 13:16:50
  * @LastEditors: ceteper 75122254@qq.com
- * @LastEditTime: 2025-04-22 13:26:30
+ * @LastEditTime: 2025-05-10 09:42:35
  * @FilePath: \dalieba\app\home\page.tsx
  * @Description: 用于显示首页内容
  */
@@ -166,7 +166,7 @@ export default function HomePage() {
     checkedToken();
     setHelloTitle(getTimeState() + "，来试试AI旅行规划");
   }, [pathname]);
-
+  
   // 监听滚动事件
   useEffect(() => {
     const handleScroll = () => {
