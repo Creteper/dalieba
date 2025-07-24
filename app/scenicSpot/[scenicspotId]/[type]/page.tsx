@@ -51,6 +51,7 @@ export default function ScenicSpotDetailPage() {
   const params = useParams();
   const router = useRouter();
   const scenicSpotId = params.scenicspotId as string;
+  const type = params.type as string; // 获取type参数：'hotel' 或 'spot'
   const scenicSpot = new ScenicSpot();
   const aiChat = new AiChat();
   const userClient = new UserClient();
@@ -94,29 +95,38 @@ export default function ScenicSpotDetailPage() {
     async function fetchData() {
       setIsLoading(true);
       try {
-        // 获取所有景点
-        const allScenicSpotRes =
-          await scenicSpot.getAllScenicSpot<ScenicSpotResponse>();
-        if (!allScenicSpotRes?.sights) {
-          toast.error("获取景点信息失败");
-          router.push("/allScenicSpot");
-
+        // 根据type参数决定调用哪个API
+        let allDataRes: ScenicSpotResponse;
+        
+        if (type === "hotel") {
+          // 获取酒店数据
+          allDataRes = await scenicSpot.getAllHotel<ScenicSpotResponse>();
+          console.log("获取酒店数据，type:", type);
+        } else {
+          // 获取景点数据（默认情况）
+          allDataRes = await scenicSpot.getAllScenicSpot<ScenicSpotResponse>();
+          console.log("获取景点数据，type:", type);
+        }
+        
+        if (!allDataRes?.sights) {
+          toast.error(`获取${type === "hotel" ? "酒店" : "景点"}信息失败`);
+          router.push("/allScenicSpotCard");
           return;
         }
 
         let spot;
         if (scenicSpotId != "all") {
-          // 找到对应ID的景点
-          spot = allScenicSpotRes.sights.find(
+          // 找到对应ID的数据
+          spot = allDataRes.sights.find(
             (s) => s.id === Number(scenicSpotId)
           );
           if (!spot) {
-            toast.error("找不到该景点信息");
-            router.push("/allScenicSpot");
+            toast.error(`找不到该${type === "hotel" ? "酒店" : "景点"}信息`);
+            router.push("/allScenicSpotCard");
             return;
           }
         } else {
-          spot = allScenicSpotRes.sights;
+          spot = allDataRes.sights;
         }
 
         setSpotDetail(spot);
@@ -133,15 +143,15 @@ export default function ScenicSpotDetailPage() {
           const [lat, lng] = spot.localtion.split(",");
           setCenter([Number(lng), Number(lat)]);
 
-          // 计算附近景点
-          if (allScenicSpotRes.sights.length > 0) {
+          // 计算附近景点（仅对景点类型计算，酒店不需要附近景点）
+          if (type !== "hotel" && allDataRes.sights.length > 0) {
             const currentLat = Number(lat);
             const currentLng = Number(lng);
 
             // 过滤出其他景点并计算距离
-            const spotsWithDistance = allScenicSpotRes.sights
-              .filter((s) => s.id !== Number(scenicSpotId) && s.localtion) // 排除当前景点
-              .map((s) => {
+            const spotsWithDistance = allDataRes.sights
+              .filter((s: any) => s.id !== Number(scenicSpotId) && s.localtion) // 排除当前景点
+              .map((s: any) => {
                 const [otherLat, otherLng] = s.localtion.split(",").map(Number);
                 const distance = calculateDistance(
                   currentLat,
@@ -161,15 +171,15 @@ export default function ScenicSpotDetailPage() {
                   type: "attraction" as const,
                 };
               })
-              .filter((s) => s.actualDistance < 10) // 只显示10公里内的景点
-              .sort((a, b) => a.actualDistance - b.actualDistance) // 按距离排序
+              .filter((s: any) => s.actualDistance < 10) // 只显示10公里内的景点
+              .sort((a: any, b: any) => a.actualDistance - b.actualDistance) // 按距离排序
               .slice(0, 5); // 取最近的5个
 
             setNearbySpots(spotsWithDistance);
           }
         }
 
-        // 获取手残状态
+        // 获取收藏状态
         if (localStorage.getItem("token")) {
           const starredData = await scenicSpot.getStarredScenicSpot<{
             book_mark: any[];
@@ -193,10 +203,10 @@ export default function ScenicSpotDetailPage() {
       }
     }
 
-    if (scenicSpotId) {
+    if (scenicSpotId && type) {
       fetchData();
     }
-  }, [scenicSpotId]);
+  }, [scenicSpotId, type]);
 
   // 清理音频资源
   useEffect(() => {
@@ -246,7 +256,7 @@ export default function ScenicSpotDetailPage() {
   // 处理AI导游
   const handleGuide = async () => {
     if (!spotDetail || !spotDetail.name) {
-      toast.error("景点信息不完整");
+      toast.error(`${type === "hotel" ? "酒店" : "景点"}信息不完整`);
       return;
     }
 
@@ -395,7 +405,7 @@ export default function ScenicSpotDetailPage() {
                   <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center mr-3">
                     <span className="inline-block w-1 h-4 bg-primary rounded-full"></span>
                   </div>
-                  景点介绍
+                  {type === "hotel" ? "酒店介绍" : "景点介绍"}
                 </h2>
 
                 <div className="bg-muted/30 rounded-lg p-4 border border-border/5 text-muted-foreground">
@@ -548,7 +558,7 @@ export default function ScenicSpotDetailPage() {
                           : "group-hover:scale-110"
                       }`}
                     />
-                    {isStarred ? "已收藏" : "收藏景点"}
+                    {isStarred ? "已收藏" : `收藏${type === "hotel" ? "酒店" : "景点"}`}
                   </Button>
                 </motion.div>
 
@@ -618,7 +628,7 @@ export default function ScenicSpotDetailPage() {
                       clipRule="evenodd"
                     />
                   </svg>
-                  景点信息
+                  {type === "hotel" ? "酒店信息" : "景点信息"}
                 </h3>
 
                 <div className="space-y-3 text-sm text-muted-foreground">
@@ -654,23 +664,24 @@ export default function ScenicSpotDetailPage() {
                 </div>
               </div>
 
-              {/* 热门推荐 */}
-              <div className="mt-6 pt-6 border-t border-border/50">
-                <h3 className="text-sm font-medium flex items-center mb-4">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                    className="w-4 h-4 mr-1 text-primary"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  附近推荐
-                </h3>
+              {/* 热门推荐 - 只在景点类型时显示 */}
+              {type !== "hotel" && (
+                <div className="mt-6 pt-6 border-t border-border/50">
+                  <h3 className="text-sm font-medium flex items-center mb-4">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                      className="w-4 h-4 mr-1 text-primary"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    附近推荐
+                  </h3>
 
                 <div className="space-y-3">
                   {nearbySpots.length > 0 ? (
@@ -679,7 +690,7 @@ export default function ScenicSpotDetailPage() {
                         key={spot.id}
                         whileHover={{ x: 3 }}
                         className="flex items-center gap-3 p-2 rounded-md hover:bg-muted/50 cursor-pointer"
-                        onClick={() => router.push(`/scenicSpot/${spot.id}`)}
+                        onClick={() => router.push(`/scenicSpot/${spot.id}/spot`)}
                       >
                         <div className="w-10 h-10 bg-primary/10 rounded-md flex items-center justify-center flex-shrink-0">
                           <svg
@@ -710,6 +721,7 @@ export default function ScenicSpotDetailPage() {
                   )}
                 </div>
               </div>
+              )}
             </motion.div>
           </motion.div>
         </div>
@@ -852,6 +864,9 @@ export default function ScenicSpotDetailPage() {
                 size="sm"
                 className="text-xs"
                 onClick={() => {
+                  if (window.speechSynthesis.speaking) {
+                    window.speechSynthesis.cancel();
+                  }
                   navigator.clipboard.writeText(guideMessage);
                   toast.success("导游内容已复制到剪贴板");
                 }}

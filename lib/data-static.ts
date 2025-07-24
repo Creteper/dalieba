@@ -5,6 +5,7 @@ export const parkinglotData = [
     address: "哈尔滨市道里区安宁街与地工街交叉口南60米",
     imageUrl: "/parlot/bgcdxtcc.jpg",
     rating: 4.5,
+    description: "车位多",
   },
   {
     id: 2,
@@ -12,6 +13,7 @@ export const parkinglotData = [
     address: "哈尔滨市道里区石头道街118号哈尔滨新一百(西北角)",
     imageUrl: "/parlot/xybdmtcc.jpg",
     rating: 4.0,
+    description: "空间大",
   },
   {
     id: 3,
@@ -19,6 +21,7 @@ export const parkinglotData = [
     address: "哈尔滨市南岗区松花江街6号天竹宾馆(哈尔大巴店)",
     imageUrl: "/parlot/tzkjbgdxtcc.jpg",
     rating: 4.5,
+    description: "免费停车",
   },
   {
     id: 4,
@@ -26,6 +29,7 @@ export const parkinglotData = [
     address: "哈尔滨市南岗区哈尔滨站地铁站3号口步行440米",
     imageUrl: "/parlot/qngctcc.jpg",
     rating: 4.5,
+    description: "免费停车",
   },
 ];
 
@@ -165,7 +169,7 @@ export const routeData = [
             description: "东北地区重要铁路枢纽",
             location: [126.629834, 45.760696],
             nextSpot: {
-              name: "圣·索菲亚教堂",
+              name: "索菲亚广场",
               address: "道里区透笼街88号",
               location: [126.627215, 45.770125],
               travelMode: {
@@ -180,7 +184,7 @@ export const routeData = [
             id: 2,
             type: "spot",
             arrivalTime: "08:30",
-            name: "圣·索菲亚教堂",
+            name: "索菲亚广场",
             rating: 4.8,
             address: "道里区透笼街88号",
             description: "远东最大东正教教堂",
@@ -976,7 +980,7 @@ export const showFakeData = `
           "id": 2,
           "type": "spot",
           "arrivalTime": "09:30",
-          "name": "圣·索菲亚教堂",
+          "name": "索菲亚广场",
           "rating": 4.9,
           "address": "哈尔滨市道里区透笼街88号",
           "description": "远东地区最大的东正教教堂，标志性历史建筑",
@@ -1055,7 +1059,7 @@ export const showFakeData = `
           "id": 2,
           "type": "spot",
           "arrivalTime": "10:00",
-          "name": "哈尔滨极地公园·极地馆",
+          "name": "哈尔滨极地公园",
           "rating": 4.8,
           "address": "松北区太阳大道3号",
           "description": "观赏北极熊、白鲸等极地动物",
@@ -1113,7 +1117,7 @@ export const showFakeData = `
           "id": 1,
           "type": "start",
           "arrivalTime": "09:00",
-          "name": "中华巴洛克风情街",
+          "name": "中华巴洛克历史文化街区",
           "rating": 4.5,
           "address": "道外区南二道街",
           "description": "融合中西建筑风格的历史文化街区",
@@ -1134,7 +1138,7 @@ export const showFakeData = `
           "id": 2,
           "type": "spot",
           "arrivalTime": "10:00",
-          "name": "松花江索道",
+          "name": "松花江湿地",
           "rating": 4.4,
           "address": "道里区通江街218号",
           "description": "俯瞰松花江全景的空中走廊",

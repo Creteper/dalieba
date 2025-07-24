@@ -57,9 +57,18 @@ export type ScenicSpotResponse = {
 };
 
 export type GuideScenicSpotResponse = {
-  data: string;
+  data: {
+    text: string;
+    audio: {
+      url: string;
+      file_size: number;
+      voice_type: string;
+      segments: number;
+    };
+    tts_status: string;
+  };
   status: number;
-  message: string;
+  message?: string;
 };
 
 export type CreatePlanResponse = {
@@ -110,6 +119,8 @@ export type PlanDetailResponse = {
 
 export type StarredScenicSpotResponse = {
   id: number;
+  user_id: number | null;
+  gd_id: number | null;
   pname: string;
   city_name: string;
   adname: string;

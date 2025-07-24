@@ -277,7 +277,21 @@ export default function AllScenicSpotCardPage() {
 
   // 处理景点卡片点击
   const handleSpotClick = (id: number) => {
-    router.push(`/scenicSpot/${id}`);
+    // 验证ID是否有效
+    if (!id || isNaN(id)) {
+      toast.error("ID无效，无法跳转");
+      console.error("Invalid id:", id);
+      return;
+    }
+    
+    // 根据当前tab类型决定跳转路径和参数
+    if (activeTab === "hotel") {
+      console.log("跳转到酒店详情页，ID:", id);
+      router.push(`/scenicSpot/${id}/hotel`);
+    } else {
+      console.log("跳转到景点详情页，ID:", id);
+      router.push(`/scenicSpot/${id}/spot`);
+    }
   };
 
   // 渲染加载状态

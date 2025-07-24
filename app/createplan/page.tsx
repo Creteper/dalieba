@@ -39,6 +39,7 @@ import {
   TimelineContent,
 } from "@/components/ui/timeline";
 import { ServerConfig } from "@/lib/site";
+import { showFakeData } from "@/lib/data-static";
 // 移除滚动条样式对象
 export default function CreatePlan() {
   const router = useRouter();
@@ -54,11 +55,8 @@ export default function CreatePlan() {
 
   useEffect(() => {
     async function getTravel() {
-      const res = await http.post("/getTravel", {
-        data: { city: "哈尔滨", days: 3, type: "cityWalk" },
-      });
-      const routeData = JSON.parse(res.data.data);
-      setData(routeData);
+
+      const routeData = JSON.parse(showFakeData);
       const analyzeRoute = new AnalyzeRoute(routeData as RouteData);
       setAnalyzeRoute(analyzeRoute);
     }
@@ -580,7 +578,7 @@ export function CreateMessage({
             },
           ]);
         }
-      }, 2000);
+      }, 4000);
 
       return () => clearTimeout(generateTimer);
     }

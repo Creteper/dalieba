@@ -9,7 +9,7 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import * as React from "react";
 import ControlBar from "@/components/ui/control-bar";
 import { Typewriter } from "react-simple-typewriter";
@@ -29,6 +29,9 @@ import {
   Clock,
   BookOpen,
   UserRound,
+  WifiOff,
+  RefreshCw,
+  AlertCircle,
 } from "lucide-react";
 import { useRouter, usePathname } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -48,6 +51,7 @@ import UserClient from "@/lib/use-client";
 import {
   RecommendScenicSpotResponse,
   StarredScenicSpotResponse,
+  ScenicSpotResponse,
 } from "@/types/article";
 import SpotCard from "@/components/home/componentsHome/spot-card";
 import ScenicSpot from "@/lib/scenic-spot";
@@ -152,11 +156,24 @@ export default function HomePage() {
   const [myRecommendScenicSpot, setMyRecommendScenicSpot] =
     useState<RecommendScenicSpotResponse>({ sights: [] });
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [isLogin, setIsLogin] = useState(false);
+  const [isCheckingLogin, setIsCheckingLogin] = useState(true);
   const plugin = React.useRef(
     Autoplay({ delay: 5000, stopOnInteraction: true })
   );
   const [starredIds, setStarredIds] = useState<number[]>([]);
+
+  // 全部景点相关状态
+  const [allScenicSpots, setAllScenicSpots] = useState<ScenicSpotResponse>({ sights: [] });
+  const [displayedAllSpots, setDisplayedAllSpots] = useState<ScenicSpotResponse["sights"]>([]);
+  const [allSpotsPage, setAllSpotsPage] = useState(1);
+  const [hasMoreAllSpots, setHasMoreAllSpots] = useState(true);
+  const [isLoadingAllSpots, setIsLoadingAllSpots] = useState(true);
+  const observerTarget = useRef(null);
+
+  // 每页加载的景点数量
+  const ITEMS_PER_PAGE = 12;
 
   useEffect(() => {
     async function checkedToken() {
@@ -166,7 +183,7 @@ export default function HomePage() {
     checkedToken();
     setHelloTitle(getTimeState() + "，来试试AI旅行规划");
   }, [pathname]);
-  
+
   // 监听滚动事件
   useEffect(() => {
     const handleScroll = () => {
@@ -185,18 +202,51 @@ export default function HomePage() {
   useEffect(() => {
     async function getRecommendScenicSpot() {
       setIsLoading(true);
+      setError(null); // 清除之前的错误状态
       try {
         const recommendScenicSpot =
           await scenicSpot.recommendScenicSpot<RecommendScenicSpotResponse>();
         setMyRecommendScenicSpot(recommendScenicSpot);
-      } catch (error) {
+      } catch (error: any) {
         console.error("获取推荐景点失败:", error);
+        // 根据错误类型设置不同的错误信息
+        if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
+          setError("网络请求超时，请检查网络连接");
+        } else if (error.code === 'NETWORK_ERROR' || !navigator.onLine) {
+          setError("网络连接失败，请检查网络设置");
+        } else {
+          setError("获取景点信息失败，请稍后重试");
+        }
       } finally {
         setIsLoading(false);
       }
     }
     getRecommendScenicSpot();
+
+    fetchStarredSpots()
   }, []);
+
+  // 重试获取推荐景点
+  const retryGetRecommendScenicSpot = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const recommendScenicSpot =
+        await scenicSpot.recommendScenicSpot<RecommendScenicSpotResponse>();
+      setMyRecommendScenicSpot(recommendScenicSpot);
+    } catch (error: any) {
+      console.error("获取推荐景点失败:", error);
+      if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
+        setError("网络请求超时，请检查网络连接");
+      } else if (error.code === 'NETWORK_ERROR' || !navigator.onLine) {
+        setError("网络连接失败，请检查网络设置");
+      } else {
+        setError("获取景点信息失败，请稍后重试");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   // 监听状态变化
   useEffect(() => {
@@ -204,26 +254,92 @@ export default function HomePage() {
   }, [myRecommendScenicSpot]);
 
   // 获取已收藏的景点
-  useEffect(() => {
-    const fetchStarredSpots = async () => {
-      if (isLogin) {
-        try {
-          const starredData = await scenicSpot.getStarredScenicSpot<{
-            code: number;
-            data: StarredScenicSpotResponse[];
-          }>();
-          if (starredData.code === 0 && starredData.data) {
-            const ids = starredData.data.map((item) => item.id);
-            setStarredIds(ids);
+  const fetchStarredSpots = useCallback(async () => {
+    if (isLogin) {
+      try {
+        const starredData = await scenicSpot.getStarredScenicSpot<
+          {
+            book_mark: StarredScenicSpotResponse[]
           }
-        } catch (error) {
-          console.error("获取收藏景点失败", error);
+        >();
+        if (starredData) {
+          const ids = starredData.book_mark.map((item) => item.gd_id);
+
+          setStarredIds(ids as number[]);
         }
+
+      } catch (error) {
+        console.error("获取收藏景点失败", error);
+      }
+    } else {
+      // 如果未登录，清空收藏状态
+      setStarredIds([]);
+    }
+  }, [isLogin, scenicSpot]);
+
+  // 获取全部景点数据
+  useEffect(() => {
+    const fetchAllScenicSpots = async () => {
+
+      try {
+        const allSpots = await scenicSpot.getAllScenicSpot<ScenicSpotResponse>();
+        if (allSpots?.sights) {
+          setAllScenicSpots(allSpots);
+          console.log("All Spots", allSpots)
+          // 初始显示前12个景点
+          setDisplayedAllSpots(allSpots.sights.slice(0, ITEMS_PER_PAGE));
+          setHasMoreAllSpots(allSpots.sights.length > ITEMS_PER_PAGE);
+        }
+      } catch (error) {
+        console.error("获取全部景点失败", error);
+      } finally {
+        setIsLoadingAllSpots(false);
       }
     };
+    fetchAllScenicSpots()
 
     fetchStarredSpots();
   }, [isLogin]);
+
+  // 懒加载更多全部景点
+  const loadMoreAllSpots = useCallback(() => {
+    if (!hasMoreAllSpots || isLoadingAllSpots) return;
+
+    const nextPage = allSpotsPage + 1;
+    const startIndex = (nextPage - 1) * ITEMS_PER_PAGE;
+    const endIndex = startIndex + ITEMS_PER_PAGE;
+
+    setDisplayedAllSpots((prev) => [
+      ...prev,
+      ...allScenicSpots.sights.slice(startIndex, endIndex),
+    ]);
+
+    setAllSpotsPage(nextPage);
+    setHasMoreAllSpots(endIndex < allScenicSpots.sights.length);
+  }, [allScenicSpots.sights, hasMoreAllSpots, isLoadingAllSpots, allSpotsPage]);
+
+  // 设置无限滚动观察器
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMoreAllSpots) {
+          loadMoreAllSpots();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    const currentTarget = observerTarget.current;
+    if (currentTarget) {
+      observer.observe(currentTarget);
+    }
+
+    return () => {
+      if (currentTarget) {
+        observer.unobserve(currentTarget);
+      }
+    };
+  }, [loadMoreAllSpots, hasMoreAllSpots]);
 
   // 处理收藏/取消收藏
   const handleStarClick = async (id: number) => {
@@ -232,10 +348,17 @@ export default function HomePage() {
       router.push("/login");
       return;
     }
-
+    fetchStarredSpots();
     try {
-      // 找到对应的景点数据
-      const spot = myRecommendScenicSpot?.sights?.find((s) => s.id === id);
+      // 首先在推荐景点中查找
+      let spot = myRecommendScenicSpot?.sights?.find((s) => s.id === id);
+
+      // 如果推荐景点中没有，再在全部景点中查找
+      if (!spot) {
+        spot = allScenicSpots?.sights?.find((s) => s.id === id);
+      }
+
+      // 如果两个数据源都没找到，才报错
       if (!spot) {
         toast.error("景点数据不存在");
         return;
@@ -243,6 +366,8 @@ export default function HomePage() {
 
       const spotData: StarredScenicSpotResponse = {
         id: spot.id,
+        user_id: null,
+        gd_id: null,
         pname: spot.pname || "",
         city_name: spot.city_name || "",
         adname: spot.adname || "",
@@ -286,9 +411,8 @@ export default function HomePage() {
       {/* 固定导航栏 */}
       <div className="w-full h-48 bg-[url('/images/bg-mountain.png')] bg-cover bg-center">
         <motion.div
-          className={`w-full h-[60px] fixed top-0 z-50 backdrop-blur-xl transition-colors duration-300 ${
-            scrolled ? "bg-background/90 shadow-sm" : "bg-transparent"
-          }`}
+          className={`w-full h-[60px] fixed top-0 z-50 backdrop-blur-xl transition-colors duration-300 ${scrolled ? "bg-background/90 shadow-sm" : "bg-transparent"
+            }`}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.3 }}
@@ -301,9 +425,8 @@ export default function HomePage() {
                 alt="GO! TOGETHER"
               />
               <p
-                className={`font-bold text-xl ${
-                  scrolled ? "text-black dark:text-white" : "text-white"
-                }`}
+                className={`font-bold text-xl ${scrolled ? "text-black dark:text-white" : "text-white"
+                  }`}
               >
                 GO! TOGETHER
               </p>
@@ -555,49 +678,86 @@ export default function HomePage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {isLoading
-                ? Array.from({ length: 4 }).map((_, index) => (
-                    <Skeleton
+              {isLoading ? (
+                // 加载状态：显示骨架屏
+                Array.from({ length: 4 }).map((_, index) => (
+                  <Skeleton
+                    key={index}
+                    className="w-full h-[200px] rounded-lg"
+                  />
+                ))
+              ) : error ? (
+                // 错误状态：显示错误提示
+                <div className="col-span-full flex flex-col items-center justify-center py-12 px-4">
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="flex flex-col items-center text-center max-w-md"
+                  >
+                    <div className="mb-4 p-3 rounded-full bg-red-100 dark:bg-red-900/20">
+                      {error.includes('超时') ? (
+                        <WifiOff className="h-8 w-8 text-red-500" />
+                      ) : (
+                        <AlertCircle className="h-8 w-8 text-red-500" />
+                      )}
+                    </div>
+                    <h3 className="text-lg font-semibold text-foreground mb-2">
+                      网络连接异常
+                    </h3>
+                    <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
+                      {error}
+                    </p>
+                    <Button
+                      onClick={retryGetRecommendScenicSpot}
+                      disabled={isLoading}
+                      className="flex items-center gap-2"
+                    >
+                      <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+                      重新加载
+                    </Button>
+                  </motion.div>
+                </div>
+              ) : (
+                // 正常状态：显示景点数据
+                myRecommendScenicSpot?.sights
+                  ?.slice(0, 4)
+                  .map((spot, index) => (
+                    <SpotCard
+                      description=""
                       key={index}
-                      className="w-full h-[200px] rounded-lg"
+                      id={spot.id}
+                      name={spot.name || `景点${index + 1}`}
+                      rating={(4.5 - index * 0.1).toFixed(1)}
+                      location={spot.address || "哈尔滨热门景点"}
+                      imageUrl={
+                        ServerConfig.userApiUrl +
+                        "/img/" +
+                        ReplaceParentheses(spot.name) +
+                        ".jpg"
+                      }
+                      isStarred={starredIds.includes(spot.id || index + 1)}
+                      onStarClick={(id) => handleStarClick(id)}
+                      onClick={() =>
+                        handleSpotClick(
+                          spot.id || index + 1,
+                          spot.name || `景点${index + 1}`
+                        )
+                      }
+                      className="w-full h-full"
                     />
                   ))
-                : myRecommendScenicSpot?.sights
-                    ?.slice(0, 4)
-                    .map((spot, index) => (
-                      <SpotCard
-                        description=""
-                        key={index}
-                        id={spot.id || index + 1}
-                        name={spot.name || `景点${index + 1}`}
-                        rating={(4.5 - index * 0.1).toFixed(1)}
-                        location={spot.address || "哈尔滨热门景点"}
-                        imageUrl={
-                          ServerConfig.userApiUrl +
-                          "/img/" +
-                          ReplaceParentheses(spot.name) +
-                          ".jpg"
-                        }
-                        isStarred={starredIds.includes(spot.id || index + 1)}
-                        onStarClick={(id) => handleStarClick(id)}
-                        onClick={() =>
-                          handleSpotClick(
-                            spot.id || index + 1,
-                            spot.name || `景点${index + 1}`
-                          )
-                        }
-                        className="w-full h-full"
-                      />
-                    ))}
+              )}
             </div>
           </motion.div>
+
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.3 }}
           >
             <p className="text-xl font-bold mt-10">推荐</p>
-            <Tabs defaultValue="parkinglot" className=" w-full mt-4">
+            <Tabs defaultValue="food" className=" w-full mt-4">
               <TabsList className="gird w-full gird-cols-4 md:w-[400px]">
                 <TabsTrigger
                   value="parkinglot"
@@ -628,7 +788,7 @@ export default function HomePage() {
                 <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
                   {parkinglotData.map((item) => (
                     <SpotCard
-                      description=""
+                      description={item.description || ""}
                       className="w-full h-full"
                       key={item.id}
                       id={item.id}
@@ -737,8 +897,137 @@ export default function HomePage() {
               </div>
             </div>
           </motion.div>
+
+
+          {/* 全部景点展示 */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: 0.4 }}
+            className="mt-10"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <p className="text-xl font-bold">全部景点</p>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-sm"
+                onClick={() => router.push("/allScenicSpotCard")}
+              >
+                查看更多
+                <ChevronsRight className="ml-1 h-4 w-4" />
+              </Button>
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {isLoadingAllSpots ? (
+                // 初始加载状态：显示骨架屏
+                Array.from({ length: 12 }).map((_, index) => (
+                  <Skeleton
+                    key={index}
+                    className="w-full h-[200px] rounded-lg"
+                  />
+                ))
+              ) : !isLogin ? (
+                // 未登录状态：显示登录提示
+                <div className="col-span-full">
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="w-full py-12 flex flex-col items-center justify-center bg-muted/30 rounded-lg"
+                  >
+                    <div className="mb-4 p-3 rounded-full bg-primary/10">
+                      <MapPin className="h-8 w-8 text-primary" />
+                    </div>
+                    <p className="text-foreground text-lg font-medium mb-2">需要登录查看更多景点</p>
+                    <p className="text-muted-foreground text-sm mb-4">登录后即可浏览哈尔滨所有景点信息</p>
+                    <Button
+                      onClick={() => router.push("/login")}
+                      className="flex items-center gap-2"
+                    >
+                      立即登录
+                      <ChevronsRight className="h-4 w-4" />
+                    </Button>
+                  </motion.div>
+                </div>
+              ) : (
+                // 正常状态：显示景点数据
+                displayedAllSpots.map((spot, index) => (
+                  <motion.div
+                    key={spot.id || index}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{
+                      duration: 0.3,
+                      delay: Math.min(0.05 * (index % 8), 0.4),
+                    }}
+                  >
+                    <SpotCard
+                      description=""
+                      id={spot.id || index + 1}
+                      name={spot.name || `景点${index + 1}`}
+                      rating={(4.5 - Math.random() * 0.5).toFixed(1)}
+                      location={spot.address || "哈尔滨景点"}
+                      imageUrl={
+                        ServerConfig.userApiUrl +
+                        "/img/" +
+                        ReplaceParentheses(spot.name) +
+                        ".jpg"
+                      }
+                      isStarred={starredIds.includes(spot.id || index + 1)}
+                      onStarClick={(id) => handleStarClick(id)}
+                      onClick={() =>
+                        handleSpotClick(
+                          spot.id || index + 1,
+                          spot.name || `景点${index + 1}`
+                        )
+                      }
+                      className="w-full h-full"
+                    />
+                  </motion.div>
+                ))
+              )}
+            </div>
+
+            {/* 加载更多指示器 */}
+            {hasMoreAllSpots && displayedAllSpots.length > 0 && (
+              <div
+                ref={observerTarget}
+                className="w-full py-8 flex items-center justify-center"
+              >
+                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
+              </div>
+            )}
+
+            {/* 没有更多数据 */}
+            {!hasMoreAllSpots && displayedAllSpots.length > 0 && (
+              <div className="w-full py-4 text-center text-muted-foreground text-sm">
+                已显示全部 {displayedAllSpots.length} 个景点
+              </div>
+            )}
+
+            {/* 空状态 */}
+            {displayedAllSpots.length === 0 && !isLoadingAllSpots && isLogin && (
+              <div className="col-span-full">
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="w-full py-12 flex flex-col items-center justify-center"
+                >
+                  <div className="mb-4 p-3 rounded-full bg-gray-100 dark:bg-gray-800">
+                    <MapPin className="h-8 w-8 text-gray-400" />
+                  </div>
+                  <p className="text-gray-500 text-lg font-medium">暂无景点数据</p>
+                </motion.div>
+              </div>
+            )}
+          </motion.div>
         </div>
+
       </div>
+
 
       {/* 悬浮吉祥物 */}
       <FloatingMascot />
