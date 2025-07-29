@@ -59,6 +59,8 @@ export default function AllScenicSpotCardPage() {
   const [showFilter, setShowFilter] = useState(false);
   const [districts, setDistricts] = useState<string[]>([]);
   const [selectedDistrict, setSelectedDistrict] = useState<string | null>(null);
+  const [cities, setCities] = useState<string[]>([]);
+  const [selectedCity, setSelectedCity] = useState<string | null>(null);
   const userClient = new UserClient();
   // 获取所有景点数据
   useEffect(() => {
@@ -91,6 +93,12 @@ export default function AllScenicSpotCardPage() {
             new Set(data.sights.map((spot) => spot.adname).filter(Boolean))
           );
           setDistricts(uniqueDistricts);
+
+          // 提取城市分类
+          const uniqueCities = Array.from(
+            new Set(data.sights.map((spot) => spot.pname).filter(Boolean))
+          );
+          setCities(uniqueCities);
 
           setFilteredSpots(data.sights);
           setDisplayedSpots(data.sights.slice(0, ITEMS_PER_PAGE));
@@ -165,6 +173,11 @@ export default function AllScenicSpotCardPage() {
       results = results.filter((spot) => spot.adname === selectedDistrict);
     }
 
+    // 应用城市筛选
+    if (selectedCity) {
+      results = results.filter((spot) => spot.pname === selectedCity);
+    }
+
     setFilteredSpots(results);
     setDisplayedSpots(results.slice(0, ITEMS_PER_PAGE));
     setPage(1);
@@ -176,6 +189,7 @@ export default function AllScenicSpotCardPage() {
     activeTab,
     starredIds,
     selectedDistrict,
+    selectedCity,
   ]);
 
   // 处理标签切换
@@ -183,6 +197,7 @@ export default function AllScenicSpotCardPage() {
     setActiveTab(value);
     // 重置其他筛选条件
     setSelectedDistrict(null);
+    setSelectedCity(null);
   };
 
   // 加载更多数据
@@ -243,6 +258,8 @@ export default function AllScenicSpotCardPage() {
 
       const spotData: StarredScenicSpotResponse = {
         id: spot.id,
+        user_id: null,
+        gd_id: null,
         pname: spot.pname || "",
         city_name: spot.city_name || "",
         adname: spot.adname || "",
@@ -324,7 +341,7 @@ export default function AllScenicSpotCardPage() {
               <ArrowLeft className="h-5 w-5" />
             </Button>
             <h1 className="text-xl font-bold">
-              哈尔滨{activeTab === "hotel" ? "酒店" : "景点"}
+              全国{activeTab === "hotel" ? "酒店" : "景点"}
             </h1>
           </div>
 
@@ -404,37 +421,75 @@ export default function AllScenicSpotCardPage() {
               transition={{ duration: 0.2 }}
               className="container mx-auto px-4 pb-4 pt-2 overflow-hidden"
             >
-              <div className="bg-background/80 border rounded-lg p-3">
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-sm font-medium">按区域筛选</h3>
-                  {selectedDistrict && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-7 px-2"
-                      onClick={() => setSelectedDistrict(null)}
-                    >
-                      清除 <X className="ml-1 h-3 w-3" />
-                    </Button>
-                  )}
+              <div className="bg-background/80 border rounded-lg p-3 space-y-4">
+                {/* 城市筛选 */}
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="text-sm font-medium">按城市筛选</h3>
+                    {selectedCity && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-7 px-2"
+                        onClick={() => setSelectedCity(null)}
+                      >
+                        清除 <X className="ml-1 h-3 w-3" />
+                      </Button>
+                    )}
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {cities.map((city) => (
+                      <Badge
+                        key={city}
+                        variant={
+                          selectedCity === city ? "default" : "outline"
+                        }
+                        className="cursor-pointer"
+                        onClick={() =>
+                          setSelectedCity(
+                            selectedCity === city ? null : city
+                          )
+                        }
+                      >
+                        {city}
+                      </Badge>
+                    ))}
+                  </div>
                 </div>
-                <div className="flex flex-wrap gap-2">
-                  {districts.map((district) => (
-                    <Badge
-                      key={district}
-                      variant={
-                        selectedDistrict === district ? "default" : "outline"
-                      }
-                      className="cursor-pointer"
-                      onClick={() =>
-                        setSelectedDistrict(
-                          selectedDistrict === district ? null : district
-                        )
-                      }
-                    >
-                      {district}
-                    </Badge>
-                  ))}
+
+                {/* 区域筛选 */}
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="text-sm font-medium">按区域筛选</h3>
+                    {selectedDistrict && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-7 px-2"
+                        onClick={() => setSelectedDistrict(null)}
+                      >
+                        清除 <X className="ml-1 h-3 w-3" />
+                      </Button>
+                    )}
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {districts.map((district) => (
+                      <Badge
+                        key={district}
+                        variant={
+                          selectedDistrict === district ? "default" : "outline"
+                        }
+                        className="cursor-pointer"
+                        onClick={() =>
+                          setSelectedDistrict(
+                            selectedDistrict === district ? null : district
+                          )
+                        }
+                      >
+                        {district}
+                      </Badge>
+                    ))}
+                  </div>
                 </div>
               </div>
             </motion.div>
@@ -446,12 +501,12 @@ export default function AllScenicSpotCardPage() {
       <div className="relative bg-gradient-to-r py-6 mb-2">
         <div className="container mx-auto px-4">
           <h1 className="text-2xl md:text-3xl font-bold mb-2">
-            探索哈尔滨景点
+            探索全国景点
           </h1>
           <p className="text-muted-foreground max-w-2xl">
             {activeTab === "hotel"
-              ? "寻找哈尔滨优质的酒店住宿，为您的旅行提供舒适的休息场所。"
-              : "发现哈尔滨最受欢迎的旅游胜地，从历史地标到自然景观，这里有各种各样的景点等待您的探索。"}
+              ? "寻找全国优质的酒店住宿，为您的旅行提供舒适的休息场所。"
+              : "发现全国最受欢迎的旅游胜地，从历史地标到自然景观，这里有各种各样的景点等待您的探索。"}
           </p>
 
           <div className="mt-4">
@@ -484,6 +539,19 @@ export default function AllScenicSpotCardPage() {
                 ? "收藏"
                 : "景点"}
             </span>
+            {selectedCity && (
+              <Badge variant="outline" className="ml-2">
+                {selectedCity}
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-4 w-4 ml-1 p-0"
+                  onClick={() => setSelectedCity(null)}
+                >
+                  <X className="h-3 w-3" />
+                </Button>
+              </Badge>
+            )}
             {selectedDistrict && (
               <Badge variant="outline" className="ml-2">
                 {selectedDistrict}
@@ -527,7 +595,7 @@ export default function AllScenicSpotCardPage() {
                   id={spot.id}
                   name={spot.name || `景点${index + 1}`}
                   rating={(4.5 - Math.random() * 0.5).toFixed(1)}
-                  description={spot.address || "哈尔滨景点"}
+                  description={spot.address || "全国景点"}
                   imageUrl={
                     ServerConfig.userApiUrl +
                     "/img/" +
@@ -591,6 +659,7 @@ export default function AllScenicSpotCardPage() {
                 onClick={() => {
                   setSearchQuery("");
                   setSelectedDistrict(null);
+                  setSelectedCity(null);
                   setActiveTab("all");
                 }}
               >

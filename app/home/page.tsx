@@ -57,6 +57,7 @@ import SpotCard from "@/components/home/componentsHome/spot-card";
 import ScenicSpot from "@/lib/scenic-spot";
 import { toast } from "sonner";
 import CalcTime from "@/components/home/componentsHome/calc-time";
+import MobileBottomNav from "@/components/ui/mobile-bottom-nav";
 import TripCard, {
   TripCardType,
 } from "@/components/home/componentsHome/tripCard";
@@ -437,7 +438,7 @@ export default function HomePage() {
       </div>
 
       {/* 主内容区域 */}
-      <div className="pt-[60px] w-full flex">
+      <div className="pt-[10px] w-full flex">
         <div className="w-full px-4 md:px-20 py-4">
           {/* 欢迎语 */}
           <motion.p
@@ -802,7 +803,7 @@ export default function HomePage() {
                 </div>
               </TabsContent>
               <TabsContent value="hotel">
-                <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4 w-full">
+                <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
                   {hotelData.map((item) => (
                     <SpotCard
                       description={item.description || ""}
@@ -1028,9 +1029,8 @@ export default function HomePage() {
 
       </div>
 
-
-      {/* 悬浮吉祥物 */}
-      <FloatingMascot />
+      {/* 移动端底部导航栏 */}
+      <MobileBottomNav />
     </div>
   );
 }

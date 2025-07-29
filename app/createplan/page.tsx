@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Http } from "@/lib/axios";
 import ControlBar from "@/components/ui/control-bar";
 import { cn } from "@/lib/utils";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { motion, AnimatePresence } from "framer-motion";
 import { Typewriter } from "react-simple-typewriter";
 import MapComponent from "@/components/map/MapComponent";
@@ -40,9 +41,12 @@ import {
 } from "@/components/ui/timeline";
 import { ServerConfig } from "@/lib/site";
 import { showFakeData } from "@/lib/data-static";
+import MobileBottomNav from "@/components/ui/mobile-bottom-nav";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 // 移除滚动条样式对象
 export default function CreatePlan() {
   const router = useRouter();
+  const isMobile = useIsMobile();
   const [data, setData] = useState({});
   const http = new Http("http://localhost:3000/api");
   const [showRightTravelBox, setShowRightTravelBox] = useState(false);
@@ -52,6 +56,16 @@ export default function CreatePlan() {
   const [generatingDay, setGeneratingDay] = useState(0); // 当前正在生成第几天的数据
   const [generationComplete, setGenerationComplete] = useState(false); // 是否全部生成完成
   const [totalDays, setTotalDays] = useState(3); // 总天数，默认3天
+  const [selectedCity, setSelectedCity] = useState("哈尔滨"); // 选中的城市
+
+  // 城市选项
+  const cityOptions = [
+    { value: "哈尔滨", label: "哈尔滨" },
+    { value: "广州", label: "广州" },
+    { value: "深圳", label: "深圳" },
+    { value: "北京", label: "北京" },
+    { value: "上海", label: "上海" },
+  ];
 
   useEffect(() => {
     async function getTravel() {
@@ -125,17 +139,21 @@ export default function CreatePlan() {
           </Button>
           <h1 className="text-xl font-bold">行程规划</h1>
         </div>
-        <ControlBar className="static" />
       </div>
       <div
         className={cn(
-          "w-full h-[calc(100%-3rem)] grid gap-4 mr-4",
+          "w-full h-[calc(100%-3rem)] grid gap-4 mr-0 md:mr-4 grid-cols-1",
           showRightTravelBox
-            ? "grid-cols-[400px_calc(100%-400px)]"
-            : "grid-cols-[1fr_0]"
+            ? "md:grid-cols-[400px_calc(100%-400px)]"
+            : "md:grid-cols-[1fr_0]"
         )}
       >
-        <div className="h-full w-[400px] rounded-md bg-background shadow-sm border-border border-1 dark:bg-muted flex flex-col">
+        <div
+          className={cn(
+            "h-full rounded-md bg-background shadow-sm border-border border-1 dark:bg-muted flex flex-col",
+            showRightTravelBox ? "hidden md:flex md:w-[400px]" : "flex w-full md:w-[400px]"
+          )}
+        >
           <div className="flex justify-between items-center p-4 border-b">
             <div className="text-xl font-bold">
               <Typewriter words={["行程规划"]} typeSpeed={100} />
@@ -143,17 +161,21 @@ export default function CreatePlan() {
           </div>
           {/* 内容区域 - 将消息列表和交互区域放在此处 */}
           <CreateMessage
-            title="嘿，我的朋友！👋"
+            title={`嘿，我的朋友！👋 准备探索${selectedCity}吗？`}
             setShowRightTravelBox={setShowRightTravelBox}
             showRightTravelBox={showRightTravelBox}
             setGeneratingDay={setGeneratingDay}
             setTotalDays={setTotalDays}
+            selectedCity={selectedCity}
           />
         </div>
         <AnimatePresence mode="wait">
           {showRightTravelBox && (
             <motion.div
-              className="h-full w-full rounded-md bg-background shadow-sm border-border border-1 dark:bg-muted overflow-y-auto custom-scrollbar"
+              className={cn(
+                "h-full w-full overflow-y-auto custom-scrollbar",
+                "fixed inset-0 z-40 bg-background dark:bg-muted md:static md:rounded-md md:shadow-sm md:border md:border-border"
+              )}
               initial={{ opacity: 0, x: 100 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 100 }}
@@ -173,10 +195,24 @@ export default function CreatePlan() {
               </div>
               <div className="p-4 w-full">
                 <div className="w-full p-4 bg-blue-100 dark:bg-blue-500 rounded-md border-border border-1">
-                  <h1 className="text-2xl font-bold">哈尔滨{totalDays}日游</h1>
+                  <div className="flex items-center justify-between mb-3">
+                    <h1 className="text-2xl font-bold">{selectedCity}{totalDays}日游</h1>
+                    <Select value={selectedCity} onValueChange={setSelectedCity}>
+                      <SelectTrigger className="w-32 bg-white dark:bg-gray-800">
+                        <SelectValue placeholder="选择城市" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {cityOptions.map((city) => (
+                          <SelectItem key={city.value} value={city.value}>
+                            {city.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                   <p className="text-sm text-foreground mt-2">
                     此行程为您规划了{totalDays}
-                    天的哈尔滨之旅，总预算¥5000，涵盖了城市最著名的景点和体验。
+                    天的{selectedCity}之旅，总预算¥5000，涵盖了城市最著名的景点和体验。
                   </p>
                 </div>
               </div>
@@ -345,6 +381,9 @@ export default function CreatePlan() {
         </AnimatePresence>
       </div>
 
+      {/* 移动端底部导航栏 */}
+      <MobileBottomNav />
+
       {/* 添加全局CSS */}
       <style jsx global>{`
         .custom-scrollbar::-webkit-scrollbar {
@@ -388,12 +427,14 @@ export function CreateMessage({
   showRightTravelBox,
   setGeneratingDay,
   setTotalDays,
+  selectedCity,
 }: {
   title: string;
   setShowRightTravelBox: (show: boolean) => void;
   showRightTravelBox: boolean;
   setGeneratingDay: (day: number) => void;
   setTotalDays: (days: number) => void;
+  selectedCity: string;
 }) {
   const [createPlanIsLoading, setCreatePlanIsLoading] = useState(false);
   const [showBudgetInput, setShowBudgetInput] = useState(false);
@@ -424,10 +465,21 @@ export function CreateMessage({
     {
       id: "initial-message",
       content:
-        "想去 哈尔滨 旅游，但是不知道怎么规划行程，需要我帮您规划一下吗？",
+        `想去 ${selectedCity} 旅游，但是不知道怎么规划行程，需要我帮您规划一下吗？`,
       type: "system",
     },
   ]);
+
+  // 当城市改变时更新初始消息
+  useEffect(() => {
+    setMessages([
+      {
+        id: "initial-message",
+        content: `想去 ${selectedCity} 旅游，但是不知道怎么规划行程，需要我帮您规划一下吗？`,
+        type: "system",
+      },
+    ]);
+  }, [selectedCity]);
 
   // 滚动到底部
   const scrollToBottom = () => {

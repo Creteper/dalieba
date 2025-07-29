@@ -449,9 +449,9 @@ function MapImpl({
           url={
             layOutisPoints
               ? ServerConfig.mapApiUrl +
-                "tiles/{z}/{x}/{y}/x={x}&y={y}&z={z}.png"
+                "/appmaptile?lang=zh_cn&size=1&scale=1&style=7&x={x}&y={y}&z={z}"
               : ServerConfig.mapApiUrl +
-                "w_tiles/{z}/{x}/{y}/x={x}&y={y}&z={z}.png"
+                "/appmaptile?lang=zh_cn&size=1&scale=1&style=7&x={x}&y={y}&z={z}"
           }
         />
 

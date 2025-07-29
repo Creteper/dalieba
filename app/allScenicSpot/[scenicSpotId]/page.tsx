@@ -59,7 +59,7 @@ export default function AllScenicSpotPage() {
   const [isExiting, setIsExiting] = useState(false); // 是否退出
   const [searchQuery, setSearchQuery] = useState(""); // 搜索框内容
   const [center, setCenter] = useState<[number, number]>([
-    45.774835, 126.617682,
+    39.774835, 116.397029,
   ]);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isOnGuide, setIsOnGuide] = useState(false);
@@ -377,6 +377,7 @@ export default function AllScenicSpotPage() {
         setZoom(15);
         setIsExiting(false);
       }, 300);
+      
     } else {
       setSelectedMarker(marker);
       setCenter(marker.position);
@@ -477,14 +478,77 @@ export default function AllScenicSpotPage() {
         <div className="absolute top-0 left-0 w-64 h-64 bg-primary/5 rounded-full filter blur-3xl opacity-60"></div>
         <div className="absolute bottom-0 right-0 w-96 h-96 bg-blue-500/5 rounded-full filter blur-3xl opacity-60"></div>
       </div>
-
-      <MapComponent
+      <MapComponent 
+        showZoomLevel
+        className="w-full h-full rounded-md shadow-xl border border-border/20 z-10"
+        center={center}
+        zoom={zoom}
+        maxZoom={18}
+        minZoom={4}
+        titleMaxZoom={18}
+        titleMinZoom={16}
+        markers={points.map((point) => ({
+          title: point.name,  
+          position: point.location,
+          popup: point.name,
+          description: point.description,
+          icon: {
+            url:
+              highlightedMarker &&
+              highlightedMarker[0] === point.location[0] &&
+              highlightedMarker[1] === point.location[1]
+                ? "/images/location-custom.svg"
+                : starredSpots.includes(point.id)
+                ? "/images/location-custom-green.svg" // 已收藏特殊图标
+                : currentCategory === 'hotel' 
+                ? "/images/location.svg" // 酒店使用默认图标
+                : "/images/location.svg",
+            size: [32, 32],
+            anchor: [16, 16],
+          },
+        }))}
+        onMapClick={handleMapClick}
+        onMarkerClick={handleMarkerClick}
+      /> 
+      {/* <MapComponent
+        showZoomLevel
+        className="w-full h-full rounded-md shadow-xl border border-border/20 z-10"
+        center={center}
+        zoom={zoom}
+        maxZoom={18}
+        minZoom={4}
+        titleMaxZoom={18}
+        titleMinZoom={14}
+        markers={points.map((point) => ({
+          title: point.name,  
+          position: point.location,
+          popup: point.name,
+          description: point.description,
+          icon: {
+            url:
+              highlightedMarker &&
+              highlightedMarker[0] === point.location[0] &&
+              highlightedMarker[1] === point.location[1]
+                ? "/images/location-custom.svg"
+                : starredSpots.includes(point.id)
+                ? "/images/location-custom-green.svg" // 已收藏特殊图标
+                : currentCategory === 'hotel' 
+                ? "/images/location.svg" // 酒店使用默认图标
+                : "/images/location.svg",
+            size: [32, 32],
+            anchor: [16, 16],
+          },
+        }))}
+        onMarkerClick={handleMarkerClick}
+        onMapClick={handleMapClick}
+      />  */}
+      {/* <MapComponent
         showZoomLevel={true}
         className="w-full h-full rounded-md shadow-xl border border-border/20 z-10"
         center={center}
         zoom={zoom}
         maxZoom={18}
-        minZoom={12}
+        minZoom={4}
         titleMaxZoom={18}
         titleMinZoom={14}
         markers={points.map((point) => ({
@@ -509,7 +573,7 @@ export default function AllScenicSpotPage() {
         }))}
         onMarkerClick={handleMarkerClick}
         onMapClick={handleMapClick}
-      />
+      /> */}
       
       <ControlBar
         className="absolute top-4 right-4 z-60"
